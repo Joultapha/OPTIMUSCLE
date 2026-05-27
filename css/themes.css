@@ -444,6 +444,24 @@ html[data-theme="light"] .landing-table-col,
 html[data-theme="light"] .landing-table-header > div,
 @media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-header > div { color: #1a1a2e; } }
 
+/* Light mode table icons */
+html[data-theme="light"] .landing-table-highlight .tbl-check,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-highlight .tbl-check { color: var(--accent); stroke: var(--accent); } }
+html[data-theme="light"] .landing-table-col:not(.landing-table-highlight) .tbl-check,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-col:not(.landing-table-highlight) .tbl-check { color: #2d2d44; stroke: #2d2d44; } }
+html[data-theme="light"] .tbl-cross,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .tbl-cross { color: #9a9ab0; stroke: #9a9ab0; opacity: 0.8; } }
+html[data-theme="light"] .tbl-note,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .tbl-note { color: #6b6b80; background: rgba(123, 44, 191, 0.06); } }
+html[data-theme="light"] .landing-comparison-table,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-comparison-table { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+html[data-theme="light"] .landing-table-highlight,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-highlight { background: rgba(123,44,191,0.06); } }
+html[data-theme="light"] .landing-table-row:last-child .landing-table-highlight,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-row:last-child .landing-table-highlight { color: var(--neon); } }
+html[data-theme="light"] .landing-table-price,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-price { color: #1a1a2e; } }
+
 /* ===== LIGHT MODE : Coach modal full visibility ===== */
 html[data-theme="light"] .coach-modal {
   background: rgba(245, 245, 247, 0.98) !important;

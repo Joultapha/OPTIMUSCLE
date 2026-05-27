@@ -620,7 +620,7 @@
 .landing-table-header,
 .landing-table-row {
   display: grid;
-  grid-template-columns: 1fr repeat(3, minmax(80px, 120px));
+  grid-template-columns: 1.4fr repeat(3, minmax(64px, 1fr));
   gap: 0;
 }
 
@@ -630,27 +630,28 @@
 }
 
 .landing-table-header > div {
-  padding: 16px 12px;
+  padding: 14px 8px;
   font-weight: 800;
-  font-size: 13px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: center;
 }
 
 .landing-table-feature {
-  padding: 14px 16px;
-  font-size: 14px;
+  padding: 12px 12px;
+  font-size: 13px;
   font-weight: 600;
   border-right: 1px solid var(--border);
   display: flex;
   align-items: center;
+  line-height: 1.3;
 }
 
 .landing-table-col {
-  padding: 14px 8px;
+  padding: 12px 6px;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   border-right: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -667,12 +668,49 @@
   font-weight: 700;
 }
 
+/* Consistent check/cross icon colors */
+.landing-table-highlight .tbl-check {
+  color: var(--accent-bright);
+  stroke: var(--accent-bright);
+}
+
+.landing-table-col:not(.landing-table-highlight) .tbl-check {
+  color: var(--text-soft);
+  stroke: var(--text-soft);
+}
+
+.tbl-cross {
+  color: var(--text-dim);
+  stroke: var(--text-dim);
+  opacity: 0.6;
+}
+
+/* "En plus" note */
+.tbl-note {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: rgba(123, 44, 191, 0.06);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.02em;
+}
+
 .landing-table-row {
   border-bottom: 1px solid var(--border);
 }
 
 .landing-table-row:last-child {
   border-bottom: none;
+}
+
+/* Price row styling */
+.landing-table-price {
+  font-weight: 700;
+  font-size: 13px;
+}
+.landing-table-row:last-child .landing-table-highlight {
+  color: var(--neon-bright);
 }
 
 /* ===== ANIMATED STATS (on scroll) ===== */
@@ -716,7 +754,24 @@
   .landing-comparison-table .landing-table-col,
   .landing-comparison-table .landing-table-feature {
     font-size: 13px;
-    padding: 12px 8px;
+    padding: 12px 10px;
+  }
+
+  .landing-table-header,
+  .landing-table-row {
+    grid-template-columns: 1.2fr repeat(3, minmax(90px, 1fr));
+  }
+
+  .landing-table-header > div {
+    font-size: 12px;
+  }
+
+  .landing-table-feature {
+    font-size: 13px;
+  }
+
+  .landing-table-col {
+    font-size: 13px;
   }
 }
 
