@@ -169,7 +169,7 @@ export async function toggleReminders() {
         state.settings.reminders = true;
         await save();
         scheduleReminder();
-        showToast('🔔 Rappels activés');
+        showToast('Rappels activés');
       } else {
         document.getElementById('set-reminders').checked = false;
         showToast('Permission refusée');
@@ -206,8 +206,8 @@ export function scheduleReminder() {
       const todayIdx = (new Date().getDay() + 6) % 7;
       const today = state.program[todayIdx];
       const msg = today && !today.rest && !today.done
-        ? `Aujourd'hui : ${today.name} (${today.duration} min) 💪`
-        : "C'est l'heure de bouger un peu ! 💪";
+        ? `Aujourd'hui : ${today.name} (${today.duration} min)`
+        : "C'est l'heure de bouger un peu !";
       try {
         new Notification('OPTIMUSCLE', { body: msg, icon: '/assets/favicon.svg' });
       } catch (e) { /* notif blocked */ }

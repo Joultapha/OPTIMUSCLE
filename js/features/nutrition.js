@@ -88,7 +88,7 @@ function renderNutritionOnboarding() {
   wrap.appendChild(createEl('div', {
     className: 'nut-onb-header',
     html: `
-      <span class="label-eyebrow">⚡ Activation nutrition</span>
+      <span class="label-eyebrow"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Activation nutrition</span>
       <h1>Calcule tes besoins<br/><span class="text-gradient">en 30 secondes</span></h1>
       <p>On a besoin de quelques infos pour personnaliser ton suivi alimentaire.</p>
     `
@@ -99,8 +99,8 @@ function renderNutritionOnboarding() {
 
   // Genre
   form.appendChild(formField('Genre', 'gender', [
-    createRadio('gender', 'M', '♂️ Homme'),
-    createRadio('gender', 'F', '♀️ Femme'),
+    createRadio('gender', 'M', '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="10" cy="14" r="5"/><path d="M15 9l5-5"/><path d="M15 4h5v5"/></svg> Homme'),
+    createRadio('gender', 'F', '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="10" r="5"/><path d="M12 15v7"/><path d="M9 19h6"/></svg> Femme'),
   ]));
 
   // Âge / Poids / Taille en grille
@@ -132,7 +132,7 @@ function renderNutritionOnboarding() {
   const submitBtn = createEl('button', {
     className: 'btn btn-primary',
     attrs: { type: 'submit', style: 'margin-top: 24px;' },
-    text: 'Calculer mes besoins 🚀'
+    text: 'Calculer mes besoins'
   });
   form.appendChild(submitBtn);
 
@@ -236,7 +236,7 @@ function renderNutritionDashboard() {
 
   // Header
   const header = createEl('div', { className: 'nut-dash-header' });
-  header.appendChild(createEl('span', { className: 'label-eyebrow', text: '🍎 Nutrition du jour' }));
+  header.appendChild(createEl('span', { className: 'label-eyebrow', html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 3c-1-1-3-1-4 0-3 2-4 6-3 10s3 7 7 7 6-3 7-7 0-8-3-10c-1-1-3-1-4 0z"/><path d="M12 3V1"/><path d="M14 1c1 0 2 1 2 2"/></svg> Nutrition du jour' }));
   header.appendChild(createEl('h1', { html: `<span class="text-gradient">${todayLabel()}</span>` }));
   container.appendChild(header);
 
@@ -347,7 +347,7 @@ function renderWaterTracker(count) {
   card.innerHTML = `
     <div class="nut-water-header">
       <div>
-        <div class="nut-water-title">💧 Hydratation</div>
+        <div class="nut-water-title"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"/></svg> Hydratation</div>
         <div class="nut-water-sub">${count}/${target} verres (${(count * 0.25).toFixed(1)}L)</div>
       </div>
       <div class="nut-water-actions">
@@ -357,7 +357,7 @@ function renderWaterTracker(count) {
     </div>
     <div class="nut-water-glasses">
       ${Array.from({ length: target }, (_, i) =>
-        `<span class="nut-water-glass ${i < count ? 'filled' : ''}">💧</span>`
+        `<span class="nut-water-glass ${i < count ? 'filled' : ''}"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"/></svg></span>`
       ).join('')}
     </div>
   `;
@@ -413,7 +413,7 @@ function renderMealsList(todayMeals) {
         const row = createEl('div', { className: 'nut-meal-item' });
         row.innerHTML = `
           <div class="nut-meal-item-left">
-            <span class="nut-meal-item-emoji">${item.emoji || '🍽️'}</span>
+            <span class="nut-meal-item-emoji">${item.emoji || '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>'}</span>
             <div>
               <div class="nut-meal-item-name">${escapeHtml(item.name)}</div>
               <div class="nut-meal-item-portion">${item.grams || ''}g · ${item.kcal} kcal</div>
@@ -506,13 +506,13 @@ function renderLocalSearchResults(query) {
 
   // Header local
   if (locals.length > 0) {
-    results.appendChild(createEl('div', { className: 'nut-search-section-title', text: '📦 Base locale' }));
+    results.appendChild(createEl('div', { className: 'nut-search-section-title', html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg> Base locale' }));
     locals.forEach(food => results.appendChild(createFoodItem(food)));
   }
 
   // Si query >= 2, lancer aussi recherche OpenFoodFacts
   if (query.length >= 2) {
-    const offHeader = createEl('div', { className: 'nut-search-section-title', html: '🌐 OpenFoodFacts <span class="nut-search-loading-mini">...</span>' });
+    const offHeader = createEl('div', { className: 'nut-search-section-title', html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> OpenFoodFacts <span class="nut-search-loading-mini">...</span>' });
     results.appendChild(offHeader);
 
     searchOpenFoodFacts(query).then(offFoods => {
@@ -533,7 +533,7 @@ function createFoodItem(food) {
   const row = createEl('div', { className: 'nut-search-item' });
   row.innerHTML = `
     <div class="nut-search-item-left">
-      <span class="nut-search-item-emoji">${food.emoji || '🍽️'}</span>
+      <span class="nut-search-item-emoji">${food.emoji || '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>'}</span>
       <div>
         <div class="nut-search-item-name">${escapeHtml(food.name)}${food.brand ? ` <span class="nut-search-item-brand">· ${escapeHtml(food.brand)}</span>` : ''}</div>
         <div class="nut-search-item-info">${food.kcal} kcal · P${food.prot}g · G${food.carb}g · L${food.fat}g <span style="opacity:0.6;">(/100g)</span></div>
@@ -563,7 +563,7 @@ function openPortionModal(food) {
   // Header
   wrap.innerHTML = `
     <div class="nut-portion-head">
-      <span class="nut-portion-emoji">${food.emoji || '🍽️'}</span>
+      <span class="nut-portion-emoji">${food.emoji || '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>'}</span>
       <div>
         <div class="nut-portion-name">${escapeHtml(food.name)}</div>
         ${food.brand ? `<div class="nut-portion-brand">${escapeHtml(food.brand)}</div>` : ''}

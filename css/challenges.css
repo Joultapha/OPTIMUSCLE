@@ -102,6 +102,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
               inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
+.chal-weekly-icon svg { width: 1em; height: 1em; color: white; stroke: white; }
 
 .chal-weekly-info { flex: 1; min-width: 0; }
 
@@ -240,6 +241,7 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
+.chal-active-icon svg { width: 1em; height: 1em; color: white; stroke: white; }
 
 .chal-active-info { flex: 1; min-width: 0; }
 
@@ -478,6 +480,7 @@
   position: relative;
   z-index: 1;
 }
+.chal-catalog-icon svg { width: 1em; height: 1em; color: white; stroke: white; }
 
 .chal-catalog-content {
   flex: 1;

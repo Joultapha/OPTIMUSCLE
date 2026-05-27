@@ -69,8 +69,14 @@ export function renderHome() {
   }
 
   const ctx = getContextualMessage(state.stats);
-  const tag = ctx ? `${ctx.icon} ${ctx.text}` : 'Cette semaine';
-  setText('hero-tag', tag);
+  const heroTag = document.getElementById('hero-tag');
+  if (heroTag) {
+    if (ctx) {
+      heroTag.innerHTML = `${ctx.icon} ${ctx.text}`;
+    } else {
+      heroTag.textContent = 'Cette semaine';
+    }
+  }
 
   const g = GOAL_LABELS[state.profile.goal];
   if (g) {
@@ -232,7 +238,8 @@ function renderTestimonials() {
   TESTIMONIALS.forEach((t) => {
     const card = createEl('div', { className: 'testimonial-card' });
 
-    const stars = createEl('div', { className: 'testimonial-stars', text: '★'.repeat(t.stars) });
+    const starSVG = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+    const stars = createEl('div', { className: 'testimonial-stars', html: starSVG.repeat(t.stars) });
     card.appendChild(stars);
 
     const text = createEl('div', { className: 'testimonial-text', text: `"${t.text}"` });
@@ -971,7 +978,7 @@ export function renderBadges() {
 
     const div = createEl('div', { className: 'badge ' + (isUnlocked ? 'unlocked' : 'locked') });
     div.style.animation = `scaleIn 300ms var(--ease-spring) ${i * 40}ms both`;
-    div.appendChild(createEl('span', { className: 'badge-emoji', text: b.emoji }));
+    div.appendChild(createEl('span', { className: 'badge-emoji', html: b.emoji }));
     div.appendChild(createEl('div', { className: 'badge-name', text: b.name }));
     div.appendChild(createEl('div', { className: 'badge-desc', text: b.desc }));
     grid.appendChild(div);
@@ -999,7 +1006,8 @@ export async function checkBadges() {
 }
 
 function showBadgeUnlock(b) {
-  setText('badge-modal-emoji', b.emoji);
+  const emojiEl = document.getElementById('badge-modal-emoji');
+  if (emojiEl) emojiEl.innerHTML = b.emoji;
   setText('badge-modal-name', b.name);
   setText('badge-modal-desc', b.desc);
   document.getElementById('badge-modal').classList.add('show');

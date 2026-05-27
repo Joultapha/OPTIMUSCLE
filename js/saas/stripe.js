@@ -71,7 +71,7 @@ export async function startCheckout(planId) {
 
   // ===== MODE DÉMO (sans Cloud Function) =====
   if (!CHECKOUT_FUNCTION_URL || STRIPE_PUBLIC_KEY === 'pk_test_REPLACE_ME') {
-    showToast('💳 Stripe en mode démo — configurez Cloud Function');
+    showToast('Stripe en mode démo — configurez Cloud Function');
     console.log('[DEMO] Checkout pour:', plan);
     // Ici tu peux simuler l'activation pour démo :
     // await simulatePremium(user.uid, planId);
@@ -118,5 +118,5 @@ export async function openCustomerPortal() {
   if (!user) return;
 
   // Nécessite une Cloud Function `createPortalSession`
-  showToast('🚧 Portail client : à configurer');
+  showToast('Portail client : à configurer');
 }

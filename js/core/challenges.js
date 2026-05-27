@@ -7,6 +7,9 @@
    3. Défis IA (générés par OPTI selon ton profil)
 ============================================================ */
 
+// Iconly Pro-style SVG icon helper
+const _s = (d) => `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
 // ============================================================
 // CATALOGUE DE DÉFIS 30 JOURS
 // ============================================================
@@ -14,7 +17,7 @@ export const CHALLENGES_30D = [
   {
     id: 'pushups_30d',
     title: '30 jours Pompes',
-    icon: '💪',
+    icon: _s('<line x1="2" y1="12" x2="22" y2="12"/><rect x="4" y="8" width="4" height="8" rx="1"/><rect x="16" y="8" width="4" height="8" rx="1"/>'),
     desc: 'Progression progressive jusqu\'à 100 pompes',
     duration: 30,
     category: 'force',
@@ -29,7 +32,7 @@ export const CHALLENGES_30D = [
   {
     id: 'squats_30d',
     title: '30 jours Squats',
-    icon: '🦵',
+    icon: _s('<path d="M8 3v8a4 4 0 0 0 4 4h4"/><path d="M16 15l3 6"/><path d="M16 15l-5 5"/>'),
     desc: 'Renforce tes jambes et fessiers',
     duration: 30,
     category: 'force',
@@ -44,7 +47,7 @@ export const CHALLENGES_30D = [
   {
     id: 'plank_30d',
     title: '30 jours Planche',
-    icon: '🧘',
+    icon: _s('<circle cx="12" cy="5" r="3"/><path d="M12 8v6"/><path d="M8 22l4-8 4 8"/><path d="M7 13h10"/>'),
     desc: 'De 20 secondes à 4 minutes',
     duration: 30,
     category: 'gainage',
@@ -58,7 +61,7 @@ export const CHALLENGES_30D = [
   {
     id: 'no_sugar_30d',
     title: '30 jours Sans Sucre',
-    icon: '🚫',
+    icon: _s('<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'),
     desc: 'Zéro sucre ajouté pendant 30 jours',
     duration: 30,
     category: 'nutrition',
@@ -69,7 +72,7 @@ export const CHALLENGES_30D = [
   {
     id: 'water_30d',
     title: '30 jours 2L d\'eau',
-    icon: '💧',
+    icon: _s('<path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"/>'),
     desc: 'Hydratation parfaite quotidienne',
     duration: 30,
     category: 'nutrition',
@@ -80,7 +83,7 @@ export const CHALLENGES_30D = [
   {
     id: 'cardio_30d',
     title: '30 jours Cardio',
-    icon: '🏃',
+    icon: _s('<circle cx="13" cy="4" r="2"/><path d="M4 22l5-7 4 3-2-7-4 3-3-3"/><path d="M14 17l3 3 3-3-3-6-3 3"/>'),
     desc: '20 minutes de cardio quotidien',
     duration: 30,
     category: 'cardio',
@@ -94,7 +97,7 @@ export const CHALLENGES_30D = [
   {
     id: 'burpees_30d',
     title: '30 jours Burpees',
-    icon: '🔥',
+    icon: _s('<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'),
     desc: 'Le défi qui tue (mais qui marche)',
     duration: 30,
     category: 'hiit',
@@ -109,7 +112,7 @@ export const CHALLENGES_30D = [
   {
     id: 'sleep_30d',
     title: '30 jours Sommeil',
-    icon: '😴',
+    icon: _s('<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'),
     desc: 'Dormir 7-8h chaque nuit',
     duration: 30,
     category: 'recovery',
@@ -123,13 +126,13 @@ export const CHALLENGES_30D = [
 // DÉFIS HEBDOMADAIRES (auto-générés selon profil)
 // ============================================================
 const WEEKLY_TEMPLATES = [
-  { title: 'Semaine Régularité', icon: '📅', desc: 'Fais toutes tes séances cette semaine', metric: 'sessions', target: null, fromProfile: true, color: '#ff5722' },
-  { title: 'Mode Beast', icon: '🦁', desc: 'Termine 5 séances cette semaine', metric: 'sessions', target: 5, color: '#ef4444' },
-  { title: 'Marathonien', icon: '⏱️', desc: 'Cumule 180 minutes cette semaine', metric: 'minutes', target: 180, color: '#06b6d4' },
-  { title: 'Streak Master', icon: '🔥', desc: 'Maintiens 7 jours consécutifs', metric: 'streak', target: 7, color: '#ff5722' },
-  { title: 'Hydratation Pro', icon: '💧', desc: 'Bois 2L d\'eau chaque jour', metric: 'water_days', target: 7, color: '#06b6d4' },
-  { title: 'Précision Macros', icon: '🎯', desc: 'Atteins tes macros 5 jours sur 7', metric: 'nutrition_days', target: 5, color: '#10b981' },
-  { title: 'Explorateur', icon: '🌟', desc: 'Débloque 3 nouveaux badges', metric: 'badges', target: 3, color: '#fbbf24' },
+  { title: 'Semaine Régularité', icon: _s('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'), desc: 'Fais toutes tes séances cette semaine', metric: 'sessions', target: null, fromProfile: true, color: '#ff5722' },
+  { title: 'Mode Beast', icon: _s('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'), desc: 'Termine 5 séances cette semaine', metric: 'sessions', target: 5, color: '#ef4444' },
+  { title: 'Marathonien', icon: _s('<circle cx="12" cy="14" r="8"/><path d="M12 10v4l3 2"/><path d="M9 2h6"/><path d="M12 4v2"/>'), desc: 'Cumule 180 minutes cette semaine', metric: 'minutes', target: 180, color: '#06b6d4' },
+  { title: 'Streak Master', icon: _s('<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'), desc: 'Maintiens 7 jours consécutifs', metric: 'streak', target: 7, color: '#ff5722' },
+  { title: 'Hydratation Pro', icon: _s('<path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z"/>'), desc: 'Bois 2L d\'eau chaque jour', metric: 'water_days', target: 7, color: '#06b6d4' },
+  { title: 'Précision Macros', icon: _s('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'), desc: 'Atteins tes macros 5 jours sur 7', metric: 'nutrition_days', target: 5, color: '#10b981' },
+  { title: 'Explorateur', icon: _s('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'), desc: 'Débloque 3 nouveaux badges', metric: 'badges', target: 3, color: '#fbbf24' },
 ];
 
 // Génère le défi de la semaine selon le user

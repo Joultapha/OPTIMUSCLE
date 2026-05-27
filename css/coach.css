@@ -512,4 +512,19 @@ body[data-view="dashboard"][data-subpage="coach"] #subpage-coach {
   display: flex;
   flex-direction: column;
   margin: 0;
+  overflow: hidden;
+}
+
+/* Ensure coach messages fill available space on all screens */
+#page-coach .coach-messages {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Desktop: coach page wider layout */
+@media (min-width: 768px) {
+  #page-coach .coach-page-wrap {
+    max-width: var(--max-width-desktop);
+    margin: 0 auto;
+  }
 }

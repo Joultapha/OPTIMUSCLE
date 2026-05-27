@@ -2,6 +2,9 @@
    OPTIMUSCLE — Data (exercises, images, badges, templates)
    =================================== */
 
+// Iconly Pro-style SVG icon helper
+const _s = (d) => `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+
 // ========== HERO IMAGES (par objectif) ==========
 export const HERO_IMAGES = {
   muscle: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=900&q=80",
@@ -202,16 +205,16 @@ export const FOCUS_MAP = {
 
 // ========== BADGES ==========
 export const BADGES = [
-  { id: "first", emoji: "◎", name: "PREMIER PAS", desc: "1 séance terminée", check: s => s.stats.totalSessions >= 1 },
-  { id: "five", emoji: "✦", name: "EN ROUTE", desc: "5 séances", check: s => s.stats.totalSessions >= 5 },
-  { id: "ten", emoji: "✺", name: "RÉGULIER", desc: "10 séances", check: s => s.stats.totalSessions >= 10 },
-  { id: "twenty", emoji: "◆", name: "ENGAGÉ", desc: "20 séances", check: s => s.stats.totalSessions >= 20 },
-  { id: "fifty", emoji: "👑", name: "CHAMPION", desc: "50 séances", check: s => s.stats.totalSessions >= 50 },
-  { id: "hundred", emoji: "★", name: "LÉGENDE", desc: "100 séances", check: s => s.stats.totalSessions >= 100 },
-  { id: "streak3", emoji: "↑", name: "ÉCHAUFFÉ", desc: "3 jours d'affilée", check: s => s.stats.bestStreak >= 3 },
-  { id: "streak7", emoji: "⚡", name: "UNE SEMAINE", desc: "7 jours d'affilée", check: s => s.stats.bestStreak >= 7 },
-  { id: "streak30", emoji: "✦", name: "INARRÊTABLE", desc: "30 jours d'affilée", check: s => s.stats.bestStreak >= 30 },
-  { id: "min60", emoji: "⏱", name: "1 HEURE", desc: "60 min cumulées", check: s => s.stats.totalMinutes >= 60 },
-  { id: "min500", emoji: "▲", name: "ENDURANCE", desc: "500 min cumulées", check: s => s.stats.totalMinutes >= 500 },
-  { id: "min1000", emoji: "✶", name: "MARATHONIEN", desc: "1000 min cumulées", check: s => s.stats.totalMinutes >= 1000 },
+  { id: "first", emoji: _s('<circle cx="12" cy="12" r="10"/><polyline points="16 10 10.5 15.5 8 13"/>'), name: "PREMIER PAS", desc: "1 séance terminée", check: s => s.stats.totalSessions >= 1 },
+  { id: "five", emoji: _s('<path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>'), name: "EN ROUTE", desc: "5 séances", check: s => s.stats.totalSessions >= 5 },
+  { id: "ten", emoji: _s('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/>'), name: "RÉGULIER", desc: "10 séances", check: s => s.stats.totalSessions >= 10 },
+  { id: "twenty", emoji: _s('<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/>'), name: "ENGAGÉ", desc: "20 séances", check: s => s.stats.totalSessions >= 20 },
+  { id: "fifty", emoji: _s('<path d="M2 18l4-10 4 6 4-6 4 10H2z"/><circle cx="4" cy="6" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="20" cy="6" r="2"/>'), name: "CHAMPION", desc: "50 séances", check: s => s.stats.totalSessions >= 50 },
+  { id: "hundred", emoji: _s('<path d="M2 8l4 8h12l4-8-5 4-5-7-5 7-5-4z"/><path d="M6 16h12"/>'), name: "LÉGENDE", desc: "100 séances", check: s => s.stats.totalSessions >= 100 },
+  { id: "streak3", emoji: _s('<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'), name: "ÉCHAUFFÉ", desc: "3 jours d'affilée", check: s => s.stats.bestStreak >= 3 },
+  { id: "streak7", emoji: _s('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/>'), name: "UNE SEMAINE", desc: "7 jours d'affilée", check: s => s.stats.bestStreak >= 7 },
+  { id: "streak30", emoji: _s('<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="currentColor"/>'), name: "INARRÊTABLE", desc: "30 jours d'affilée", check: s => s.stats.bestStreak >= 30 },
+  { id: "min60", emoji: _s('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'), name: "1 HEURE", desc: "60 min cumulées", check: s => s.stats.totalMinutes >= 60 },
+  { id: "min500", emoji: _s('<path d="M18 20l4-4-4-4"/><path d="M6 20l-4-4 4-4"/><line x1="22" y1="16" x2="2" y2="16"/>'), name: "ENDURANCE", desc: "500 min cumulées", check: s => s.stats.totalMinutes >= 500 },
+  { id: "min1000", emoji: _s('<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>'), name: "MARATHONIEN", desc: "1000 min cumulées", check: s => s.stats.totalMinutes >= 1000 },
 ];

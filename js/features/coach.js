@@ -46,20 +46,15 @@ function buildSystemPrompt() {
   const userName = user?.displayName?.split(' ')[0] || 'athlète';
 
   let context = `Tu es OPTI, le coach virtuel intelligent de l'application OPTIMUSCLE. Tu es à la fois :
-- 💪 MOTIVANT : tu encourages, célèbres les progrès, pousses à donner le meilleur
-- 🎓 EXPERT : connaissances pointues en musculation, cardio, nutrition, physiologie
-- 🤗 BIENVEILLANT : tu comprends les difficultés, adaptes ton ton selon l'humeur
+- [MOTIVANT] : tu encourages, célèbres les progrès, pousses à donner le meilleur
+- [EXPERT] : connaissances pointues en musculation, cardio, nutrition, physiologie
+- [BIENVEILLANT] : tu comprends les difficultés, adaptes ton ton selon l'humeur
 
 RÈGLES STRICTES :
 - Réponds TOUJOURS en français
 - Tutoie l'utilisateur (jamais "vous")
 - Réponses COURTES et percutantes (3-6 lignes max, sauf si demandé long)
 - Utilise des emojis avec parcimonie (1-2 par réponse)
-- Donne des conseils CONCRETS et actionnables
-- Si la question est hors fitness/santé, redirige gentiment
-- Ne donne JAMAIS de conseil médical, redirige vers un pro si symptômes
-- Sois direct, va à l'essentiel
-- Utilise du **gras** (markdown) pour les points clés
 
 NOM DE L'UTILISATEUR : ${userName}`;
 
@@ -190,24 +185,24 @@ async function callGroq(userMessage) {
 function getDemoResponse(message) {
   const m = message.toLowerCase();
   if (m.includes('progresser') || m.includes('plus vite')) {
-    return "💪 Pour progresser vite : 1) **Régularité** avant intensité, 2) **Surcharge progressive** (augmente poids/reps chaque semaine), 3) Sommeil 7-9h, 4) Protéines à chaque repas. Tiens 8 semaines minimum sans skip !";
+    return "[MUSCLE] Pour progresser vite : 1) **Régularité** avant intensité, 2) **Surcharge progressive** (augmente poids/reps chaque semaine), 3) Sommeil 7-9h, 4) Protéines à chaque repas. Tiens 8 semaines minimum sans skip !";
   }
   if (m.includes('pec') || m.includes('pectoraux')) {
-    return "🏋️ Top exos pecs : **Développé couché** (force), **Pompes** (volume), **Écarté incliné** (forme). Vise 4 séries de 8-12 reps. Repos 90s entre séries.";
+    return "[GYM] Top exos pecs : **Développé couché** (force), **Pompes** (volume), **Écarté incliné** (forme). Vise 4 séries de 8-12 reps. Repos 90s entre séries.";
   }
   if (m.includes('nutrition') || m.includes('manger') || m.includes('alim')) {
-    return "🍎 Règles d'or : **1,6-2g de protéines/kg** de poids, 4-5 repas/jour, hydratation 2-3L, glucides autour des entraînements. Compte tes calories pendant 2 semaines pour calibrer.";
+    return "[NUTRITION] Règles d'or : **1,6-2g de protéines/kg** de poids, 4-5 repas/jour, hydratation 2-3L, glucides autour des entraînements. Compte tes calories pendant 2 semaines pour calibrer.";
   }
   if (m.includes('récup') || m.includes('repos')) {
-    return "😴 Récupération = **50% du résultat**. Min 48h par groupe musculaire travaillé. Dors 7-9h. Étire-toi après. Une semaine 'décharge' toutes les 6-8 semaines.";
+    return "[SLEEP] Récupération = **50% du résultat**. Min 48h par groupe musculaire travaillé. Dors 7-9h. Étire-toi après. Une semaine 'décharge' toutes les 6-8 semaines.";
   }
   if (m.includes('blessure') || m.includes('mal') || m.includes('douleur')) {
-    return "🚨 Si tu as une douleur vive : **ARRÊTE et consulte** un kiné/médecin. Préventif : échauffement 10 min, technique parfaite avant lourd, hydratation, sommeil. Ne force jamais sur la douleur.";
+    return "[ALERT] Si tu as une douleur vive : **ARRÊTE et consulte** un kiné/médecin. Préventif : échauffement 10 min, technique parfaite avant lourd, hydratation, sommeil. Ne force jamais sur la douleur.";
   }
   if (m.includes('grasse') || m.includes('graisse') || m.includes('maigrir')) {
-    return "🔥 Perte de graisse : **déficit calorique léger** (200-500 kcal/jour), cardio 2-3x/sem (HIIT efficace), force pour garder muscle, patience (0,5-1kg/sem max). Le sommeil et le stress comptent !";
+    return "[FIRE] Perte de graisse : **déficit calorique léger** (200-500 kcal/jour), cardio 2-3x/sem (HIIT efficace), force pour garder muscle, patience (0,5-1kg/sem max). Le sommeil et le stress comptent !";
   }
-  return "🤖 Mode démo activé ! L'IA complète sera disponible bientôt. En attendant, pose-moi des questions sur la progression, les pecs, la nutrition, la récupération, les blessures ou la perte de graisse.";
+  return "[BOT] Mode démo activé ! L'IA complète sera disponible bientôt. En attendant, pose-moi des questions sur la progression, les pecs, la nutrition, la récupération, les blessures ou la perte de graisse.";
 }
 
 // ============================================================

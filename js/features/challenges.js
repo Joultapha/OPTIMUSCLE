@@ -49,7 +49,7 @@ export function renderChallenges() {
   container.appendChild(createEl('div', {
     className: 'chal-header',
     html: `
-      <span class="label-eyebrow">🏆 Défis</span>
+      <span class="label-eyebrow"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg> Défis</span>
       <h1>Pousse tes <span class="text-gradient">limites</span></h1>
       <p>Relève des défis quotidiens et hebdomadaires pour rester motivé</p>
     `
@@ -80,7 +80,7 @@ function renderWeeklyChallenge() {
   const wrap = createEl('div', { className: 'chal-section' });
   wrap.appendChild(createEl('h2', {
     className: 'chal-section-title',
-    html: '⚡ <span>Défi de la semaine</span>'
+    html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>Défi de la semaine</span>'
   }));
 
   const card = createEl('div', {
@@ -110,7 +110,7 @@ function renderWeeklyChallenge() {
 
     ${progress.completed ? `
       <div class="chal-completed-badge">
-        ✅ DÉFI TERMINÉ ! <strong>+${CHALLENGE_XP.weekly_complete} XP</strong>
+        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11.5 14.5 16 9.5"/></svg> DÉFI TERMINÉ ! <strong>+${CHALLENGE_XP.weekly_complete} XP</strong>
       </div>
     ` : ''}
   `;
@@ -128,7 +128,7 @@ function renderActive30dList() {
 
   wrap.appendChild(createEl('h2', {
     className: 'chal-section-title',
-    html: '🔥 <span>Défis en cours</span>'
+    html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> <span>Défis en cours</span>'
   }));
 
   state.challenges.active30d.forEach(activeChallenge => {
@@ -168,7 +168,7 @@ function renderActive30dCard(active, status) {
     </div>
 
     <div class="chal-today-task ${todayTask.rest ? 'rest' : ''} ${todayDone ? 'done' : ''}">
-      <div class="chal-today-label">${todayTask.rest ? "😴 AUJOURD'HUI" : '🎯 OBJECTIF DU JOUR'}</div>
+      <div class="chal-today-label">${todayTask.rest ? "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"/></svg> AUJOURD'HUI" : '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> OBJECTIF DU JOUR'}</div>
       <div class="chal-today-value">${escapeHtml(todayTask.label)}</div>
       ${!todayTask.rest ? `
         <button class="chal-today-btn ${todayDone ? 'done' : ''}" data-id="${def.id}" data-day="${currentDay}" type="button">
@@ -208,7 +208,7 @@ function renderCatalog30d() {
   const wrap = createEl('div', { className: 'chal-section' });
   wrap.appendChild(createEl('h2', {
     className: 'chal-section-title',
-    html: '📚 <span>Catalogue de défis</span>'
+    html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span>Catalogue de défis</span>'
   }));
 
   const grid = createEl('div', { className: 'chal-catalog-grid' });
@@ -227,7 +227,7 @@ function renderCatalog30d() {
         <p class="chal-catalog-desc">${escapeHtml(def.desc)}</p>
         <div class="chal-catalog-meta">
           <span class="chal-meta-pill">${def.duration}j</span>
-          <span class="chal-meta-pill chal-meta-${def.difficulty}">${def.difficulty === 'beginner' ? '🌱 Débutant' : def.difficulty === 'intermediate' ? '⚡ Inter' : '🔥 Avancé'}</span>
+          <span class="chal-meta-pill chal-meta-${def.difficulty}">${def.difficulty === 'beginner' ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 22v-8"/><path d="M12 14c-4 0-7-3-7-7 4 0 7 3 7 7z"/><path d="M12 14c0-4 3-7 7-7 0 4-3 7-7 7z"/></svg> Débutant' : def.difficulty === 'intermediate' ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Inter' : '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Avancé'}</span>
         </div>
       </div>
       <button class="chal-catalog-btn ${isActive ? 'active' : ''}" data-id="${def.id}" type="button">
@@ -319,7 +319,7 @@ function showChallengeCompleted(def) {
   // Modal de félicitations (réutilise badge modal pour simplicité)
   const modal = document.getElementById('badge-modal');
   if (!modal) return;
-  document.getElementById('badge-modal-emoji').textContent = def.icon;
+  document.getElementById('badge-modal-emoji').innerHTML = def.icon;
   document.getElementById('badge-modal-name').textContent = def.title.toUpperCase();
   document.getElementById('badge-modal-desc').textContent = `Défi terminé ! +${CHALLENGE_XP.complete_30d} XP`;
   modal.classList.add('show');

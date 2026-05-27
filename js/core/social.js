@@ -97,13 +97,13 @@ export function getContextualMessage(stats) {
   const sessions = stats.totalSessions || 0;
   const streak = stats.streak || 0;
 
-  if (sessions === 0) return { icon: '▲', text: "Lance ta première séance !" };
-  if (sessions === 1) return { icon: '↑', text: "Bien joué pour la première !" };
-  if (streak >= 7) return { icon: '⚡', text: `${streak} jours d'affilée, tu es en feu !` };
-  if (streak >= 3) return { icon: '✦', text: `${streak} jours, continue comme ça !` };
-  if (sessions >= 50) return { icon: '👑', text: "Tu fais partie des 5% les plus actifs" };
-  if (sessions >= 10) return { icon: '🌟', text: `${sessions} séances déjà, impressionnant !` };
-  if (sessions >= 5) return { icon: '⭐', text: `Bientôt 10 séances, tu progresses !` };
+  if (sessions === 0) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>', text: "Lance ta première séance !" };
+  if (sessions === 1) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>', text: "Bien joué pour la première !" };
+  if (streak >= 7) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>', text: `${streak} jours d'affilée, tu es en feu !` };
+  if (streak >= 3) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>', text: `${streak} jours, continue comme ça !` };
+  if (sessions >= 50) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l4-10 4 6 4-6 4 10H2z"/><circle cx="4" cy="6" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="20" cy="6" r="2"/></svg>', text: "Tu fais partie des 5% les plus actifs" };
+  if (sessions >= 10) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>', text: `${sessions} séances déjà, impressionnant !` };
+  if (sessions >= 5) return { icon: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>', text: `Bientôt 10 séances, tu progresses !` };
 
   return null;
 }

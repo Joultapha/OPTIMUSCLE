@@ -478,3 +478,115 @@ html[data-theme="light"] .timer-circle .fg {
 html[data-theme="light"] .xp-info span {
   color: var(--text) !important;
 }
+
+/* ===== LIGHT MODE : Additional text visibility fixes ===== */
+html[data-theme="light"] .stat-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .stat-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .stat-value,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .stat-value { color: var(--text); } }
+
+html[data-theme="light"] .stat-label,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .stat-label { color: var(--text-dim); } }
+
+html[data-theme="light"] .day-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .day-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .day-card .day-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .day-card .day-name { color: var(--text); } }
+
+html[data-theme="light"] .day-card .day-detail,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .day-card .day-detail { color: var(--text-dim); } }
+
+html[data-theme="light"] .day-card .day-detail-dot,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .day-card .day-detail-dot { background: var(--text-dimmer); } }
+
+html[data-theme="light"] .exercise,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .exercise { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .exercise-muscle,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .exercise-muscle { color: var(--accent); } }
+
+html[data-theme="light"] .exercise-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .exercise-name { color: var(--text); } }
+
+html[data-theme="light"] .set-pill,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .set-pill { background: rgba(123,44,191,0.06); color: var(--text-soft); border-color: rgba(0,0,0,0.04); } }
+
+html[data-theme="light"] .history-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .history-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .history-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .history-name { color: var(--text); } }
+
+html[data-theme="light"] .history-meta,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .history-meta { color: var(--text-dim); } }
+
+html[data-theme="light"] .badge,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .badge { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .badge-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .badge-name { color: var(--text); } }
+
+html[data-theme="light"] .badge-desc,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .badge-desc { color: var(--text-dim); } }
+
+html[data-theme="light"] .badge.locked .badge-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .badge.locked .badge-name { color: var(--text-dimmer); } }
+
+html[data-theme="light"] .calendar-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .calendar-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .calendar-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .calendar-title { color: var(--text); } }
+
+html[data-theme="light"] .calendar-dayname,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .calendar-dayname { color: var(--text-dim); } }
+
+html[data-theme="light"] .calendar-cell,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .calendar-cell { color: var(--text-soft); } }
+
+html[data-theme="light"] .calendar-cell.is-today,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .calendar-cell.is-today { color: var(--accent); border-color: var(--accent); } }
+
+html[data-theme="light"] .xp-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .xp-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .nut-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .nut-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .nut-input,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .nut-input { color: var(--text); background: rgba(255,255,255,0.80); border-color: rgba(0,0,0,0.10); } }
+
+html[data-theme="light"] .nut-search-item,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .nut-search-item { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .chart-bar,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .chart-bar { background: var(--accent); } }
+
+html[data-theme="light"] .chart-bar.empty,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .chart-bar.empty { background: rgba(0,0,0,0.06); } }
+
+html[data-theme="light"] .chart-label,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .chart-label { color: var(--text-dim); } }
+
+html[data-theme="light"] .empty,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .empty { color: var(--text-dim); } }
+
+html[data-theme="light"] .section-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .section-title { color: var(--text); } }
+
+html[data-theme="light"] .confirm-modal-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .confirm-modal-title { color: var(--text); } }
+
+html[data-theme="light"] .confirm-modal-message,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .confirm-modal-message { color: var(--text-dim); } }
+
+html[data-theme="light"] .landing-trust-stars svg,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-trust-stars svg { color: var(--gold); } }
+
+html[data-theme="light"] .login-social-proof-stars svg,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .login-social-proof-stars svg { color: var(--gold); } }
+
+html[data-theme="light"] .testimonial-stars svg,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .testimonial-stars svg { color: var(--gold); } }

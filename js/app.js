@@ -97,7 +97,7 @@ const db = getDatabase(firebaseApp);
 initDatabase(db, ref, set, get);
 
 cleanupOldEntries();
-console.log(`💪 ${APP_NAME} v${APP_VERSION} initialized`);
+console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 
 // ============================================================
 // 3. INIT MODULES
