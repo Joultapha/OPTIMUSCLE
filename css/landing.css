@@ -197,7 +197,7 @@
 /* ===== SCROLL INDICATOR ===== */
 .landing-scroll {
   position: absolute;
-  bottom: 40px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
