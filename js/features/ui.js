@@ -194,7 +194,7 @@ function createDayCard(d, i, isToday) {
 
   const detail = createEl('div', { className: 'day-detail' });
   if (d.rest) {
-    detail.appendChild(document.createTextNode(isLocked ? '🔒 Réservé Premium' : 'Repos & récupération'));
+    detail.appendChild(document.createTextNode(isLocked ? 'Réservé Premium' : 'Repos & récupération'));
   } else {
     detail.appendChild(document.createTextNode(`${d.exercises.length} exos`));
     detail.appendChild(createEl('span', { className: 'day-detail-dot' }));
@@ -216,7 +216,7 @@ function createDayCard(d, i, isToday) {
   } else if (isLocked) {
     card.addEventListener('click', () => {
       haptic('medium');
-      showToast('💎 Disponible avec Premium');
+      showToast('Disponible avec Premium');
     });
   }
 
@@ -354,13 +354,13 @@ function createExerciseCard(ex, idx) {
   const sets = createEl('div', { className: 'sets' });
   sets.appendChild(createPill(String(ex.sets), 'séries'));
   sets.appendChild(createPill(String(ex.reps), ex.time ? '' : 'reps'));
-  sets.appendChild(createPill(`⏱ ${ex.rest}s`, 'repos'));
+  sets.appendChild(createPill(`${ex.rest}s`, 'repos'));
   body.appendChild(sets);
 
   const timerBtn = createEl('button', {
     className: 'timer-btn',
     attrs: { type: 'button' },
-    text: `⏱ Timer ${ex.rest}s`,
+    text: `Timer ${ex.rest}s`,
     on: { click: () => { haptic('medium'); startTimer(ex.rest, ex.name); } },
   });
   body.appendChild(timerBtn);
@@ -445,7 +445,7 @@ export async function completeWorkout() {
 
     // ⭐ Toast avec bouton Annuler (undo)
     const undoClicked = await showToastWithAction(
-      `Bravo ! +${XP_REWARDS.workoutComplete} XP 💪`,
+      `Bravo ! +${XP_REWARDS.workoutComplete} XP`,
       'Annuler',
       5000
     );
@@ -499,7 +499,7 @@ function openExerciseEditor(exIdx) {
   clearEl(overlay);
 
   const modal = createEl('div', { className: 'modal' });
-  modal.appendChild(createEl('h3', { text: '✏️ Modifier l\'exercice' }));
+  modal.appendChild(createEl('h3', { text: 'Modifier l\'exercice' }));
   modal.appendChild(createEl('p', {
     className: 'confirm-modal-message',
     text: ex.name.toUpperCase() + ' — ' + ex.muscle,
@@ -542,7 +542,7 @@ function openExerciseEditor(exIdx) {
         await save();
         overlay.classList.remove('show');
         openWorkout(state.currentDay);
-        showToast('✅ Exercice modifié');
+        showToast('Exercice modifié');
       },
     },
   }));
@@ -604,7 +604,7 @@ function openSubstituteDialog(exIdx) {
   clearEl(overlay);
 
   const modal = createEl('div', { className: 'modal', attrs: { style: 'max-height: 80vh; overflow-y: auto;' } });
-  modal.appendChild(createEl('h3', { text: '🔄 Remplacer l\'exercice' }));
+  modal.appendChild(createEl('h3', { text: 'Remplacer l\'exercice' }));
   modal.appendChild(createEl('p', {
     className: 'confirm-modal-message',
     text: `Remplacer ${ex.name} par :`,
@@ -619,7 +619,7 @@ function openSubstituteDialog(exIdx) {
     });
 
     const leftDiv = createEl('div', { className: 'nut-search-item-left' });
-    leftDiv.appendChild(createEl('span', { className: 'nut-search-item-emoji', text: '🏋️' }));
+    leftDiv.appendChild(createEl('span', { className: 'nut-search-item-emoji', text: '' }));
     const infoDiv = createEl('div');
     infoDiv.appendChild(createEl('div', { className: 'nut-search-item-name', text: data.name }));
     infoDiv.appendChild(createEl('div', {
@@ -660,7 +660,7 @@ function openSubstituteDialog(exIdx) {
       await save();
       overlay.classList.remove('show');
       openWorkout(state.currentDay);
-      showToast(`✅ Remplacé par ${data.name}`);
+      showToast(`Remplacé par ${data.name}`);
     });
 
     list.appendChild(item);
@@ -803,7 +803,7 @@ export function renderHistory() {
 
   if (filteredHistory.length === 0) {
     const empty = createEl('div', { className: 'empty' });
-    empty.appendChild(createEl('div', { className: 'empty-icon', text: '📋' }));
+    empty.appendChild(createEl('div', { className: 'empty-icon', html: '<svg width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\"/><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\"/></svg>' }));
     empty.appendChild(document.createTextNode('Aucune séance encore. Lance-toi !'));
     list.appendChild(empty);
     return;
@@ -1046,52 +1046,6 @@ export function renderProfile() {
   const emailLine = document.getElementById('profile-email-line');
   if (emailLine && user?.email) {
     emailLine.textContent = user.email;
-  }
-}
-
-// ========== DATA EXPORT ==========
-export async function exportUserData() {
-  const state = getState();
-  const user = getCurrentUser();
-
-  const exportData = {
-    exportedAt: new Date().toISOString(),
-    appVersion: '14.0.0',
-    user: {
-      email: user?.email || null,
-      displayName: user?.displayName || null,
-      uid: user?.uid || null,
-    },
-    profile: state.profile,
-    stats: state.stats,
-    history: state.history,
-    badges: state.badges,
-    settings: state.settings,
-    nutrition: state.nutrition || null,
-    challenges: state.challenges || null,
-    program: state.program,
-  };
-
-  try {
-    const json = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const date = new Date().toISOString().slice(0, 10);
-    const a = createEl('a', {
-      attrs: {
-        href: url,
-        download: `optimuscle-export-${date}.json`,
-      },
-    });
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    showToast('📤 Données exportées !');
-  } catch (e) {
-    showToast('Erreur lors de l\'export');
   }
 }
 

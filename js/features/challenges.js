@@ -264,11 +264,11 @@ async function startChallenge(challengeId) {
   ensureChallengesState();
   const result = startChallenge30d(challengeId, state);
   if (!result) {
-    showToast('⚠️ Défi déjà actif');
+    showToast('Défi déjà actif');
     return;
   }
   haptic('success');
-  showToast(`🔥 Défi lancé ! C'est parti !`);
+  showToast(`Défi lancé ! C'est parti !`);
   await save();
   renderChallenges();
 }
@@ -311,7 +311,7 @@ async function markDayDone(challengeId, day) {
   }
 
   await save();
-  showToast(`✅ Jour ${day} validé ! +${CHALLENGE_XP.daily_30d} XP`);
+  showToast(`Jour ${day} validé ! +${CHALLENGE_XP.daily_30d} XP`);
   renderChallenges();
 }
 

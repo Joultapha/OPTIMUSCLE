@@ -97,10 +97,10 @@ export function getContextualMessage(stats) {
   const sessions = stats.totalSessions || 0;
   const streak = stats.streak || 0;
 
-  if (sessions === 0) return { icon: '🚀', text: "Lance ta première séance !" };
-  if (sessions === 1) return { icon: '🔥', text: "Bien joué pour la première !" };
+  if (sessions === 0) return { icon: '▲', text: "Lance ta première séance !" };
+  if (sessions === 1) return { icon: '↑', text: "Bien joué pour la première !" };
   if (streak >= 7) return { icon: '⚡', text: `${streak} jours d'affilée, tu es en feu !` };
-  if (streak >= 3) return { icon: '💪', text: `${streak} jours, continue comme ça !` };
+  if (streak >= 3) return { icon: '✦', text: `${streak} jours, continue comme ça !` };
   if (sessions >= 50) return { icon: '👑', text: "Tu fais partie des 5% les plus actifs" };
   if (sessions >= 10) return { icon: '🌟', text: `${sessions} séances déjà, impressionnant !` };
   if (sessions >= 5) return { icon: '⭐', text: `Bientôt 10 séances, tu progresses !` };

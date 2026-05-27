@@ -59,6 +59,15 @@ body[data-view="dashboard"][data-subpage="coach"] .coach-fab {
   display: none;
   flex-direction: column;
   animation: slideUpFull 300ms var(--ease-out);
+  overflow: hidden;
+}
+
+.coach-modal-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 .coach-modal.show {

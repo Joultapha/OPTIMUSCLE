@@ -97,5 +97,5 @@ async function finishOnboarding() {
   // Le render() centralisé va automatiquement basculer vers dashboard.
   setOnboardingCompleted(true);
 
-  showToast('🎉 Programme prêt !');
+  showToast('Programme prêt !');
 }

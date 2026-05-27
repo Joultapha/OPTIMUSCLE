@@ -405,3 +405,76 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb {
 html[data-theme="light"] .timer-circle .bg {
   stroke: rgba(0, 0, 0, 0.06) !important;
 }
+
+/* ===== LIGHT MODE : Landing page text visibility ===== */
+html[data-theme="light"] .landing-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-title { color: #1a1a2e; } }
+html[data-theme="light"] .landing-subtitle,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-subtitle { color: #2d2d44; } }
+html[data-theme="light"] .landing-section-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-section-title { color: #1a1a2e; } }
+html[data-theme="light"] .landing-feature-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-feature-title { color: #1a1a2e; } }
+html[data-theme="light"] .landing-feature-desc,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-feature-desc { color: #6b6b80; } }
+html[data-theme="light"] .landing-testimonial-text,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-testimonial-text { color: #1a1a2e; } }
+html[data-theme="light"] .landing-testimonial-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-testimonial-name { color: #1a1a2e; } }
+html[data-theme="light"] .landing-urgency-text,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-urgency-text { color: #1a1a2e; } }
+html[data-theme="light"] .landing-urgency-sub,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-urgency-sub { color: #6b6b80; } }
+html[data-theme="light"] .landing-final-cta-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-final-cta-title { color: #1a1a2e; } }
+html[data-theme="light"] .landing-final-cta-sub,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-final-cta-sub { color: #6b6b80; } }
+html[data-theme="light"] .landing-step-title,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-step-title { color: #1a1a2e; } }
+html[data-theme="light"] .landing-step-desc,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-step-desc { color: #6b6b80; } }
+html[data-theme="light"] .landing-scroll-label,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-scroll-label { color: #6b6b80; } }
+html[data-theme="light"] .landing-scroll-arrow,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-scroll-arrow { color: #6b6b80; border-color: rgba(0,0,0,0.12); background: rgba(255,255,255,0.7); } }
+html[data-theme="light"] .landing-table-feature,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-feature { color: #1a1a2e; } }
+html[data-theme="light"] .landing-table-col,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-col { color: #1a1a2e; } }
+html[data-theme="light"] .landing-table-header > div,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-table-header > div { color: #1a1a2e; } }
+
+/* ===== LIGHT MODE : Coach modal full visibility ===== */
+html[data-theme="light"] .coach-modal {
+  background: rgba(245, 245, 247, 0.98) !important;
+}
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .coach-modal {
+    background: rgba(245, 245, 247, 0.98) !important;
+  }
+}
+
+/* ===== LIGHT MODE : Login text fixes ===== */
+html[data-theme="light"] .login-loading {
+  color: var(--text) !important;
+}
+html[data-theme="light"] .login-card .login-title {
+  color: var(--text) !important;
+}
+html[data-theme="light"] .login-card .login-sub {
+  color: var(--text-dim) !important;
+}
+html[data-theme="light"] .login-divider span {
+  color: var(--text-dim) !important;
+  background: var(--bg-elev-1) !important;
+}
+
+/* ===== LIGHT MODE : Timer gradient fix ===== */
+html[data-theme="light"] .timer-circle .fg {
+  stroke: var(--accent) !important;
+}
+
+/* ===== LIGHT MODE : XP card text ===== */
+html[data-theme="light"] .xp-info span {
+  color: var(--text) !important;
+}

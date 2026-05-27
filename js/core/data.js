@@ -202,16 +202,16 @@ export const FOCUS_MAP = {
 
 // ========== BADGES ==========
 export const BADGES = [
-  { id: "first", emoji: "🎯", name: "PREMIER PAS", desc: "1 séance terminée", check: s => s.stats.totalSessions >= 1 },
+  { id: "first", emoji: "◎", name: "PREMIER PAS", desc: "1 séance terminée", check: s => s.stats.totalSessions >= 1 },
   { id: "five", emoji: "✦", name: "EN ROUTE", desc: "5 séances", check: s => s.stats.totalSessions >= 5 },
   { id: "ten", emoji: "✺", name: "RÉGULIER", desc: "10 séances", check: s => s.stats.totalSessions >= 10 },
-  { id: "twenty", emoji: "💎", name: "ENGAGÉ", desc: "20 séances", check: s => s.stats.totalSessions >= 20 },
+  { id: "twenty", emoji: "◆", name: "ENGAGÉ", desc: "20 séances", check: s => s.stats.totalSessions >= 20 },
   { id: "fifty", emoji: "👑", name: "CHAMPION", desc: "50 séances", check: s => s.stats.totalSessions >= 50 },
-  { id: "hundred", emoji: "🏆", name: "LÉGENDE", desc: "100 séances", check: s => s.stats.totalSessions >= 100 },
-  { id: "streak3", emoji: "🔥", name: "ÉCHAUFFÉ", desc: "3 jours d'affilée", check: s => s.stats.bestStreak >= 3 },
+  { id: "hundred", emoji: "★", name: "LÉGENDE", desc: "100 séances", check: s => s.stats.totalSessions >= 100 },
+  { id: "streak3", emoji: "↑", name: "ÉCHAUFFÉ", desc: "3 jours d'affilée", check: s => s.stats.bestStreak >= 3 },
   { id: "streak7", emoji: "⚡", name: "UNE SEMAINE", desc: "7 jours d'affilée", check: s => s.stats.bestStreak >= 7 },
-  { id: "streak30", emoji: "💪", name: "INARRÊTABLE", desc: "30 jours d'affilée", check: s => s.stats.bestStreak >= 30 },
-  { id: "min60", emoji: "⏱️", name: "1 HEURE", desc: "60 min cumulées", check: s => s.stats.totalMinutes >= 60 },
-  { id: "min500", emoji: "🚀", name: "ENDURANCE", desc: "500 min cumulées", check: s => s.stats.totalMinutes >= 500 },
-  { id: "min1000", emoji: "🎖️", name: "MARATHONIEN", desc: "1000 min cumulées", check: s => s.stats.totalMinutes >= 1000 },
+  { id: "streak30", emoji: "✦", name: "INARRÊTABLE", desc: "30 jours d'affilée", check: s => s.stats.bestStreak >= 30 },
+  { id: "min60", emoji: "⏱", name: "1 HEURE", desc: "60 min cumulées", check: s => s.stats.totalMinutes >= 60 },
+  { id: "min500", emoji: "▲", name: "ENDURANCE", desc: "500 min cumulées", check: s => s.stats.totalMinutes >= 500 },
+  { id: "min1000", emoji: "✶", name: "MARATHONIEN", desc: "1000 min cumulées", check: s => s.stats.totalMinutes >= 1000 },
 ];

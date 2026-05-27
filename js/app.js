@@ -110,12 +110,12 @@ bindGlobalEvents();
 // ============================================================
 window.addEventListener('error', (event) => {
   console.error('[GLOBAL ERROR]', event.error || event.message);
-  showToast('⚠️ Une erreur est survenue. Réessaie.');
+  showToast('Une erreur est survenue. Réessaie.');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('[UNHANDLED REJECTION]', event.reason);
-  showToast('⚠️ Erreur réseau. Vérifie ta connexion.');
+  showToast('Erreur réseau. Vérifie ta connexion.');
 });
 
 // ============================================================

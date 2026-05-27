@@ -182,12 +182,12 @@ async function submitNutritionOnboarding(form) {
   const activityLevel = formData.get('activityLevel');
 
   if (!gender || !age || !weight || !height || !activityLevel) {
-    showToast('⚠️ Remplis tous les champs');
+    showToast('Remplis tous les champs');
     return;
   }
-  if (age < 14 || age > 100) return showToast('⚠️ Âge invalide');
-  if (weight < 30 || weight > 300) return showToast('⚠️ Poids invalide');
-  if (height < 100 || height > 250) return showToast('⚠️ Taille invalide');
+  if (age < 14 || age > 100) return showToast('Âge invalide');
+  if (weight < 30 || weight > 300) return showToast('Poids invalide');
+  if (height < 100 || height > 250) return showToast('Taille invalide');
 
   haptic('success');
 
@@ -213,7 +213,7 @@ async function submitNutritionOnboarding(form) {
 
   await saveImmediate();
 
-  showToast(`✅ Objectif : ${macros.kcal} kcal/jour`);
+  showToast(`Objectif : ${macros.kcal} kcal/jour`);
 
   // Re-render avec le dashboard
   renderNutrition();
@@ -255,7 +255,7 @@ function renderNutritionDashboard() {
   // Bouton Settings (modifier ses objectifs)
   const settingsBtn = createEl('button', {
     className: 'btn btn-ghost nut-settings-btn',
-    text: '⚙️ Modifier mes objectifs',
+    text: 'Modifier mes objectifs',
     on: { click: () => resetNutritionOnboarding() }
   });
   container.appendChild(settingsBtn);
@@ -642,7 +642,7 @@ async function addFoodToMeal(foodEntry) {
   nut.dailyMeals[today][currentMealType].push(foodEntry);
   haptic('success');
   await save();
-  showToast(`✅ ${foodEntry.name} ajouté !`);
+  showToast(`${foodEntry.name} ajouté !`);
   renderNutritionDashboard();
 }
 

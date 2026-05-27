@@ -24,14 +24,14 @@ let conversationHistory = [];
 
 // Suggestions de questions au démarrage
 const STARTER_QUESTIONS = [
-  { icon: '🎯', text: 'Comment progresser plus vite ?' },
-  { icon: '💪', text: 'Quels exercices pour les pecs ?' },
-  { icon: '🍽️', text: 'Suggère-moi un menu pour finir ma journée' },
-  { icon: '🏆', text: 'Propose-moi un défi personnalisé' },
-  { icon: '🍎', text: 'Conseils nutrition pour la prise de muscle' },
-  { icon: '😴', text: 'Combien de temps récupérer ?' },
-  { icon: '🏋️', text: 'Comment éviter les blessures ?' },
-  { icon: '🔥', text: 'Routine pour brûler des graisses' },
+  { icon: 'target', text: 'Comment progresser plus vite ?' },
+  { icon: 'muscle', text: 'Quels exercices pour les pecs ?' },
+  { icon: 'utensils', text: 'Suggère-moi un menu pour finir ma journée' },
+  { icon: 'trophy', text: 'Propose-moi un défi personnalisé' },
+  { icon: 'apple', text: 'Conseils nutrition pour la prise de muscle' },
+  { icon: 'moon', text: 'Combien de temps récupérer ?' },
+  { icon: 'shield', text: 'Comment éviter les blessures ?' },
+  { icon: 'fire', text: 'Routine pour brûler des graisses' },
 ];
 
 // Vérifie si l'API est configurée
@@ -161,28 +161,28 @@ async function callGroq(userMessage) {
       const error = await response.json().catch(() => null);
       console.error('Groq API error:', error);
       if (response.status === 429) {
-        return "⏳ Trop de questions d'un coup ! Attends 30 secondes et réessaie.";
+        return "Trop de questions d'un coup ! Attends 30 secondes et réessaie.";
       }
       if (response.status === 401 || response.status === 403) {
-        return "⚠️ Problème d'authentification. Contacte le support.";
+        return "Problème d'authentification. Contacte le support.";
       }
       if (response.status >= 500) {
-        return "🌐 Le service est temporairement indisponible. Réessaie dans un moment.";
+        return "Le service est temporairement indisponible. Réessaie dans un moment.";
       }
-      return "😅 Désolé, j'ai un petit souci technique. Réessaie !";
+      return "Désolé, j'ai un petit souci technique. Réessaie !";
     }
 
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content;
 
     if (!text) {
-      return "🤔 Hmm, je n'ai pas trouvé de réponse. Reformule ta question ?";
+      return "Hmm, je n'ai pas trouvé de réponse. Reformule ta question ?";
     }
 
     return text.trim();
   } catch (e) {
     console.error('Erreur Groq:', e);
-    return "🌐 Problème de connexion. Vérifie ton internet et réessaie.";
+    return "Problème de connexion. Vérifie ton internet et réessaie.";
   }
 }
 
@@ -322,7 +322,7 @@ export async function sendMessage(text) {
 
   // Rate limit côté client
   if (!rateLimit('coach', 20, 60_000)) {
-    showToast('⏳ Patiente avant de poser une autre question');
+    showToast('Patiente avant de poser une autre question');
     return;
   }
 
@@ -403,10 +403,25 @@ function renderWelcome() {
   const user = getCurrentUser();
   const name = user?.displayName?.split(' ')[0] || 'champion';
 
-  const welcomeText = `Salut **${name}** ! 👋 Je suis **OPTI**, ton coach virtuel.\n\nPose-moi tes questions sur l'entraînement, la nutrition, la récup... Je suis là pour t'aider à atteindre tes objectifs.`;
+  const welcomeText = `Salut **${name}** ! Je suis **OPTI**, ton coach virtuel.\n\nPose-moi tes questions sur l'entraînement, la nutrition, la récup... Je suis là pour t'aider à atteindre tes objectifs.`;
 
   addMessageToUI(welcomeText, 'assistant');
   renderStarters();
+}
+
+
+function getStarterIconSVG(name) {
+  const icons = {
+    target: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+    muscle: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2"/><path d="M20 12h2"/><rect x="4" y="9" width="3" height="6" rx="1"/><rect x="17" y="9" width="3" height="6" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg>',
+    utensils: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+    trophy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg>',
+    apple: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 2a4 4 0 0 0-4 4c0 2 1 4 4 6 3-2 4-4 4-6a4 4 0 0 0-4-4z"/></svg>',
+    moon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+    shield: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    fire: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  };
+  return icons[name] || '';
 }
 
 function renderStarters() {
@@ -420,7 +435,8 @@ function renderStarters() {
       className: 'coach-starter',
       attrs: { type: 'button', 'data-text': q.text },
     });
-    const icon = createEl('span', { className: 'coach-starter-icon', text: q.icon });
+    const icon = createEl('span', { className: 'coach-starter-icon' });
+    icon.innerHTML = getStarterIconSVG(q.icon);
     const text = createEl('span', { text: q.text });
     btn.appendChild(icon);
     btn.appendChild(text);

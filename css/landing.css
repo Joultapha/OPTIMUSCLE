@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 24px 60px;
+  padding: 80px 24px 40px;
   overflow: hidden;
 }
 
@@ -197,7 +197,7 @@
 /* ===== SCROLL INDICATOR ===== */
 .landing-scroll {
   position: absolute;
-  bottom: 36px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;

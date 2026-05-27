@@ -278,7 +278,7 @@ function showResetEmailModal(prefilledEmail) {
         click: () => {
           const val = input.value.trim().toLowerCase();
           if (!val || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-            showToast('⚠️ Email invalide');
+            showToast('Email invalide');
             return;
           }
           overlay.classList.remove('show');
@@ -328,7 +328,7 @@ export async function handleDeleteAccount() {
     showToast('Compte supprimé');
   } catch (e) {
     if (e.code === 'auth/requires-recent-login') {
-      showToast('⚠️ Reconnecte-toi avant de supprimer ton compte');
+      showToast('Reconnecte-toi avant de supprimer ton compte');
     } else {
       showToast('Erreur lors de la suppression. Réessaie.');
     }
