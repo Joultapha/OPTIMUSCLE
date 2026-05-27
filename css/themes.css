@@ -18,14 +18,14 @@ html[data-theme="light"] {
   --card-2: #fafafa;
   --bg-2: #ffffff;
 
-  --text: #0a0a0a;
-  --text-soft: #1a1a1f;
-  --text-dim: #6b6b73;
-  --text-dimmer: #9a9aa3;
+  --text: #1a1a2e;
+  --text-soft: #2d2d44;
+  --text-dim: #6b6b80;
+  --text-dimmer: #9a9ab0;
 
   --border: rgba(0, 0, 0, 0.08);
   --border-light: rgba(0, 0, 0, 0.12);
-  --border-accent: rgba(232, 96, 44, 0.30);
+  --border-accent: rgba(123, 44, 191, 0.30);
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -47,14 +47,14 @@ html[data-theme="light"] {
     --card-2: #fafafa;
     --bg-2: #ffffff;
 
-    --text: #0a0a0a;
-    --text-soft: #1a1a1f;
-    --text-dim: #6b6b73;
-    --text-dimmer: #9a9aa3;
+    --text: #1a1a2e;
+    --text-soft: #2d2d44;
+    --text-dim: #6b6b80;
+    --text-dimmer: #9a9ab0;
 
     --border: rgba(0, 0, 0, 0.08);
     --border-light: rgba(0, 0, 0, 0.12);
-    --border-accent: rgba(232, 96, 44, 0.30);
+    --border-accent: rgba(123, 44, 191, 0.30);
 
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -70,28 +70,42 @@ html[data-theme="light"] {
 html[data-theme="light"] body,
 html[data-theme="auto"] body {
   background: var(--bg) !important;
+  color: var(--text);
 }
 
 @media (prefers-color-scheme: light) {
   html[data-theme="auto"] body {
     background: var(--bg) !important;
+    color: var(--text);
   }
 }
 
 /* Header glass effect adapté light */
-html[data-theme="light"] header {
+html[data-theme="light"] header,
+html[data-theme="light"] #app-header {
   background: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
 }
+
 @media (prefers-color-scheme: light) {
-  html[data-theme="auto"] header {
+  html[data-theme="auto"] header,
+  html[data-theme="auto"] #app-header {
     background: rgba(255, 255, 255, 0.88) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
   }
 }
 
 /* Hero overlay plus léger en light */
 html[data-theme="light"] .hero-overlay {
   background:
-    linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 60%, var(--bg) 100%) !important;
+    linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 60%, var(--bg) 100%) !important;
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .hero-overlay {
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 60%, var(--bg) 100%) !important;
+  }
 }
 
 /* Login background en light */
@@ -101,19 +115,293 @@ html[data-theme="light"] .login-hero-bg {
     radial-gradient(ellipse 60% 50% at 20% 40%, rgba(124,109,240,0.05) 0%, transparent 60%) !important;
 }
 
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .login-hero-bg {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(123,44,191,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 20% 40%, rgba(124,109,240,0.05) 0%, transparent 60%) !important;
+  }
+}
+
 /* Login text plus lisible en light */
 html[data-theme="light"] .login-logo-text,
 html[data-theme="light"] .login-hero-text h1 {
-  color: #0a0a0a;
+  color: var(--text);
+}
+
+html[data-theme="light"] .login-hero-text p,
+html[data-theme="light"] .login-sub,
+html[data-theme="light"] .login-card p,
+html[data-theme="light"] .login-toggle,
+html[data-theme="light"] .login-forgot-password a {
+  color: var(--text-dim);
 }
 
 /* Bottom nav adapté light */
 html[data-theme="light"] nav.tabs {
   background: rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] nav.tabs {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-top-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08) !important;
+  }
 }
 
 /* Hero quote en light */
 html[data-theme="light"] .hero-quote {
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* ===== LIGHT MODE : Text visibility fixes ===== */
+html[data-theme="light"] .tab,
+html[data-theme="light"] .bottom-nav-item {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .tab.active,
+html[data-theme="light"] .bottom-nav-item.active {
+  color: var(--accent);
+}
+
+html[data-theme="light"] .btn-ghost {
+  background: rgba(123, 44, 191, 0.04);
+  border-color: rgba(0, 0, 0, 0.10);
+  color: var(--text);
+}
+
+html[data-theme="light"] .btn-ghost:hover {
+  background: rgba(123, 44, 191, 0.08);
+  border-color: rgba(123, 44, 191, 0.20);
+}
+
+html[data-theme="light"] .coach-msg-bubble {
+  color: var(--text) !important;
+  background: rgba(255, 255, 255, 0.80) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .coach-input {
+  color: var(--text) !important;
+  background: rgba(255, 255, 255, 0.70) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+html[data-theme="light"] .coach-input::placeholder {
+  color: var(--text-dimmer) !important;
+}
+
+html[data-theme="light"] .coach-header {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .coach-header-name {
+  color: var(--text);
+}
+
+html[data-theme="light"] .coach-form {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .coach-starters {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-top-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .coach-starter {
+  color: var(--text-soft) !important;
+  background: rgba(123, 44, 191, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .login-input {
+  color: var(--text) !important;
+  background: rgba(255, 255, 255, 0.80) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+html[data-theme="light"] .login-input::placeholder {
+  color: var(--text-dimmer) !important;
+}
+
+html[data-theme="light"] .btn-google {
+  color: var(--text) !important;
+  background: rgba(255, 255, 255, 0.80) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+html[data-theme="light"] .sidebar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-right-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .sidebar-item {
+  color: var(--text-soft);
+}
+
+html[data-theme="light"] .sidebar-item:hover {
+  background: rgba(123, 44, 191, 0.06);
+  color: var(--text);
+}
+
+html[data-theme="light"] .sidebar-section-title {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .sidebar-close {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .sidebar-close:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme="light"] .sidebar-user-name {
+  color: var(--text);
+}
+
+html[data-theme="light"] .sidebar-user-email {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .modal {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .modal h3,
+html[data-theme="light"] .modal p {
+  color: var(--text);
+}
+
+html[data-theme="light"] .modal p {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .profile-row span:first-child {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .profile-row span:last-child:not(.switch) {
+  color: var(--text);
+}
+
+html[data-theme="light"] .header-btn,
+html[data-theme="light"] .menu-toggle {
+  color: var(--text) !important;
+  background: rgba(123, 44, 191, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .header-btn:hover,
+html[data-theme="light"] .menu-toggle:hover {
+  background: rgba(123, 44, 191, 0.12) !important;
+  border-color: rgba(123, 44, 191, 0.20) !important;
+}
+
+html[data-theme="light"] .coach-header-close {
+  color: var(--text) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .toast {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--text) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10) !important;
+}
+
+html[data-theme="light"] .theme-switcher {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html[data-theme="light"] .theme-option {
+  color: var(--text-dim);
+}
+
+html[data-theme="light"] .theme-option.active {
+  background: rgba(255, 255, 255, 0.90);
+  color: var(--accent);
+}
+
+html[data-theme="light"] .coach-fab {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(123, 44, 191, 0.20) !important;
+  color: var(--accent) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10), 0 0 24px var(--accent-glow) !important;
+}
+
+html[data-theme="light"] .bottom-nav {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-top-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ===== Light mode ambient glow adjustment ===== */
+html[data-theme="light"] body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(123, 44, 191, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(157, 78, 221, 0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at 50% 100%, rgba(124, 109, 240, 0.03) 0%, transparent 55%) !important;
+  opacity: 1 !important;
+}
+
+/* ===== Light mode login card ===== */
+html[data-theme="light"] .login-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ===== Light mode landing features ===== */
+html[data-theme="light"] .landing-feature {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .landing-feature:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(123, 44, 191, 0.15) !important;
+}
+
+html[data-theme="light"] .landing-stats {
+  background: rgba(123, 44, 191, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .landing-testimonial {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .landing-urgency {
+  background: rgba(123, 44, 191, 0.05) !important;
+  border-color: rgba(123, 44, 191, 0.20) !important;
+}
+
+html[data-theme="light"] .landing-trust-item {
+  background: rgba(255, 255, 255, 0.70) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .landing-badge-top {
+  background: rgba(255, 255, 255, 0.80) !important;
+  border-color: rgba(123, 44, 191, 0.15) !important;
+}
+
+/* ===== Light mode scrollbar ===== */
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(123, 44, 191, 0.20);
+}
+
+/* ===== Light mode timer ===== */
+html[data-theme="light"] .timer-circle .bg {
+  stroke: rgba(0, 0, 0, 0.06) !important;
 }

@@ -182,6 +182,17 @@
   .hero-title { font-size: clamp(88px, 7vw, 112px); }
 }
 
+/* ===== DESKTOP CHAT LAYOUT ===== */
+@media (min-width: 1024px) {
+  body {
+    max-width: 100%;
+  }
+  
+  .container {
+    max-width: 960px;
+  }
+}
+
 /* ===== TOUCH OPTIMIZATIONS ===== */
 @media (hover: none) and (pointer: coarse) {
   /* Pas de hover sur mobile, mais on garde l'effet active */

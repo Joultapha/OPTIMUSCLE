@@ -33,7 +33,7 @@ import {
   getCurrentView,
   render,
 } from './core/appState.js';
-import { initTheme, bindThemeButtons } from './features/theme.js';
+import { initTheme, bindThemeButtons, applyTheme } from './features/theme.js';
 import { initSidebar } from './features/sidebar.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
@@ -63,7 +63,6 @@ import {
   closeBadgeModal,
   closeExInfo,
   completeWorkout,
-  exportUserData,
 } from './features/ui.js';
 import {
   toggleTimer,
@@ -201,6 +200,19 @@ function bindGlobalEvents() {
   // ⭐ Init sidebar + theme buttons + coach IA
   initSidebar();
   bindThemeButtons();
+
+  // Theme toggle button (header)
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  if (themeToggleBtn) {
+    updateThemeToggleIcon();
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark');
+      applyTheme(next);
+      updateThemeToggleIcon();
+    });
+  }
+
   initCoach();
   initDraggableFab();
   initNutrition();
@@ -239,9 +251,6 @@ function bindGlobalEvents() {
 
   // ⭐ Account deletion
   on('btn-delete-account', 'click', handleDeleteAccount);
-
-  // ⭐ Data export
-  on('btn-export-data', 'click', exportUserData);
 
   on('input-password', 'keydown', e => { if (e.key === 'Enter') handleEmailAuth(); });
   on('input-password2', 'keydown', e => { if (e.key === 'Enter') handleEmailAuth(); });
@@ -292,6 +301,19 @@ function bindGlobalEvents() {
     resetOnboardingUI();
     setOnboardingCompleted(false);
   });
+}
+
+function updateThemeToggleIcon() {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  const current = document.documentElement.getAttribute('data-theme');
+  const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const lightIcon = btn.querySelector('.theme-icon-light');
+  const darkIcon = btn.querySelector('.theme-icon-dark');
+  if (lightIcon && darkIcon) {
+    lightIcon.style.display = isDark ? 'block' : 'none';
+    darkIcon.style.display = isDark ? 'none' : 'block';
+  }
 }
 
 // ============================================================

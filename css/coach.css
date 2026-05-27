@@ -391,16 +391,16 @@ body[data-view="dashboard"][data-subpage="coach"] .coach-fab {
   .coach-modal {
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 32px;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
   }
 
   .coach-modal-inner {
     width: 100%;
-    max-width: 600px;
-    height: 80vh;
-    max-height: 800px;
+    max-width: 700px;
+    height: 85vh;
+    max-height: 900px;
     background: var(--bg);
     border-radius: var(--radius-xl);
     overflow: hidden;
@@ -410,9 +410,82 @@ body[data-view="dashboard"][data-subpage="coach"] .coach-fab {
     border: 1px solid var(--glass-border-strong);
   }
 
+  .coach-messages {
+    padding: 20px 28px;
+    gap: 16px;
+  }
+
+  .coach-msg {
+    max-width: 75%;
+  }
+
+  .coach-msg-bubble {
+    padding: 14px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .coach-header {
+    padding: 18px 28px;
+  }
+
+  .coach-form {
+    padding: 14px 24px max(14px, env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+
+  .coach-input {
+    padding: 14px 22px;
+    font-size: 15px;
+  }
+
+  .coach-send {
+    width: 48px;
+    height: 48px;
+  }
+
+  .coach-starters {
+    padding: 18px 28px;
+    gap: 10px;
+  }
+
+  .coach-starter {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+
   .coach-fab {
-    bottom: 24px;
-    right: 24px;
+    bottom: 28px;
+    right: 28px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .coach-fab svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .coach-modal-inner {
+    max-width: 800px;
+  }
+
+  .coach-msg {
+    max-width: 65%;
+  }
+
+  .coach-fab {
+    bottom: 32px;
+    right: 32px;
+    width: 64px;
+    height: 64px;
+  }
+
+  .coach-fab svg {
+    width: 28px;
+    height: 28px;
   }
 }
 
