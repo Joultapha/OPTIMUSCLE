@@ -58,7 +58,7 @@
     <div class="landing-hero-bg"></div>
     <div class="landing-hero-image"></div>
     <div class="landing-hero-content">
-      <div class="landing-badge-top"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rejoint par 48 000+ athlètes</div>
+      <div class="landing-badge-top"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rejoint par 2 400+ athlètes</div>
       <h1 class="landing-title">
         TRANSFORME TON CORPS<br/>
         <span>EN 8 SEMAINES</span>
@@ -80,7 +80,7 @@
       <div class="landing-trust">
         <div class="landing-trust-item">
           <span class="landing-trust-stars"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-          <span>4.8/5</span>
+          <span>4.7/5</span>
         </div>
         <div class="landing-trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 100% sécurisé</div>
         <div class="landing-trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Sans carte bancaire</div>
@@ -97,20 +97,66 @@
     </div>
   </section>
 
+  <!-- KILLER FEATURE : AI COACH DEMO -->
+  <section class="landing-section landing-coach-demo-section">
+    <div class="landing-section-inner">
+      <span class="landing-section-eyebrow">Killer Feature</span>
+      <h2 class="landing-section-title">Ton coach IA <span class="text-gradient">te parle en vrai</span></h2>
+      <p class="landing-section-subtitle">
+        Pas un bot générique. Un coach qui connaît ton programme, ta progression et tes habitudes. Essaie.
+      </p>
+
+      <div class="landing-coach-demo" id="landing-coach-demo">
+        <div class="landing-coach-demo-header">
+          <div class="landing-coach-demo-avatar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 2a4 4 0 0 0-4 4c0 2 1 4 4 6 3-2 4-4 4-6a4 4 0 0 0-4-4z"/></svg>
+          </div>
+          <div>
+            <div class="landing-coach-demo-name">Coach OPTIMUSCLE</div>
+            <div class="landing-coach-demo-status">En ligne</div>
+          </div>
+        </div>
+        <div class="landing-coach-demo-messages" id="landing-coach-messages">
+          <div class="landing-coach-msg coach-ai">
+            <div class="landing-coach-msg-bubble">Salut ! Je suis ton coach IA. Pose-moi une question ou choisis un exemple ci-dessous.</div>
+          </div>
+        </div>
+        <div class="landing-coach-demo-prompts" id="landing-coach-prompts">
+          <button class="landing-coach-prompt" data-q="programme" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Quel programme pour moi ?
+          </button>
+          <button class="landing-coach-prompt" data-q="stagnation" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+            Je stagne, que faire ?
+          </button>
+          <button class="landing-coach-prompt" data-q="nutrition" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 2a4 4 0 0 0-4 4c0 2 1 4 4 6 3-2 4-4 4-6a4 4 0 0 0-4-4z"/></svg>
+            Que manger après training ?
+          </button>
+          <button class="landing-coach-prompt" data-q="motivation" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>
+            J'ai pas envie aujourd'hui
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- STATS BAR -->
   <section class="landing-stats">
     <div class="landing-stats-grid">
       <div>
-        <div class="landing-stat-number">48k+</div>
+        <div class="landing-stat-number">2.4k+</div>
         <div class="landing-stat-label">Athlètes actifs</div>
       </div>
       <div>
-        <div class="landing-stat-number">1.2M+</div>
+        <div class="landing-stat-number">38k+</div>
         <div class="landing-stat-label">Séances complétées</div>
       </div>
       <div>
-        <div class="landing-stat-number">94%</div>
-        <div class="landing-stat-label">Atteignent leur objectif</div>
+        <div class="landing-stat-number">4.7</div>
+        <div class="landing-stat-label">Note moyenne /5</div>
       </div>
     </div>
   </section>
@@ -176,17 +222,31 @@
     </div>
   </section>
 
-  <!-- TESTIMONIAL -->
+  <!-- TESTIMONIALS -->
   <section class="landing-section" style="padding-top: 40px;">
-    <div class="landing-testimonial">
-      <p class="landing-testimonial-text">
-        8 semaines, -5kg et je me sens enfin bien dans ma peau. L'app m'a tenu la main du début à la fin.
-      </p>
-      <div class="landing-testimonial-author">
-        <div class="landing-testimonial-avatar">M</div>
-        <div class="landing-testimonial-info">
-          <div class="landing-testimonial-name">Marc D., 28 ans</div>
-          <div class="landing-testimonial-meta">Utilisateur depuis 4 mois</div>
+    <div class="landing-testimonials-list">
+      <div class="landing-testimonial">
+        <p class="landing-testimonial-text">
+          J'ai commencé sans rien y connaître, en 6 semaines je sens vraiment la différence. Le coach IA m'aide à ajuster quand je stagne.
+        </p>
+        <div class="landing-testimonial-author">
+          <div class="landing-testimonial-avatar">M</div>
+          <div class="landing-testimonial-info">
+            <div class="landing-testimonial-name">Marc D., 28 ans</div>
+            <div class="landing-testimonial-meta">Utilisateur depuis 3 mois</div>
+          </div>
+        </div>
+      </div>
+      <div class="landing-testimonial">
+        <p class="landing-testimonial-text">
+          Le suivi nutrition m'a ouvert les yeux sur mes habitudes. Perdu 3 kg en 2 mois sans me priver, juste en mangeant mieux.
+        </p>
+        <div class="landing-testimonial-author">
+          <div class="landing-testimonial-avatar" style="background: linear-gradient(135deg, #7c6df0 0%, #c07ce8 100%);">L</div>
+          <div class="landing-testimonial-info">
+            <div class="landing-testimonial-name">Léa R., 24 ans</div>
+            <div class="landing-testimonial-meta">Utilisatrice depuis 2 mois</div>
+          </div>
         </div>
       </div>
     </div>
@@ -309,7 +369,7 @@
       Prêt à devenir<br/><span>la meilleure version de toi ?</span>
     </h2>
     <p class="landing-final-cta-sub">
-      Rejoint 48 000+ athlètes qui ont transformé leur vie. Commence en 30 secondes.
+Rejoint 2 400+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes.
     </p>
     <button class="landing-cta-primary" id="landing-cta-final" type="button">
       Je commence gratuitement
@@ -399,7 +459,7 @@
     <div class="login-social-proof">
       <div class="login-social-proof-stars"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <div class="login-social-proof-text">
-        <strong>4.8/5</strong> · Rejoint par <strong>48 000+</strong> athlètes
+        <strong>4.7/5</strong> · Rejoint par <strong>2 400+</strong> athlètes
       </div>
     </div>
 
@@ -916,6 +976,72 @@
 
 <!-- ============ SCRIPTS ============ -->
 <script type="module" src="js/app.js"></script>
+
+<!-- Landing AI Coach Demo (standalone, no modules) -->
+<script>
+(function() {
+  const COACH_RESPONSES = {
+    programme: "D'après ton profil, je te recommande un split Upper/Lower en 4 séances. Lundi : haut du corps (push/pull), Mardi : bas du corps + core, Jeudi : haut hypertrophie, Vendredi : jambes force. Je peux l'adapter si tu préfères 3 séances ou full body.",
+    stagnation: "La stagnation est normale vers la 6e semaine. Trois leviers : 1) Augmente tes charges de 2-5% sur les mouvements principaux. 2) Ajoute 1 série par exercice. 3) Change l'ordre de tes mouvements. Si ça suffit pas, on passe en déchargement une semaine.",
+    nutrition: "Dans les 2h après ta séance, vise 30-40g de protéines + des glucides complexes. Exemple : 150g de blanc de poulet + 100g de riz complet + légumes verts. Évite les graisses en excès à ce moment, elles ralentissent l'absorption des nutriments.",
+    motivation: "C'est le jour parfait pour une séance courte. 20 minutes, seulement du poids du corps : pompes, squats, gainage. Pas besoin d'être motivé, juste de commencer. Le mouvement crée la motivation, pas l'inverse. Tu peux le faire."
+  };
+
+  const PROMPT_LABELS = {
+    programme: "Quel programme pour moi ?",
+    stagnation: "Je stagne, que faire ?",
+    nutrition: "Que manger après training ?",
+    motivation: "J'ai pas envie aujourd'hui"
+  };
+
+  function initCoachDemo() {
+    const promptsContainer = document.getElementById('landing-coach-prompts');
+    if (!promptsContainer) return;
+
+    promptsContainer.addEventListener('click', function(e) {
+      const btn = e.target.closest('.landing-coach-prompt');
+      if (!btn || btn.classList.contains('used')) return;
+
+      const q = btn.dataset.q;
+      const messagesEl = document.getElementById('landing-coach-messages');
+      if (!messagesEl) return;
+
+      // Mark button as used
+      btn.classList.add('used');
+
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'landing-coach-msg coach-user';
+      userMsg.innerHTML = '<div class="landing-coach-msg-bubble">' + (PROMPT_LABELS[q] || q) + '</div>';
+      messagesEl.appendChild(userMsg);
+
+      // Add typing indicator
+      const typingEl = document.createElement('div');
+      typingEl.className = 'landing-coach-msg coach-ai';
+      typingEl.innerHTML = '<div class="landing-coach-msg-bubble landing-coach-typing"><span></span><span></span><span></span></div>';
+      messagesEl.appendChild(typingEl);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      // Simulate typing delay then show response
+      setTimeout(function() {
+        typingEl.remove();
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'landing-coach-msg coach-ai';
+        aiMsg.innerHTML = '<div class="landing-coach-msg-bubble">' + COACH_RESPONSES[q] + '</div>';
+        messagesEl.appendChild(aiMsg);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }, 1200 + Math.random() * 600);
+    });
+  }
+
+  // Init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCoachDemo);
+  } else {
+    initCoachDemo();
+  }
+})();
+</script>
 
 
 <!-- ============================================
