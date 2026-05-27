@@ -158,7 +158,7 @@ function createRadio(name, value, label) {
   const wrap = createEl('label', { className: 'nut-radio' });
   const input = createEl('input', { attrs: { type: 'radio', name, value, required: 'required' } });
   wrap.appendChild(input);
-  wrap.appendChild(createEl('span', { text: label }));
+  wrap.appendChild(createEl('span', { html: label }));
   return wrap;
 }
 
@@ -484,7 +484,7 @@ function openAddMealModal(mealType) {
   // Mettre le titre selon le type
   const title = document.getElementById('nut-add-modal-title');
   const meal = MEAL_TYPES.find(m => m.id === mealType);
-  if (title && meal) title.textContent = `${meal.emoji} Ajouter à : ${meal.name}`;
+  if (title && meal) title.innerHTML = `${meal.emoji} Ajouter à : ${meal.name}`;
 
   setTimeout(() => input?.focus(), 200);
 }
