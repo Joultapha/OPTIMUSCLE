@@ -1,0 +1,123 @@
+rules_version = '2';
+
+// ============================================================
+// OPTIMUSCLE - Firestore Security Rules
+// ============================================================
+// Optionnel : si tu migres de Realtime DB vers Firestore.
+// Plus puissant et scalable. Recommandé pour la production.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== HELPER FUNCTIONS =====
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isPremium() {
+      return isSignedIn() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscription.status == 'active';
+    }
+
+    function isValidStats(stats) {
+      return stats.keys().hasAll(['totalSessions', 'totalMinutes', 'streak', 'bestStreak']) &&
+             stats.totalSessions is number && stats.totalSessions >= 0 && stats.totalSessions < 100000 &&
+             stats.totalMinutes is number && stats.totalMinutes >= 0 && stats.totalMinutes < 1000000 &&
+             stats.streak is number && stats.streak >= 0 && stats.streak < 10000 &&
+             stats.bestStreak is number && stats.bestStreak >= 0 && stats.bestStreak < 10000;
+    }
+
+    function isReasonableProgressIncrement(oldStats, newStats) {
+      // Empêche un utilisateur de gonfler ses stats d'un coup (anti-triche)
+      return newStats.totalSessions <= oldStats.totalSessions + 1 &&
+             newStats.totalMinutes <= oldStats.totalMinutes + 180; // max 3h par save
+    }
+
+    // ===== USERS =====
+    match /users/{userId} {
+      // Lecture : propriétaire ou admin
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Création : uniquement par soi-même, avec rôle "user" par défaut
+      allow create: if isOwner(userId) &&
+                       request.resource.data.role == 'user' &&
+                       request.resource.data.createdAt == request.time;
+
+      // Mise à jour : par soi-même, mais champs sensibles bloqués
+      allow update: if isOwner(userId) &&
+                       // Empêche modification du rôle
+                       request.resource.data.role == resource.data.role &&
+                       // Empêche modification de l'abonnement (Cloud Function only)
+                       request.resource.data.subscription == resource.data.subscription &&
+                       // Empêche modification de la date de création
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       // Valide les stats
+                       isValidStats(request.resource.data.stats) &&
+                       // Anti-triche : progression réaliste
+                       isReasonableProgressIncrement(resource.data.stats, request.resource.data.stats);
+
+      // Suppression : admin uniquement
+      allow delete: if isAdmin();
+
+      // ===== SOUS-COLLECTION: WORKOUTS (historique) =====
+      match /workouts/{workoutId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) &&
+                         request.resource.data.timestamp == request.time &&
+                         request.resource.data.duration is number &&
+                         request.resource.data.duration > 0 &&
+                         request.resource.data.duration < 300;
+        allow update, delete: if false; // Historique immuable
+      }
+
+      // ===== SOUS-COLLECTION: PROGRAM (programme actuel) =====
+      match /program/{programId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId) &&
+                        request.resource.data.size() < 50;
+      }
+    }
+
+    // ===== PUBLIC STATS (anonymisées) =====
+    match /publicStats/{statId} {
+      allow read: if true;
+      allow write: if false; // Cloud Function only
+    }
+
+    // ===== SUBSCRIPTIONS (Stripe) =====
+    match /subscriptions/{subId} {
+      // Lecture : propriétaire uniquement
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Écriture : Cloud Function uniquement (webhook Stripe)
+      allow write: if false;
+    }
+
+    // ===== RATE LIMITS =====
+    match /rateLimits/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) &&
+                      request.resource.data.count is number &&
+                      request.resource.data.count <= 100;
+    }
+
+    // ===== ADMIN LOGS =====
+    match /adminLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Cloud Function only
+    }
+
+    // ===== DEFAULT: DENY ALL =====
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

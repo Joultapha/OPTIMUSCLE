@@ -1,0 +1,6 @@
+# OPTIMUSCLE - Cloudflare Pages Configuration
+# This is a static site (HTML + CSS + JS), no build needed.
+
+# SPA redirect: all routes → index.html
+# Cloudflare Pages uses _redirects file for this
+/*    /index.html   200

@@ -1,0 +1,433 @@
+/* ============================================================
+   OPTIMUSCLE V3 — Coach IA Styles
+   ============================================================ */
+
+/* ===== BOUTON FLOTTANT (FAB) — Simple message, draggable ===== */
+.coach-fab {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 80px);
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--glass-border-strong);
+  color: var(--accent);
+  cursor: grab;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  transition: box-shadow var(--duration-base) var(--ease-out), border-color var(--duration-base);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.30),
+    0 0 24px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: none;
+  touch-action: none;
+}
+
+.coach-fab:active { cursor: grabbing; }
+
+.coach-fab svg {
+  width: 22px;
+  height: 22px;
+}
+
+.coach-fab:hover {
+  border-color: var(--accent);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.40),
+    0 0 36px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Hide FAB on non-dashboard pages */
+body:not([data-view="dashboard"]) .coach-fab,
+body[data-view="dashboard"][data-subpage="workout"] .coach-fab,
+body[data-view="dashboard"][data-subpage="coach"] .coach-fab {
+  display: none !important;
+}
+
+/* ===== MODAL COACH (chat fullscreen) ===== */
+.coach-modal {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  animation: slideUpFull 300ms var(--ease-out);
+}
+
+.coach-modal.show {
+  display: flex;
+}
+
+@keyframes slideUpFull {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* ===== HEADER COACH ===== */
+.coach-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  flex-shrink: 0;
+}
+
+.coach-header-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--grad-brand);
+  display: grid;
+  place-items: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--accent-glow);
+  position: relative;
+}
+
+.coach-header-avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.coach-header-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--neon-bright);
+  border-radius: 50%;
+  border: 2px solid var(--bg-elev-1);
+}
+
+.coach-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.coach-header-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+
+.coach-header-status {
+  font-size: 11px;
+  color: var(--neon-bright);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.coach-header-close {
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  flex-shrink: 0;
+}
+
+.coach-header-close:hover {
+  background: var(--glass-bg-3);
+  border-color: var(--glass-border-strong);
+  transform: rotate(90deg);
+}
+
+.coach-header-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===== MESSAGES LIST ===== */
+.coach-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.coach-messages::-webkit-scrollbar { width: 6px; }
+.coach-messages::-webkit-scrollbar-track { background: transparent; }
+.coach-messages::-webkit-scrollbar-thumb {
+  background: var(--glass-border-strong);
+  border-radius: 3px;
+}
+
+/* ===== MESSAGES BUBBLES ===== */
+.coach-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 85%;
+  animation: msgFadeIn 300ms var(--ease-out);
+}
+
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.coach-msg-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.coach-msg-assistant {
+  align-self: flex-start;
+}
+
+.coach-msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--grad-brand);
+  display: grid;
+  place-items: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.coach-msg-avatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.coach-msg-bubble {
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text);
+  word-wrap: break-word;
+}
+
+.coach-msg-user .coach-msg-bubble {
+  background: var(--grad-brand);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom-right-radius: var(--radius-xs);
+}
+
+.coach-msg-assistant .coach-msg-bubble {
+  border-bottom-left-radius: var(--radius-xs);
+}
+
+.coach-msg-bubble strong {
+  font-weight: 700;
+}
+
+/* ===== TYPING INDICATOR ===== */
+.coach-typing .coach-msg-bubble {
+  padding: 14px 18px;
+}
+
+.coach-typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.coach-typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.coach-typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.coach-typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== STARTER QUESTIONS ===== */
+.coach-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--glass-border);
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+}
+
+.coach-starter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--glass-bg-1);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  color: var(--text-soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+}
+
+.coach-starter:hover {
+  background: var(--glass-bg-3);
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.coach-starter-icon {
+  font-size: 14px;
+}
+
+/* ===== INPUT FORM ===== */
+.coach-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border-top: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+.coach-input {
+  flex: 1;
+  background: var(--glass-bg-1);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  padding: 12px 18px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-fast);
+  min-width: 0;
+}
+
+.coach-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow-soft);
+}
+
+.coach-input::placeholder {
+  color: var(--text-dimmer);
+}
+
+.coach-send {
+  background: var(--grad-brand);
+  border: none;
+  color: white;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all var(--duration-fast);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.coach-send svg {
+  width: 20px;
+  height: 20px;
+}
+
+.coach-send:hover {
+  transform: scale(1.05);
+}
+
+.coach-send:active {
+  transform: scale(0.95);
+}
+
+.coach-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE TABLET+ ===== */
+@media (min-width: 768px) {
+  .coach-modal {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+  }
+
+  .coach-modal-inner {
+    width: 100%;
+    max-width: 600px;
+    height: 80vh;
+    max-height: 800px;
+    background: var(--bg);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--glass-border-strong);
+  }
+
+  .coach-fab {
+    bottom: 24px;
+    right: 24px;
+  }
+}
+
+/* ===== COACH SUBPAGE ===== */
+.subpage#subpage-coach {
+  display: none;
+}
+
+body[data-view="dashboard"][data-subpage="coach"] #subpage-coach {
+  display: block !important;
+}
+
+#page-coach .coach-page-wrap {
+  height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}

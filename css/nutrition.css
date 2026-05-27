@@ -1,0 +1,850 @@
+/* ============================================================
+   OPTIMUSCLE — Nutrition Styles
+   ============================================================ */
+
+/* ===== SUBPAGE NUTRITION ===== */
+#subpage-nutrition {
+  display: none;
+}
+body[data-view="dashboard"][data-subpage="nutrition"] #subpage-nutrition {
+  display: block !important;
+}
+
+#nutrition-content {
+  padding: 16px 16px 32px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ===== ONBOARDING NUTRITION ===== */
+.nut-onb-wrap {
+  padding: 24px 4px;
+  animation: fadeUp 500ms var(--ease-out);
+}
+
+.nut-onb-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.nut-onb-header h1 {
+  font-size: clamp(32px, 8vw, 44px);
+  line-height: 0.95;
+  margin: 12px 0 12px;
+}
+
+.nut-onb-header p {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.nut-onb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.nut-onb-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.nut-onb-label-sm {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.nut-radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.nut-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all var(--duration-fast);
+}
+
+.nut-radio input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.nut-radio:hover {
+  border-color: var(--border-light);
+  background: var(--bg-elev-2);
+}
+
+.nut-radio:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-glow-soft);
+  color: var(--accent);
+}
+
+.nut-onb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .nut-onb-grid { grid-template-columns: 1fr; }
+}
+
+.nut-input {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-fast);
+}
+
+.nut-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow-soft);
+}
+
+.nut-onb-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nut-onb-activity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.nut-onb-activity input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.nut-onb-activity:hover {
+  border-color: var(--border-light);
+  background: var(--bg-elev-2);
+}
+
+.nut-onb-activity:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-glow-soft);
+}
+
+.nut-onb-activity-content { flex: 1; }
+.nut-onb-activity-name { font-weight: 700; font-size: 14px; }
+.nut-onb-activity-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+/* ===== DASHBOARD NUTRITION ===== */
+.nut-dash-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.nut-dash-header h1 {
+  font-size: clamp(28px, 7vw, 38px);
+  line-height: 1;
+  margin: 4px 0;
+}
+
+/* ===== KCAL RING CARD ===== */
+.nut-kcal-card {
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.nut-kcal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, var(--accent-glow-soft) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.nut-kcal-ring {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  max-width: 100%;
+}
+
+.nut-kcal-ring svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 16px var(--accent-glow));
+}
+
+.nut-kcal-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.nut-kcal-value {
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: 1;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nut-kcal-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.nut-kcal-remaining {
+  font-size: 13px;
+  color: var(--neon-bright);
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.nut-kcal-remaining.over {
+  color: #d94848;
+}
+
+/* ===== MACROS CARD ===== */
+.nut-macros-card {
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.nut-macros-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.nut-macros-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nut-macro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nut-macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.nut-macro-label {
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.nut-macro-value {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+.nut-macro-value .dim {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.nut-macro-bar {
+  height: 8px;
+  background: var(--bg-elev-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.nut-macro-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 800ms var(--ease-out);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ===== WATER CARD ===== */
+.nut-water-card {
+  background: linear-gradient(135deg, rgba(76, 201, 214, 0.1), rgba(76, 201, 214, 0.03));
+  border: 1px solid rgba(76, 201, 214, 0.3);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.nut-water-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.nut-water-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.05em;
+}
+
+.nut-water-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.nut-water-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nut-water-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #4cc9d6;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  box-shadow: 0 4px 12px rgba(76, 201, 214, 0.4);
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.nut-water-btn:active { transform: scale(0.9); }
+.nut-water-btn:hover { transform: scale(1.1); }
+
+.nut-water-glasses {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  font-size: 18px;
+}
+
+.nut-water-glass {
+  opacity: 0.3;
+  filter: grayscale(1);
+  transition: all var(--duration-fast);
+}
+
+.nut-water-glass.filled {
+  opacity: 1;
+  filter: none;
+  animation: pulseGlass 600ms var(--ease-spring);
+}
+
+@keyframes pulseGlass {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== MEALS LIST ===== */
+.nut-meals-wrap {
+  margin-bottom: 16px;
+}
+
+.nut-meals-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.nut-meal-card {
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.nut-meal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.nut-meal-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nut-meal-emoji { font-size: 28px; }
+
+.nut-meal-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+}
+
+.nut-meal-stats {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.nut-meal-add {
+  background: var(--accent-glow-soft);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.nut-meal-add:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.nut-meal-items {
+  border-top: 1px solid var(--border);
+}
+
+.nut-meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.nut-meal-item:first-child { border-top: none; }
+
+.nut-meal-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nut-meal-item-emoji { font-size: 20px; }
+
+.nut-meal-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nut-meal-item-portion {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.nut-meal-item-del {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all var(--duration-fast);
+}
+
+.nut-meal-item-del:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+
+/* ===== ADD MEAL MODAL ===== */
+#nut-add-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+#nut-add-modal.show {
+  display: flex;
+  animation: fade .25s;
+}
+
+.nut-add-modal-inner {
+  width: 100%;
+  max-width: 640px;
+  height: 90vh;
+  background: var(--bg);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  display: flex;
+  flex-direction: column;
+  animation: slideUpFull 300ms var(--ease-out);
+  border: 1px solid var(--border-light);
+}
+
+@media (min-width: 600px) {
+  #nut-add-modal { align-items: center; padding: 24px; }
+  .nut-add-modal-inner { border-radius: var(--radius-xl); height: 85vh; max-height: 700px; }
+}
+
+.nut-add-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nut-add-modal-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.03em;
+}
+
+.nut-add-modal-close {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.nut-search-wrap {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nut-search-input {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  padding: 14px 20px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+}
+
+.nut-search-input:focus {
+  border-color: var(--accent);
+}
+
+.nut-search-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.nut-search-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  font-weight: 700;
+  padding: 12px 20px 8px;
+}
+
+.nut-search-loading-mini {
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+.nut-search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background var(--duration-fast);
+  border-top: 1px solid var(--border);
+}
+
+.nut-search-item:hover {
+  background: var(--bg-elev-2);
+}
+
+.nut-search-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nut-search-item-emoji {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.nut-search-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nut-search-item-brand {
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.nut-search-item-info {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.nut-search-item-add {
+  background: var(--accent);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.nut-search-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+}
+
+/* ===== PORTION MODAL ===== */
+#nut-portion-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 1100;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+#nut-portion-modal.show {
+  display: flex;
+  animation: fade .25s;
+}
+
+.nut-portion-modal-inner {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-elev-1);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+  animation: slideUpFull 300ms var(--ease-out);
+  border: 1px solid var(--border-light);
+}
+
+@media (min-width: 600px) {
+  #nut-portion-modal { align-items: center; padding: 24px; }
+  .nut-portion-modal-inner { border-radius: var(--radius-xl); }
+}
+
+.nut-portion-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--bg-elev-2);
+  border: none;
+  color: var(--text);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 2;
+}
+
+.nut-portion-wrap { position: relative; }
+
+.nut-portion-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-right: 40px;
+}
+
+.nut-portion-emoji { font-size: 36px; }
+
+.nut-portion-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.nut-portion-brand {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.nut-portion-input-wrap {
+  margin-bottom: 20px;
+}
+
+.nut-portion-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.nut-portion-quick {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.nut-portion-quick-btn {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border-light);
+  color: var(--text-soft);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+}
+
+.nut-portion-quick-btn:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.nut-portion-input {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 0.02em;
+}
+
+.nut-portion-preview {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  text-align: center;
+}
+
+.nut-portion-pkcal {
+  font-family: var(--font-display);
+  font-size: 42px;
+  line-height: 1;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nut-portion-pkcal span {
+  font-size: 16px;
+  color: var(--text-dim);
+  -webkit-text-fill-color: var(--text-dim);
+}
+
+.nut-portion-pmacros {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Settings button */
+.nut-settings-btn {
+  margin-top: 24px;
+}

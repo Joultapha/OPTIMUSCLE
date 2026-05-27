@@ -1,0 +1,13 @@
+{
+  "name": "optimuscle",
+  "version": "14.0.0",
+  "private": true,
+  "description": "OPTIMUSCLE — Programme de fitness personnalisé, suivi nutritionnel, défis et coaching IA",
+  "scripts": {
+    "dev": "npx serve -l 3000",
+    "preview": "npx serve -l 3000"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

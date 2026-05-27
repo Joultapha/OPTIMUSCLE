@@ -1,0 +1,134 @@
+/* ============================================================
+   OPTIMUSCLE — Bottom Navigation Bar
+   ============================================================
+   5 tabs : Accueil, Training, Nutrition, Défis, Profil
+   Glassmorphism background, orange active indicator
+   Visible uniquement sur data-view="dashboard"
+============================================================ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  padding: 6px 8px;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  height: var(--bottom-nav-height);
+  background: rgba(13, 13, 15, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Visible uniquement en dashboard (pas en workout) */
+body[data-view="dashboard"][data-subpage="home"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="history"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="badges"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="profile"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="nutrition-view"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
+  display: flex;
+}
+
+/* ===== TAB ITEM ===== */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: var(--text-dimmer);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  position: relative;
+  transition: color var(--duration-fast) var(--ease-out);
+  min-width: 56px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.8;
+  transition: all var(--duration-base) var(--ease-spring);
+}
+
+.bottom-nav-item:active {
+  transform: scale(0.92);
+}
+
+/* ===== ACTIVE TAB ===== */
+.bottom-nav-item.active {
+  color: var(--accent);
+}
+
+.bottom-nav-item.active svg {
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
+/* Active indicator dot */
+.bottom-nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
+  animation: indicatorPop 300ms var(--ease-spring);
+}
+
+@keyframes indicatorPop {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  50% {
+    width: 28px;
+  }
+  100% {
+    width: 20px;
+    opacity: 1;
+  }
+}
+
+/* ===== CONTENT SPACING ===== */
+body[data-view="dashboard"] .page.active {
+  padding-bottom: calc(var(--bottom-nav-height) + 16px);
+}
+
+/* ===== HIDE OLD TABS WHEN BOTTOM NAV IS SHOWN ===== */
+body[data-view="dashboard"] nav.tabs {
+  display: none !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 600px) {
+  .bottom-nav {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 480px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bottom-nav {
+    max-width: 520px;
+  }
+}

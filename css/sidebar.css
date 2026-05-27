@@ -1,0 +1,352 @@
+/* ============================================================
+   OPTIMUSCLE — Sidebar Menu & Theme Toggle
+   ============================================================ */
+
+/* ===== HAMBURGER MENU BUTTON (header) ===== */
+.menu-toggle {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all var(--duration-base) var(--ease-out);
+  padding: 0;
+}
+
+.menu-toggle:hover {
+  background: var(--bg-elev-3);
+  border-color: var(--border-light);
+}
+
+.menu-toggle svg {
+  width: 20px;
+  height: 20px;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+body.sidebar-open .menu-toggle svg {
+  transform: rotate(90deg);
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-base) var(--ease-out), visibility var(--duration-base);
+}
+
+body.sidebar-open .sidebar-backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  background: var(--bg-elev-1);
+  border-right: 1px solid var(--border);
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform var(--duration-base) var(--ease-out);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+body.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== SIDEBAR HEADER ===== */
+.sidebar-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--grad-brand);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.sidebar-logo-text {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.sidebar-logo-text span {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-close {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast);
+}
+
+.sidebar-close:hover {
+  background: var(--bg-elev-2);
+  color: var(--text);
+}
+
+/* ===== SIDEBAR USER ===== */
+.sidebar-user {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--grad-brand);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: white;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-email {
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== SIDEBAR NAV ===== */
+.sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  padding: 16px 12px 8px;
+  font-weight: 700;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.sidebar-item:hover {
+  background: var(--bg-elev-2);
+  color: var(--text);
+}
+
+.sidebar-item.active {
+  background: var(--accent-glow-soft);
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+}
+
+.sidebar-item-icon {
+  font-size: 18px;
+  width: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.sidebar-item-label {
+  flex: 1;
+}
+
+.sidebar-item-badge {
+  background: var(--accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+}
+
+/* ===== THEME SWITCH (dans la sidebar) ===== */
+.theme-switcher {
+  margin: 16px 12px;
+  padding: 6px;
+  background: var(--bg-elev-2);
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  border: 1px solid var(--border);
+}
+
+.theme-option {
+  background: transparent;
+  border: none;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--duration-fast);
+  font-family: inherit;
+}
+
+.theme-option svg {
+  width: 18px;
+  height: 18px;
+}
+
+.theme-option:hover {
+  color: var(--text);
+}
+
+.theme-option.active {
+  background: var(--bg-elev-1);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== SIDEBAR FOOTER ===== */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-dimmer);
+  letter-spacing: 0.05em;
+}
+
+/* ===== Cacher la sidebar quand pas en mode dashboard/workout ===== */
+body:not([data-view="dashboard"]):not([data-view="workout"]) .sidebar,
+body:not([data-view="dashboard"]):not([data-view="workout"]) .sidebar-backdrop,
+body:not([data-view="dashboard"]):not([data-view="workout"]) .menu-toggle {
+  display: none !important;
+}
+
+
+/* ============================================
+   SIDEBAR DESKTOP : un peu plus large et stylée
+============================================ */
+@media (min-width: 1024px) {
+  .sidebar {
+    width: 360px;
+    max-width: 360px;
+  }
+
+  .sidebar-header {
+    padding: 28px 28px 20px;
+  }
+
+  .sidebar-user {
+    padding: 24px 28px;
+  }
+
+  .sidebar-nav {
+    padding: 20px 16px;
+  }
+
+  .sidebar-item {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  /* Backdrop plus visible sur desktop */
+  .sidebar-backdrop {
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+}
+
+/* ============================================
+   FIX : sidebar AU-DESSUS de tout
+============================================ */
+.sidebar { z-index: 1010 !important; }
+.sidebar-backdrop { z-index: 1000 !important; }

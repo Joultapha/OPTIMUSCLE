@@ -1,0 +1,88 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      "$uid": {
+        // Un utilisateur peut UNIQUEMENT lire/écrire ses propres données
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        // Validation stricte de la structure
+        ".validate": "newData.hasChildren(['state', 'updatedAt'])",
+
+        "state": {
+          // Le state doit être une string JSON, max 100 KB (anti-abus)
+          ".validate": "newData.isString() && newData.val().length < 100000"
+        },
+
+        "updatedAt": {
+          // Timestamp serveur uniquement (anti-falsification)
+          ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > 1700000000000"
+        },
+
+        "role": {
+          // Le rôle ne peut JAMAIS être modifié depuis le client
+          // Seul un admin (via console Firebase ou Cloud Function) peut le changer
+          ".write": false,
+          ".validate": "newData.isString() && (newData.val() === 'user' || newData.val() === 'premium' || newData.val() === 'admin')"
+        },
+
+        "subscription": {
+          // L'abonnement ne peut être modifié que via Cloud Function / Stripe webhook
+          ".write": false,
+          ".validate": "newData.hasChildren(['plan', 'status'])"
+        },
+
+        "stats": {
+          // Les stats peuvent être écrites mais sont validées
+          ".validate": "newData.hasChildren(['totalSessions', 'totalMinutes', 'streak', 'bestStreak'])",
+          "totalSessions": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 100000"
+          },
+          "totalMinutes": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 1000000"
+          },
+          "streak": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 10000"
+          },
+          "bestStreak": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 10000"
+          }
+        }
+      }
+    },
+
+    "publicStats": {
+      // Statistiques agrégées publiques (lecture seule pour tous, écriture admin uniquement)
+      ".read": true,
+      ".write": false
+    },
+
+    "rateLimits": {
+      "$uid": {
+        // Rate limiting : seul l'utilisateur peut lire son propre rate limit
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['count', 'windowStart'])",
+        "count": {
+          ".validate": "newData.isNumber() && newData.val() <= 100"
+        },
+        "windowStart": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+
+    "abuseReports": {
+      // Personne ne peut lire (admin seulement via console)
+      // Tout utilisateur authentifié peut créer un rapport
+      ".read": false,
+      "$reportId": {
+        ".write": "auth != null && !data.exists()",
+        ".validate": "newData.hasChildren(['reportedBy', 'timestamp', 'reason'])"
+      }
+    }
+  }
+}

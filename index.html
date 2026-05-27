@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="auto">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="description" content="OPTIMUSCLE — La meilleure app fitness pour transformer ton corps. Programmes personnalisés, démos vidéo, suivi de progression." />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="OPTIMUSCLE" />
+
+<title>OPTIMUSCLE — Pousse tes limites</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://js.stripe.com https://www.google.com https://www.recaptcha.net;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com;
+  font-src 'self' https://fonts.gstatic.com data:;
+  img-src 'self' data: https: blob:;
+  connect-src 'self' https://world.openfoodfacts.org https://api.groq.com https://generativelanguage.googleapis.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://api.stripe.com https://firebaseappcheck.googleapis.com wss://*.firebaseio.com;
+  frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://js.stripe.com https://hooks.stripe.com https://www.google.com https://www.recaptcha.net;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self' https://accounts.google.com;
+">
+
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/workout.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/view-system.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/coach.css">
+<link rel="stylesheet" href="css/nutrition.css">
+<link rel="stylesheet" href="css/challenges.css">
+<link rel="stylesheet" href="css/liquid-glass.css">
+<link rel="stylesheet" href="css/bottom-nav.css">
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body data-view="loading" data-subpage="home">
+
+<!-- ============================================
+     LANDING PAGE (avant inscription)
+============================================ -->
+<div id="view-landing">
+
+  <!-- HERO -->
+  <section class="landing-hero">
+    <div class="landing-hero-bg"></div>
+    <div class="landing-hero-image"></div>
+    <div class="landing-hero-content">
+      <div class="landing-badge-top"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rejoint par 48 000+ athlètes</div>
+      <h1 class="landing-title">
+        TRANSFORME TON CORPS<br/>
+        <span>EN 8 SEMAINES</span>
+      </h1>
+      <p class="landing-subtitle">
+        Programme d'entraînement sur-mesure, démos vidéo, suivi en temps réel.
+        <strong>Sans coach, sans matériel obligatoire.</strong>
+      </p>
+
+      <div class="landing-cta-group">
+        <button class="landing-cta-primary" id="landing-cta-start" type="button">
+          Commencer maintenant — Gratuit
+        </button>
+        <button class="landing-cta-secondary" id="landing-cta-login" type="button">
+          J'ai déjà un compte
+        </button>
+      </div>
+
+      <div class="landing-trust">
+        <div class="landing-trust-item">
+          <span class="landing-trust-stars">★★★★★</span>
+          <span>4.8/5</span>
+        </div>
+        <div class="landing-trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 100% sécurisé</div>
+        <div class="landing-trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Sans carte bancaire</div>
+      </div>
+    </div>
+
+    <div class="landing-scroll" onclick="document.querySelector('.landing-stats').scrollIntoView({behavior:'smooth'})">
+      <span class="landing-scroll-label">Découvre</span>
+      <div class="landing-scroll-arrow">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 4v12M10 16l-4-4M10 16l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="landing-stats">
+    <div class="landing-stats-grid">
+      <div>
+        <div class="landing-stat-number">48k+</div>
+        <div class="landing-stat-label">Athlètes actifs</div>
+      </div>
+      <div>
+        <div class="landing-stat-number">1.2M+</div>
+        <div class="landing-stat-label">Séances complétées</div>
+      </div>
+      <div>
+        <div class="landing-stat-number">94%</div>
+        <div class="landing-stat-label">Atteignent leur objectif</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="landing-section">
+    <div class="landing-section-inner">
+      <span class="landing-section-eyebrow">Pourquoi OPTIMUSCLE</span>
+      <h2 class="landing-section-title">Tout pour <span class="text-gradient">progresser vite</span></h2>
+      <p class="landing-section-subtitle">
+        Une app pensée par des sportifs, pour des sportifs.
+      </p>
+
+      <div class="landing-features">
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
+          <div class="landing-feature-title">SUR-MESURE</div>
+          <p class="landing-feature-desc">
+            Programme généré selon ton objectif, niveau, équipement et temps disponible. Adapté à toi, à 100%.
+          </p>
+        </div>
+
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></svg></div>
+          <div class="landing-feature-title">DÉMOS VIDÉO</div>
+          <p class="landing-feature-desc">
+            Chaque exercice expliqué visuellement. Tu apprends la bonne technique et tu évites les blessures.
+          </p>
+        </div>
+
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg></div>
+          <div class="landing-feature-title">SUIVI INTELLIGENT</div>
+          <p class="landing-feature-desc">
+            Stats, séries, niveaux, badges. Visualise ta progression et reste motivé semaine après semaine.
+          </p>
+        </div>
+
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" stroke="none"/></svg></div>
+          <div class="landing-feature-title">EXPRESS OU LONG</div>
+          <p class="landing-feature-desc">
+            Séances de 20, 40 ou 60 minutes. Adapte ta routine à ton emploi du temps réel.
+          </p>
+        </div>
+
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg></div>
+          <div class="landing-feature-title">GAMIFICATION</div>
+          <p class="landing-feature-desc">
+            Système XP, niveaux, badges. Chaque séance te rapproche d'un palier. Addictif.
+          </p>
+        </div>
+
+        <div class="landing-feature">
+          <div class="landing-feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
+          <div class="landing-feature-title">SANS EXCUSE</div>
+          <p class="landing-feature-desc">
+            Maison sans matos, avec haltères ou en salle. On a un programme qui marche partout.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section class="landing-section" style="padding-top: 40px;">
+    <div class="landing-testimonial">
+      <p class="landing-testimonial-text">
+        8 semaines, -5kg et je me sens enfin bien dans ma peau. L'app m'a tenu la main du début à la fin.
+      </p>
+      <div class="landing-testimonial-author">
+        <div class="landing-testimonial-avatar">M</div>
+        <div class="landing-testimonial-info">
+          <div class="landing-testimonial-name">Marc D., 28 ans</div>
+          <div class="landing-testimonial-meta">Utilisateur depuis 4 mois</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="landing-section">
+    <div class="landing-section-inner">
+      <span class="landing-section-eyebrow">Comment ça marche</span>
+      <h2 class="landing-section-title">3 étapes pour <span class="text-gradient">transformer ton corps</span></h2>
+      <p class="landing-section-subtitle">
+        Pas de complications. Pas de coach couteux. Juste toi et ton téléphone.
+      </p>
+
+      <div class="landing-steps">
+        <div class="landing-step">
+          <div class="landing-step-number">1</div>
+          <div class="landing-step-content">
+            <div class="landing-step-title">Remplis ton profil</div>
+            <div class="landing-step-desc">Objectif, niveau, équipement, temps... 30 secondes et c'est parti.</div>
+          </div>
+        </div>
+        <div class="landing-step">
+          <div class="landing-step-number">2</div>
+          <div class="landing-step-content">
+            <div class="landing-step-title">Ton programme est généré</div>
+            <div class="landing-step-desc">Un plan sur-mesure, adapté à ton niveau et ton matériel, prêt en 1 clic.</div>
+          </div>
+        </div>
+        <div class="landing-step">
+          <div class="landing-step-number">3</div>
+          <div class="landing-step-content">
+            <div class="landing-step-title">Entraîne-toi et progresse</div>
+            <div class="landing-step-desc">Suis tes séances, gagne de l'XP, débloque des badges. Tu ne voudras plus t'arrêter.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="landing-section" style="padding-top: 0;">
+    <div class="landing-section-inner">
+      <span class="landing-section-eyebrow">Pourquoi nous choisir</span>
+      <h2 class="landing-section-title">OPTIMUSCLE <span class="text-gradient">vs le reste</span></h2>
+      <p class="landing-section-subtitle">
+        Compare et choisis la meilleure option pour toi.
+      </p>
+
+      <div class="landing-comparison-table">
+        <div class="landing-table-header">
+          <div class="landing-table-feature"></div>
+          <div class="landing-table-col landing-table-highlight">OPTIMUSCLE</div>
+          <div class="landing-table-col">Coach perso</div>
+          <div class="landing-table-col">Salle classique</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Programme personnalisé</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">✅</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Démos vidéo</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">✅</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Suivi de progression</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">❌</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Gamification (XP, badges)</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">❌</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Nutrition intégrée</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">💰 En plus</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Coach IA 24/7</div>
+          <div class="landing-table-col landing-table-highlight">✅</div>
+          <div class="landing-table-col">❌</div>
+          <div class="landing-table-col">❌</div>
+        </div>
+        <div class="landing-table-row">
+          <div class="landing-table-feature">Coût mensuel</div>
+          <div class="landing-table-col landing-table-highlight">Gratuit</div>
+          <div class="landing-table-col">60-100€</div>
+          <div class="landing-table-col">30-50€</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- URGENCY -->
+  <section class="landing-section" style="padding-top: 0;">
+    <div class="landing-urgency">
+      <span class="landing-urgency-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg></span>
+      <div class="landing-urgency-text">
+        Offre de lancement : <span class="text-gradient">100% gratuit</span>
+      </div>
+      <div class="landing-urgency-sub">
+        Toutes les fonctionnalités débloquées pendant la phase beta.<br/>
+        <strong>Aucune carte bancaire requise.</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="landing-final-cta">
+    <h2 class="landing-final-cta-title">
+      Prêt à devenir<br/><span>la meilleure version de toi ?</span>
+    </h2>
+    <p class="landing-final-cta-sub">
+      Rejoint 48 000+ athlètes qui ont transformé leur vie. Commence en 30 secondes.
+    </p>
+    <button class="landing-cta-primary" id="landing-cta-final" type="button">
+      Je commence gratuitement
+    </button>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="landing-footer">
+    © 2026 OPTIMUSCLE — POUSSE TES LIMITES
+  </div>
+
+</div>
+
+
+
+<!-- ============ LOGIN PAGE PREMIUM ============ -->
+<div id="page-login">
+  <div class="login-hero-bg"></div>
+  <div class="login-content">
+
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="10" width="3" height="4" rx="1"/>
+          <rect x="19" y="10" width="3" height="4" rx="1"/>
+          <rect x="5" y="8" width="3" height="8" rx="1"/>
+          <rect x="16" y="8" width="3" height="8" rx="1"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <div class="login-logo-text">OPTI<span>MUSCLE</span></div>
+      <div class="login-tagline">POUSSE TES LIMITES</div>
+    </div>
+
+    <div class="login-hero-text">
+      <h1>Ton meilleur corps<br/><span class="text-gradient">commence ici.</span></h1>
+      <p>Programme sur-mesure, démos vidéo, suivi en temps réel. Tout pour transformer ton corps.</p>
+    </div>
+
+    <div class="login-card">
+      <div id="login-loading" class="login-loading">
+        <div class="loader-premium">
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+        </div>
+        <div style="margin-top: 12px;">Connexion en cours...</div>
+      </div>
+
+      <div id="login-form-area">
+        <div class="login-title" id="login-form-title">CONNEXION</div>
+        <div class="login-sub" id="login-form-sub">Reprends ton entraînement où tu l'as laissé</div>
+
+        <button class="btn-google" id="btn-google" type="button">
+          <svg width="20" height="20" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.7 6.5 29.1 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.7 6.5 29.1 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.8-1.7 13.4-4.7l-6.2-5.2C29.3 35.5 26.8 36 24 36c-5.3 0-9.6-2.9-11.3-7H6.3l-.1.1C9.6 39.4 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.2-2.3 4-4.2 5.2l6.2 5.2C41 34.9 44 29.9 44 24c0-1.3-.1-2.7-.4-4z"/>
+          </svg>
+          Continuer avec Google
+        </button>
+
+        <div class="login-divider"><span>OU</span></div>
+
+        <div class="login-input-group">
+          <input class="login-input" type="email" id="input-email" placeholder="Adresse email" autocomplete="email" />
+          <input class="login-input" type="password" id="input-password" placeholder="Mot de passe" autocomplete="current-password" />
+          <input class="login-input" type="password" id="input-password2" placeholder="Confirmer le mot de passe" style="display:none;" />
+        </div>
+
+        <div class="login-error" id="login-error"></div>
+
+        <button class="btn btn-primary" id="btn-email-action" type="button" style="margin-top:4px;">Se connecter</button>
+
+        <div class="login-forgot-password">
+          <a id="btn-forgot-password" tabindex="0">Mot de passe oublié ?</a>
+        </div>
+
+        <div class="login-toggle">
+          <span id="toggle-text">Pas encore de compte ?</span>
+          <a id="toggle-mode" tabindex="0"> Créer un compte</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-social-proof">
+      <div class="login-social-proof-stars">★★★★★</div>
+      <div class="login-social-proof-text">
+        <strong>4.8/5</strong> · Rejoint par <strong>48 000+</strong> athlètes
+      </div>
+    </div>
+
+    <div class="login-footer">© 2026 OPTIMUSCLE — TOUS DROITS RÉSERVÉS</div>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header id="app-header" style="display:none;">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="10" width="3" height="4" rx="1"/>
+        <rect x="19" y="10" width="3" height="4" rx="1"/>
+        <rect x="5" y="8" width="3" height="8" rx="1"/>
+        <rect x="16" y="8" width="3" height="8" rx="1"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+    </div>
+    <div class="logo-text">OPTI<span>MUSCLE</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <button class="header-btn" id="settings-btn" type="button" aria-label="Paramètres">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div id="user-avatar-wrap" style="display:none;"></div>
+  </div>
+</header>
+
+<!-- ============ ONBOARDING PREMIUM ============ -->
+<section id="page-onboarding" class="page onb-container">
+  <div class="onb-bg"></div>
+
+  <div class="onb-progress-track">
+    <div class="onb-progress-bar" id="onb-progress" style="width: 20%"></div>
+  </div>
+
+  <div class="step active" data-step="1">
+    <span class="step-counter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>Étape 1 sur 5</span>
+    <div class="question">QUEL EST <span class="text-gradient">TON OBJECTIF</span> ?</div>
+    <p class="question-sub">On va construire un programme rien que pour toi</p>
+    <div class="options" data-field="goal">
+      <div class="option" data-value="muscle"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2"/><path d="M20 12h2"/><rect x="4" y="9" width="3" height="6" rx="1"/><rect x="17" y="9" width="3" height="6" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div><div class="option-text"><div class="option-title">Prise de muscle</div><div class="option-desc">Hypertrophie, force, volume</div></div></div>
+      <div class="option" data-value="loss"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div><div class="option-text"><div class="option-title">Perte de poids</div><div class="option-desc">Brûler les graisses, tonifier</div></div></div>
+      <div class="option" data-value="endurance"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M4 22l5-7 4 3-2-7-4 3-3-3"/><path d="M14 17l3 3 3-3-3-6-3 3"/></svg></div><div class="option-text"><div class="option-title">Endurance</div><div class="option-desc">Cardio, souffle, résistance</div></div></div>
+      <div class="option" data-value="health"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96c1.4 5.36-1 12.85-4.2 14.34A6.9 6.9 0 0 1 11 20"/><path d="M2 21c.69-2.5 2.49-5 4-7 1.5-2 3-2.5 5-2.5"/></svg></div><div class="option-text"><div class="option-title">Forme générale</div><div class="option-desc">Bien-être, énergie, santé</div></div></div>
+    </div>
+    <button class="btn btn-primary btn-next" disabled>Continuer →</button>
+  </div>
+
+  <div class="step" data-step="2">
+    <span class="step-counter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M2 12h2"/><path d="M20 12h2"/><rect x="4" y="9" width="3" height="6" rx="1"/><rect x="17" y="9" width="3" height="6" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Étape 2 sur 5</span>
+    <div class="question">QUEL EST <span class="text-gradient">TON NIVEAU</span> ?</div>
+    <p class="question-sub">Sois honnête, ça nous permet d'adapter l'intensité</p>
+    <div class="options" data-field="level">
+      <div class="option" data-value="beginner"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17.5v-4.5a5 5 0 0 1 5-5h0a5 5 0 0 1 5 5v4.5"/><path d="M12 22v-10"/><path d="M9 22h6"/></svg></div><div class="option-text"><div class="option-title">Débutant</div><div class="option-desc">Moins de 6 mois d'expérience</div></div></div>
+      <div class="option" data-value="intermediate"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg></div><div class="option-text"><div class="option-title">Intermédiaire</div><div class="option-desc">6 mois à 2 ans</div></div></div>
+      <div class="option" data-value="advanced"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div><div class="option-text"><div class="option-title">Avancé</div><div class="option-desc">Plus de 2 ans, technique solide</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-prev">← Retour</button>
+      <button class="btn btn-primary btn-next" disabled>Continuer →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="3">
+    <span class="step-counter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Étape 3 sur 5</span>
+    <div class="question">OÙ <span class="text-gradient">T'ENTRAÎNES-TU</span> ?</div>
+    <p class="question-sub">Le programme s'adapte à ton équipement</p>
+    <div class="options" data-field="place">
+      <div class="option" data-value="home_none"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/></svg></div><div class="option-text"><div class="option-title">Maison sans matériel</div><div class="option-desc">Juste le poids du corps</div></div></div>
+      <div class="option" data-value="home_basic"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2"/><path d="M20 12h2"/><rect x="4" y="9" width="3" height="6" rx="1"/><rect x="17" y="9" width="3" height="6" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div><div class="option-text"><div class="option-title">Maison avec haltères</div><div class="option-desc">Élastiques, haltères, banc</div></div></div>
+      <div class="option" data-value="gym"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="9" y2="9.01"/><line x1="15" y1="9" x2="15" y2="9.01"/><line x1="9" y1="15" x2="9" y2="15.01"/><line x1="15" y1="15" x2="15" y2="15.01"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div><div class="option-text"><div class="option-title">Salle de sport</div><div class="option-desc">Équipement complet</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-prev">← Retour</button>
+      <button class="btn btn-primary btn-next" disabled>Continuer →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="4">
+    <span class="step-counter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Étape 4 sur 5</span>
+    <div class="question">COMBIEN DE <span class="text-gradient">SÉANCES</span> ?</div>
+    <p class="question-sub">Par semaine, sois réaliste pour tenir dans le temps</p>
+    <div class="options" data-field="frequency">
+      <div class="option" data-value="3"><div class="option-emoji option-num">3</div><div class="option-text"><div class="option-title">3 séances</div><div class="option-desc">Idéal pour commencer</div></div></div>
+      <div class="option" data-value="4"><div class="option-emoji option-num">4</div><div class="option-text"><div class="option-title">4 séances</div><div class="option-desc">Bon équilibre vie / sport</div></div></div>
+      <div class="option" data-value="5"><div class="option-emoji option-num">5</div><div class="option-text"><div class="option-title">5 séances</div><div class="option-desc">Pour les motivés</div></div></div>
+      <div class="option" data-value="6"><div class="option-emoji option-num">6</div><div class="option-text"><div class="option-title">6 séances</div><div class="option-desc">Niveau athlète</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-prev">← Retour</button>
+      <button class="btn btn-primary btn-next" disabled>Continuer →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="5">
+    <span class="step-counter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l3 2"/><path d="M9 2h6"/><path d="M12 4v2"/></svg>Étape 5 sur 5</span>
+    <div class="question">DURÉE <span class="text-gradient">PAR SÉANCE</span> ?</div>
+    <p class="question-sub">Mieux vaut court et régulier que long et abandonné</p>
+    <div class="options" data-field="duration">
+      <div class="option" data-value="20"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg></div><div class="option-text"><div class="option-title">20 minutes</div><div class="option-desc">Express, efficace</div></div></div>
+      <div class="option" data-value="40"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l3 2"/><path d="M9 2h6"/><path d="M12 4v2"/></svg></div><div class="option-text"><div class="option-title">40 minutes</div><div class="option-desc">Standard, équilibré</div></div></div>
+      <div class="option" data-value="60"><div class="option-emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div><div class="option-text"><div class="option-title">60 minutes</div><div class="option-desc">Complet, intense</div></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-prev">← Retour</button>
+      <button class="btn btn-primary" id="btn-finish-onb" disabled>Générer mon programme <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD HOME ============ -->
+<section id="page-home" class="page">
+
+  <!-- HERO PREMIUM -->
+  <div class="hero">
+    <div class="hero-img" id="hero-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-greeting" id="hero-greeting">Salut <strong>Champion</strong></div>
+      <div class="hero-tag" id="hero-tag">Cette semaine</div>
+      <div class="hero-title" id="hero-title">ON Y VA.</div>
+      <div class="hero-quote" id="hero-quote">La discipline bat le talent.</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- STREAK CARD -->
+    <div class="streak-card" id="streak-card" style="display:none;">
+      <div class="streak-flame"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 1 2 4 4 4 8a8 8 0 0 1-16 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 2-7 5-10z"/></svg></div>
+      <div class="streak-info">
+        <div class="streak-number" id="streak-number">0</div>
+        <div class="streak-label">Jours consécutifs</div>
+        <div class="streak-best" id="streak-best">Best : 0 jours</div>
+      </div>
+    </div>
+
+    <!-- XP & LEVEL CARD -->
+    <div class="xp-card">
+      <div class="xp-header">
+        <div class="xp-label">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:-2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+          <span id="xp-title">Niveau 1 · Débutant</span>
+        </div>
+        <div class="xp-level-badge" id="xp-level-badge">LVL 1</div>
+      </div>
+      <div class="xp-progress">
+        <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+      </div>
+      <div class="xp-info">
+        <span><strong id="xp-current">0</strong> XP</span>
+        <span><strong id="xp-required">100</strong> XP pour le prochain niveau</span>
+      </div>
+    </div>
+
+    <!-- WEEK PROGRESS CARD -->
+    <div class="week-card">
+      <div class="week-card-bg" id="week-card-bg"></div>
+      <div class="week-card-content">
+        <div class="progress-header">
+          <div>
+            <div class="progress-label">PROGRESSION HEBDO</div>
+            <div class="progress-value"><span id="done-count">0</span><span class="suffix"> / <span id="total-count">0</span></span></div>
+          </div>
+          <div class="fire-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2c0 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 1 2 4 4 4 8a8 8 0 0 1-16 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3 2-7 5-10z"/></svg></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="week-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-value gradient" id="stat-total">0</span>
+        <span class="stat-label">Séances</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value gradient" id="stat-min">0</span>
+        <span class="stat-label">Minutes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value gradient" id="stat-badges">0</span>
+        <span class="stat-label">Badges</span>
+      </div>
+    </div>
+
+    <!-- TA SEMAINE -->
+    <div class="section-title">
+      <h2>TA SEMAINE</h2>
+      <span class="section-title-link" id="week-link">Voir tout</span>
+    </div>
+    <div id="days-list"></div>
+
+    <!-- SOCIAL PROOF -->
+    <div class="social-proof">
+      <div class="live-counter">
+        <span class="live-dot"></span>
+        <span><strong id="live-count">324</strong> personnes s'entraînent maintenant</span>
+      </div>
+      <div class="social-proof-grid">
+        <div class="social-proof-stat">
+          <div class="social-proof-number" id="sp-users">48k+</div>
+          <div class="social-proof-label">Athlètes</div>
+        </div>
+        <div class="social-proof-stat">
+          <div class="social-proof-number" id="sp-workouts">1.2M+</div>
+          <div class="social-proof-label">Séances</div>
+        </div>
+        <div class="social-proof-stat">
+          <div class="social-proof-number" id="sp-rating">4.8/5</div>
+          <div class="social-proof-label">Note</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top: 4px;">
+        <h2 style="font-size: 22px;">ILS L'ONT FAIT</h2>
+      </div>
+
+      <div class="testimonials" id="testimonials-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ WORKOUT DETAIL ============ -->
+<section id="page-workout" class="page">
+  <div class="workout-hero">
+    <div class="workout-hero-img" id="wk-hero-img"></div>
+    <div class="workout-hero-overlay"></div>
+    <div class="workout-hero-content">
+      <button class="back-btn" id="btn-back-home" type="button" aria-label="Retour">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="workout-hero-bottom">
+        <span class="workout-tag" id="wk-day">SÉANCE</span>
+        <div class="workout-title" id="wk-title">SÉANCE</div>
+        <div class="workout-meta">
+          <div><strong id="wk-ex-count">0</strong>EXOS</div>
+          <div><strong id="wk-duration">0</strong>MIN</div>
+          <div><strong id="wk-difficulty">—</strong>INTENSITÉ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="padding-top: 28px;">
+    <div id="exercise-list"></div>
+    <button class="btn btn-primary btn-complete-workout" id="btn-complete-workout">Terminer la séance <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="20 6 9 17 4 12"/></svg></button>
+  </div>
+</section>
+
+<!-- ============ HISTORY ============ -->
+<section id="page-history" class="page">
+  <div class="container" style="padding-top: 24px;">
+    <h1>HISTORIQUE</h1>
+    <p class="subtitle">Ton activité au fil du temps</p>
+
+    <div class="chart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="progress-label">7 DERNIERS JOURS</div>
+          <div style="font-family: var(--font-display); font-size: 36px; line-height: 1; margin-top: 6px;">
+            <span class="text-gradient" id="week-sessions">0</span>
+            <span style="font-size: 18px; color: var(--text-dim);">SÉANCES</span>
+          </div>
+        </div>
+        <div style="font-size: 36px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg></div>
+      </div>
+      <div class="chart" id="history-chart"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><span class="stat-value" id="hist-week">0</span><span class="stat-label">Cette sem.</span></div>
+      <div class="stat-card"><span class="stat-value" id="hist-month">0</span><span class="stat-label">30 jours</span></div>
+      <div class="stat-card"><span class="stat-value" id="hist-best">0</span><span class="stat-label">Best série</span></div>
+    </div>
+
+    <div class="section-title"><h2>SÉANCES RÉCENTES</h2></div>
+    <div id="history-list"></div>
+  </div>
+</section>
+
+<!-- ============ BADGES ============ -->
+<section id="page-badges" class="page">
+  <div class="container" style="padding-top: 24px;">
+    <h1>RÉCOMPENSES</h1>
+    <p class="subtitle">Débloque des badges en progressant</p>
+
+    <div class="achievement-header">
+      <div class="achievement-counter">
+        <span id="badges-unlocked">0</span><span> / <span id="badges-total">0</span></span>
+      </div>
+      <div class="achievement-label">BADGES DÉBLOQUÉS</div>
+    </div>
+
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+</section>
+
+<!-- ============ PROFILE ============ -->
+<section id="page-profile" class="page">
+  <div class="container" style="padding-top: 24px;">
+    <h1>MON PROFIL</h1>
+    <p class="subtitle" id="profile-email-line">Tes préférences d'entraînement</p>
+
+    <div class="profile-card" id="profile-info"></div>
+
+    <button class="btn btn-ghost" id="btn-reset-profile">Refaire le questionnaire</button>
+    <button class="btn btn-ghost" id="btn-export-data" style="margin-top: 12px;">📤 Exporter mes données</button>
+    <button class="btn btn-danger" id="btn-logout" style="margin-top: 12px;">Se déconnecter</button>
+    <button class="btn btn-danger-outline" id="btn-delete-account" style="margin-top: 8px;">🗑️ Supprimer mon compte</button>
+  </div>
+</section>
+
+<!-- ============================================
+     PAGE NUTRITION
+============================================ -->
+<section id="page-nutrition" class="page">
+  <div id="nutrition-content"></div>
+</section>
+
+<!-- ============================================
+     PAGE CHALLENGES
+============================================ -->
+<section id="page-challenges" class="page">
+  <div id="challenges-content"></div>
+</section>
+
+<!-- ============================================
+     MODAL : Ajouter un aliment
+============================================ -->
+<div id="nut-add-modal">
+  <div class="nut-add-modal-inner">
+    <div class="nut-add-modal-header">
+      <div class="nut-add-modal-title" id="nut-add-modal-title">🍽️ Ajouter un aliment</div>
+      <button class="nut-add-modal-close" id="nut-add-modal-close" type="button" aria-label="Fermer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="nut-search-wrap">
+      <input type="text" class="nut-search-input" id="nut-search-input" placeholder="Rechercher un aliment... (ex: poulet, pomme)" autocomplete="off"/>
+    </div>
+
+    <div class="nut-search-results" id="nut-search-results"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     MODAL : Portion
+============================================ -->
+<div id="nut-portion-modal">
+  <div class="nut-portion-modal-inner">
+    <button class="nut-portion-modal-close" id="nut-portion-modal-close" type="button" aria-label="Fermer">✕</button>
+    <div id="nut-portion-content"></div>
+  </div>
+</div>
+
+
+<!-- ============ MODALS ============ -->
+
+<!-- Settings -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="text-align:left;">
+    <h3 style="text-align:center; margin-bottom: 18px; display:flex; align-items:center; justify-content:center; gap:8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> PARAMÈTRES</h3>
+    <div class="profile-card" style="margin-bottom: 18px;">
+      <div class="profile-row">
+        <span style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Rappels</span>
+        <label class="switch"><input type="checkbox" id="set-reminders"><span class="slider"></span></label>
+      </div>
+      <div class="profile-row">
+        <span style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Heure</span>
+        <input type="time" class="time-input" id="set-time" value="18:00">
+      </div>
+      <div class="profile-row">
+        <span style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Sons</span>
+        <label class="switch"><input type="checkbox" id="set-sound" checked><span class="slider"></span></label>
+      </div>
+      <div class="profile-row">
+        <span style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="1"/><line x1="3" y1="9" x2="3" y2="15"/><line x1="21" y1="9" x2="21" y2="15"/></svg> Vibrations</span>
+        <label class="switch"><input type="checkbox" id="set-vibrate" checked><span class="slider"></span></label>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-close-settings">Sauvegarder</button>
+  </div>
+</div>
+
+<!-- Timer -->
+<div class="modal-overlay" id="timer-modal">
+  <div class="modal">
+    <h3>⏱ REPOS</h3>
+    <p id="timer-ex-name">—</p>
+    <div class="timer-circle">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e8602c"/>
+            <stop offset="100%" stop-color="#f09050"/>
+          </linearGradient>
+        </defs>
+        <circle class="bg" cx="100" cy="100" r="90"></circle>
+        <circle class="fg" cx="100" cy="100" r="90" id="timer-fg" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+      </svg>
+      <div class="timer-display" id="timer-display">60</div>
+    </div>
+    <div class="timer-controls">
+      <button class="btn btn-ghost" id="btn-timer-minus">-15s</button>
+      <button class="btn btn-primary" id="timer-pause">Pause</button>
+      <button class="btn btn-ghost" id="btn-timer-plus">+15s</button>
+    </div>
+    <button class="btn btn-danger" style="margin-top: 12px;" id="btn-timer-cancel">Annuler</button>
+  </div>
+</div>
+
+<!-- Exercise info -->
+<div class="modal-overlay" id="ex-info-modal">
+  <div class="modal ex-info-modal">
+    <h3 id="ex-info-name">—</h3>
+    <div style="text-align:center;"><span class="muscle-tag" id="ex-info-muscle">—</span></div>
+    <div class="ex-gif-wrap" id="ex-gif-wrap">
+      <div class="ex-gif-loading">
+        <div class="loader-premium">
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+        </div>
+        Chargement de la démo...
+      </div>
+      <img id="ex-gif-img" src="" alt="" style="display:none;" />
+      <div class="ex-gif-fallback" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="10" width="3" height="4" rx="1"/>
+          <rect x="19" y="10" width="3" height="4" rx="1"/>
+          <rect x="5" y="8" width="3" height="8" rx="1"/>
+          <rect x="16" y="8" width="3" height="8" rx="1"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        <div class="ex-gif-fallback-text">Réfère-toi aux instructions ci-dessous</div>
+        <div class="ex-gif-fallback-muscle"></div>
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-label">📋 DESCRIPTION</div>
+      <div class="info-text" id="ex-info-desc">—</div>
+    </div>
+    <div class="info-section">
+      <div class="info-label">✅ EXÉCUTION CORRECTE</div>
+      <ul class="tips-list" id="ex-info-tips"></ul>
+    </div>
+    <button class="btn btn-primary" id="btn-close-ex-info">Compris 👍</button>
+  </div>
+</div>
+
+<!-- Badge unlock -->
+<div class="modal-overlay" id="badge-modal">
+  <div class="modal">
+    <div style="font-size: 96px; margin-bottom: 12px;" class="badge-unlock-anim" id="badge-modal-emoji">🏆</div>
+    <h3 style="background: var(--grad-premium); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">NOUVEAU BADGE !</h3>
+    <div style="font-family: var(--font-display); font-size: 28px; margin: 8px 0;" id="badge-modal-name">—</div>
+    <p id="badge-modal-desc">—</p>
+    <button class="btn btn-primary" id="btn-close-badge">Génial ! 🎉</button>
+  </div>
+</div>
+
+<!-- Level up -->
+<div class="modal-overlay" id="levelup-modal">
+  <div class="modal">
+    <div style="font-size: 96px; margin-bottom: 12px;" class="badge-unlock-anim">⚡</div>
+    <h3 style="background: var(--grad-electric); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 32px;">LEVEL UP !</h3>
+    <div style="font-family: var(--font-display); font-size: 36px; margin: 8px 0;" id="levelup-level">NIVEAU 2</div>
+    <p id="levelup-title">Tu deviens : Novice</p>
+    <button class="btn btn-primary" id="btn-close-levelup">Continuer 🚀</button>
+  </div>
+</div>
+
+<!-- ============ TABS ============ -->
+<nav class="tabs" id="tabs" style="display:none;">
+  <button class="tab active" data-tab="home" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    Accueil
+  </button>
+  <button class="tab" data-tab="history" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+    Stats
+  </button>
+  <button class="tab" data-tab="badges" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 13l-2 8 5-3 5 3-2-8"/></svg>
+    Badges
+  </button>
+  <button class="tab" data-tab="profile" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    Profil
+  </button>
+</nav>
+
+<div class="toast" id="toast">Bravo ! 💪</div>
+
+<!-- ============ BOTTOM NAVIGATION ============ -->
+<nav class="bottom-nav" id="bottom-nav"></nav>
+
+<!-- ============ SCRIPTS ============ -->
+<script type="module" src="js/app.js"></script>
+
+
+<!-- ============================================
+     SIDEBAR MENU
+============================================ -->
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="10" width="3" height="4" rx="1"/>
+          <rect x="19" y="10" width="3" height="4" rx="1"/>
+          <rect x="5" y="8" width="3" height="8" rx="1"/>
+          <rect x="16" y="8" width="3" height="8" rx="1"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <div class="sidebar-logo-text">OPTI<span>MUSCLE</span></div>
+    </div>
+    <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Fermer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="sidebar-user-avatar" id="sidebar-user-avatar">U</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="sidebar-user-name">Athlète</div>
+      <div class="sidebar-user-email" id="sidebar-user-email">—</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-title">Navigation</div>
+    <button class="sidebar-item" data-action="home" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/></svg></span>
+      <span class="sidebar-item-label">Accueil</span>
+    </button>
+    <button class="sidebar-item" data-action="history" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg></span>
+      <span class="sidebar-item-label">Statistiques</span>
+    </button>
+    <button class="sidebar-item" data-action="badges" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg></span>
+      <span class="sidebar-item-label">Badges</span>
+    </button>
+    <button class="sidebar-item" data-action="challenges" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg></span>
+      <span class="sidebar-item-label">Défis</span>
+      <span class="sidebar-item-badge">HOT</span>
+    </button>
+    <button class="sidebar-item" data-action="nutrition" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 2a4 4 0 0 0-4 4c0 2 1 4 4 6 3-2 4-4 4-6a4 4 0 0 0-4-4z"/></svg></span>
+      <span class="sidebar-item-label">Nutrition</span>
+      <span class="sidebar-item-badge">NEW</span>
+    </button>
+    <button class="sidebar-item" data-action="coach" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg></span>
+      <span class="sidebar-item-label">Coach IA</span>
+      <span class="sidebar-item-badge">NEW</span>
+    </button>
+    <button class="sidebar-item" data-action="profile" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+      <span class="sidebar-item-label">Profil</span>
+    </button>
+
+    <div class="sidebar-section-title">Préférences</div>
+    <button class="sidebar-item" data-action="settings" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6m11-11h-6M7 12H1m17.5-6.5l-4.24 4.24M9.74 14.26l-4.24 4.24m13-.01l-4.24-4.24M9.74 9.74L5.5 5.5"/></svg></span>
+      <span class="sidebar-item-label">Paramètres</span>
+    </button>
+
+    <div class="sidebar-section-title">Apparence</div>
+    <div class="theme-switcher">
+      <button class="theme-option" data-theme="light" type="button" title="Mode clair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        CLAIR
+      </button>
+      <button class="theme-option" data-theme="auto" type="button" title="Auto (système)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        AUTO
+      </button>
+      <button class="theme-option" data-theme="dark" type="button" title="Mode sombre">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        SOMBRE
+      </button>
+    </div>
+
+    <div class="sidebar-section-title">Compte</div>
+    <button class="sidebar-item" data-action="logout" type="button" style="color: var(--danger);">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+      <span class="sidebar-item-label">Se déconnecter</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    © 2026 OPTIMUSCLE
+  </div>
+</aside>
+
+
+
+<!-- ============================================
+     COACH IA — Bouton flottant
+============================================ -->
+<button class="coach-fab" id="coach-fab" type="button" aria-label="Ouvrir le coach IA">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<!-- ============================================
+     COACH IA — Modal Chat
+============================================ -->
+<div class="coach-modal" id="coach-modal">
+  <div class="coach-modal-inner" style="display:contents;">
+
+    <!-- Header -->
+    <header class="coach-header">
+      <div class="coach-header-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/>
+          <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/>
+        </svg>
+      </div>
+      <div class="coach-header-info">
+        <div class="coach-header-name">OPTI · Coach IA</div>
+        <div class="coach-header-status">
+          <span style="width:6px;height:6px;background:var(--neon-bright);border-radius:50%;display:inline-block;"></span>
+          En ligne
+        </div>
+      </div>
+      <button class="coach-header-close" id="coach-modal-close" type="button" aria-label="Fermer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+
+    <!-- Messages -->
+    <div class="coach-messages" id="coach-messages"></div>
+
+    <!-- Starter questions -->
+    <div class="coach-starters" id="coach-starters"></div>
+
+    <!-- Input form -->
+    <form class="coach-form" id="coach-form">
+      <input
+        type="text"
+        class="coach-input"
+        id="coach-input"
+        placeholder="Pose ta question à OPTI..."
+        autocomplete="off"
+        maxlength="500"
+      />
+      <button type="submit" class="coach-send" aria-label="Envoyer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor"/>
+        </svg>
+      </button>
+    </form>
+
+  </div>
+</div>
+
+
+</body>
+</html>
