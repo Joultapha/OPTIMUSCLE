@@ -5,12 +5,17 @@
    → User pays in crypto → Redirect back to OPTIMUSCLE
    → Premium activated locally (localStorage)
 
-   Uses NOWPayments Hosted Checkout (official frontend method).
-   Public Key only — safe for frontend.
-   API Key is for server-side only (not used here).
+   Uses NOWPayments Hosted Checkout via 2 methods:
+   - Primary: API Invoice (POST /v1/invoice → redirect to invoice_url)
+   - Fallback: Direct URL with ?data= JSON parameter
+
+   API Key is used server-side only in the invoice flow.
+   For the ?data= method, API key is embedded in URL (by design,
+   like Stripe publishable keys).
    ============================================================ */
 
-const NOWPAYMENTS_PUBLIC_KEY = '3a537511-bad2-413b-8d2b-b27471c593c7';
+const NOWPAYMENTS_API_KEY = 'QY9XACJ-CB5MJNM-PJG7JZV-DNCHB40';
+const NOWPAYMENTS_API_BASE = 'https://api.nowpayments.io/v1';
 
 // ===== PRICING =====
 export const PRICING = {
@@ -124,50 +129,110 @@ export function deactivatePremium() {
 // ===== PAYMENT FLOW =====
 
 /**
- * Create a NOWPayments hosted checkout URL.
+ * METHOD 1 (Primary): Create an invoice via NOWPayments API,
+ * then redirect the user to the hosted checkout page.
  *
- * NOWPayments hosted checkout format:
- *   https://nowpayments.io/payment?apikey=...&price_amount=...&...
+ * Flow:
+ *   POST /v1/invoice → get invoice_url → redirect user
  *
- * All params must be SNAKE_CASE.
- * Only the Public Key is used (safe for frontend).
- *
- * ⚠️ DO NOT use checkout.nowpayments.io — that domain does NOT exist!
- * Use nowpayments.io/payment instead.
+ * The invoice_url format is: https://nowpayments.io/payment?iid={id}
+ * This is the OFFICIAL recommended method by NOWPayments.
  *
  * @param {string} planId - 'monthly', 'yearly', or 'lifetime'
- * @returns {string} checkout URL
  */
-export function createCheckoutUrl(planId) {
+async function createInvoiceAndRedirect(planId) {
   const plan = PRICING[planId] || PRICING.monthly;
   const orderId = `optimuscle_${planId}_${Date.now()}`;
 
-  const params = new URLSearchParams({
-    apikey: NOWPAYMENTS_PUBLIC_KEY,
-    price_amount: plan.price.toString(),
+  const body = {
+    price_amount: plan.price,
     price_currency: plan.currency,
-    pay_currency: 'usdtsol',
+    // NOT specifying pay_currency lets the user choose their crypto on the checkout page
     order_id: orderId,
     order_description: `OPTIMUSCLE ${plan.name}`,
     success_url: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`,
     cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancel`,
-  });
+  };
 
-  return `https://nowpayments.io/payment?${params.toString()}`;
+  console.log('[NOWPayments] Creating invoice via API...', body);
+
+  try {
+    const response = await fetch(`${NOWPAYMENTS_API_BASE}/invoice`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': NOWPAYMENTS_API_KEY,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('[NOWPayments] Invoice API error:', response.status, errorData);
+      throw new Error(`API error ${response.status}: ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+    console.log('[NOWPayments] Invoice created:', data);
+
+    if (data.invoice_url) {
+      console.log('[NOWPayments] Redirecting to invoice_url:', data.invoice_url);
+      window.location.href = data.invoice_url;
+      return;
+    }
+
+    throw new Error('No invoice_url in response');
+  } catch (err) {
+    console.warn('[NOWPayments] Invoice API failed, falling back to ?data= method:', err.message);
+    fallbackToDirectUrl(planId);
+  }
 }
 
 /**
- * Redirect user to NOWPayments hosted checkout
+ * METHOD 2 (Fallback): Direct URL checkout with ?data= parameter.
+ *
+ * This method constructs a JSON object with payment details,
+ * encodes it, and passes it as the ?data= parameter to:
+ *   https://nowpayments.io/payment?data=<encoded JSON>
+ *
+ * This is the official WooCommerce-style integration.
+ * The API key is included in the URL by design (like Stripe publishable keys).
+ *
+ * @param {string} planId - 'monthly', 'yearly', or 'lifetime'
  */
-export function redirectToCheckout(planId) {
-  const url = createCheckoutUrl(planId);
-  console.log('[NOWPayments] Redirecting to:', url);
+function fallbackToDirectUrl(planId) {
+  const plan = PRICING[planId] || PRICING.monthly;
+  const orderId = `optimuscle_${planId}_${Date.now()}`;
+
+  const data = {
+    apiKey: NOWPAYMENTS_API_KEY,
+    paymentAmount: plan.price,
+    paymentCurrency: plan.currency,
+    successURL: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`,
+    cancelURL: `${window.location.origin}${window.location.pathname}?payment=cancel`,
+    orderID: orderId,
+    orderDescription: `OPTIMUSCLE ${plan.name}`,
+  };
+
+  const encodedData = encodeURIComponent(JSON.stringify(data));
+  const url = `https://nowpayments.io/payment?data=${encodedData}`;
+
+  console.log('[NOWPayments] Fallback: Redirecting to ?data= URL');
   window.location.href = url;
 }
 
 /**
- * Check URL params for payment result on page load
- * Called during app initialization
+ * Redirect user to NOWPayments hosted checkout.
+ * Tries the API Invoice method first, falls back to direct URL.
+ */
+export function redirectToCheckout(planId) {
+  console.log('[NOWPayments] Starting checkout for plan:', planId);
+  createInvoiceAndRedirect(planId);
+}
+
+/**
+ * Check URL params for payment result on page load.
+ * Called during app initialization.
  */
 export function checkPaymentResult() {
   const params = new URLSearchParams(window.location.search);
