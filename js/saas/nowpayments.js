@@ -1,18 +1,15 @@
 /* ============================================================
    OPTIMUSCLE — NOWPayments Integration (Crypto Payments)
    ============================================================
-   Flow: User clicks Subscribe → Redirect to NOWPayments Checkout
-   → Payment confirmed → Redirect back to OPTIMUSCLE
-   → Premium activated locally (localStorage)
+   Flow: User clicks Subscribe → NOWPayments Widget opens
+   → User pays in crypto → Widget callback → Premium activated
 
-   IMPORTANT: Public Key only — safe for frontend.
+   Uses NOWPayments Checkout Widget (official frontend method).
+   Public Key only — safe for frontend.
    API Key is for server-side only (not used here).
    ============================================================ */
 
 const NOWPAYMENTS_PUBLIC_KEY = '3a537511-bad2-413b-8d2b-b27471c593c7';
-const NOWPAYMENTS_API_BASE = 'https://api.nowpayments.io/v1';
-// NOWPayments hosted checkout — correct URL format
-const NOWPAYMENTS_CHECKOUT_URL = 'https://nowpayments.io/payment/';
 
 // ===== PRICING =====
 export const PRICING = {
@@ -126,40 +123,83 @@ export function deactivatePremium() {
   });
 }
 
+// ===== WIDGET LOADER =====
+
+let widgetScriptLoaded = false;
+let widgetScriptPromise = null;
+
+/**
+ * Load the NOWPayments widget script dynamically.
+ * Only loads once, then cached.
+ */
+function loadWidgetScript() {
+  if (widgetScriptLoaded) return Promise.resolve();
+  if (widgetScriptPromise) return widgetScriptPromise;
+
+  widgetScriptPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.nowpayments.io/scripts/nowpayments.js';
+    script.async = true;
+    script.onload = () => {
+      widgetScriptLoaded = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error('Failed to load NOWPayments widget'));
+    document.head.appendChild(script);
+  });
+
+  return widgetScriptPromise;
+}
+
 // ===== PAYMENT FLOW =====
 
 /**
- * Create a NOWPayments checkout URL and redirect the user.
- * Uses the hosted checkout page — simplest integration for pure frontend.
+ * Open NOWPayments checkout widget for a plan.
+ * Uses the official Checkout Widget — works in pure frontend.
  *
  * @param {string} planId - 'monthly', 'yearly', or 'lifetime'
- * @returns {string} checkout URL
  */
-export function createCheckoutUrl(planId) {
+export async function redirectToCheckout(planId) {
   const plan = PRICING[planId] || PRICING.monthly;
   const orderId = `optimuscle_${planId}_${Date.now()}`;
 
-  // ⚠️ NOWPayments hosted checkout uses SNAKE_CASE params, not camelCase
-  const params = new URLSearchParams({
-    apikey: NOWPAYMENTS_PUBLIC_KEY,          // lowercase 'k'!
-    price_amount: plan.price.toString(),     // snake_case
-    price_currency: plan.currency,           // snake_case
-    pay_currency: 'usdtsol',                 // USDT on Solana — low fees, fast
-    order_id: orderId,                       // snake_case
-    order_description: `OPTIMUSCLE ${plan.name}`, // snake_case
-    success_url: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`, // snake_case
-    cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancel`, // snake_case
-  });
+  try {
+    // 1. Load widget script
+    await loadWidgetScript();
 
-  return `${NOWPAYMENTS_CHECKOUT_URL}?${params.toString()}`;
-}
+    // 2. Check widget is available
+    if (!window.NowPayments) {
+      throw new Error('NOWPayments widget not available');
+    }
 
-/**
- * Redirect user to NOWPayments checkout
- */
-export function redirectToCheckout(planId) {
-  const url = createCheckoutUrl(planId);
-  window.location.href = url;
+    // 3. Open payment widget
+    window.NowPayments.showPayment({
+      apiKey: NOWPAYMENTS_PUBLIC_KEY,
+      priceAmount: plan.price,
+      priceCurrency: plan.currency,
+      payCurrency: 'usdtsol',        // USDT on Solana — low fees, fast
+      orderId: orderId,
+      orderDescription: `OPTIMUSCLE ${plan.name}`,
+      successUrl: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`,
+      cancelUrl: `${window.location.origin}${window.location.pathname}?payment=cancel`,
+    });
+
+  } catch (e) {
+    console.error('[NOWPayments] Widget error:', e);
+
+    // Fallback: redirect to hosted checkout page (no trailing slash!)
+    const params = new URLSearchParams({
+      apikey: NOWPAYMENTS_PUBLIC_KEY,
+      price_amount: plan.price.toString(),
+      price_currency: plan.currency,
+      pay_currency: 'usdtsol',
+      order_id: orderId,
+      order_description: `OPTIMUSCLE ${plan.name}`,
+      success_url: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`,
+      cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancel`,
+    });
+    window.location.href = `https://nowpayments.io/payment?${params.toString()}`;
+  }
 }
 
 /**
@@ -186,25 +226,4 @@ export function checkPaymentResult() {
   }
 
   return null;
-}
-
-// ===== PAYMENT STATUS CHECK (optional, uses public API) =====
-
-/**
- * Check payment status via NOWPayments public API
- * @param {string} paymentId - NOWPayments payment ID
- */
-export async function checkPaymentStatus(paymentId) {
-  try {
-    const res = await fetch(`${NOWPAYMENTS_API_BASE}/payment/${paymentId}`, {
-      headers: {
-        'x-api-key': NOWPAYMENTS_PUBLIC_KEY,
-      },
-    });
-    if (!res.ok) throw new Error('API error');
-    return await res.json();
-  } catch (e) {
-    console.warn('NOWPayments status check failed:', e);
-    return null;
-  }
 }
