@@ -1,5 +1,6 @@
 /* ============================================================
    OPTIMUSCLE — Theme System (Dark / Light / Auto)
+   Apple Liquid Glass 3-way Switcher
    ============================================================ */
 
 const THEME_KEY = 'optimuscle_theme';
@@ -17,10 +18,13 @@ export function applyTheme(theme) {
   // Update theme-color meta selon le thème actuel
   updateThemeColor(theme);
 
-  // Update UI buttons
+  // Update UI buttons (sidebar theme options)
   document.querySelectorAll('.theme-option').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.theme === theme);
   });
+
+  // Update Apple Liquid Glass Switcher
+  updateLiquidSwitcher(theme);
 }
 
 function updateThemeColor(theme) {
@@ -66,7 +70,7 @@ export function initTheme() {
 }
 
 /**
- * Bind les boutons de switch theme.
+ * Bind les boutons de switch theme (sidebar).
  */
 export function bindThemeButtons() {
   document.querySelectorAll('.theme-option').forEach(btn => {
@@ -74,5 +78,50 @@ export function bindThemeButtons() {
       const theme = btn.dataset.theme;
       applyTheme(theme);
     });
+  });
+}
+
+/**
+ * Bind Apple Liquid Glass Switcher events.
+ */
+export function bindLiquidSwitcher() {
+  const switcher = document.getElementById('liquid-switcher');
+  if (!switcher) return;
+
+  const options = switcher.querySelectorAll('.liquid-switcher-option');
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      const value = option.dataset.option;
+      if (!VALID_THEMES.includes(value)) return;
+
+      // Add switching animation class
+      switcher.classList.add('switching');
+      setTimeout(() => switcher.classList.remove('switching'), 400);
+
+      applyTheme(value);
+    });
+  });
+}
+
+/**
+ * Update Apple Liquid Glass Switcher UI to match current theme.
+ */
+function updateLiquidSwitcher(theme) {
+  const switcher = document.getElementById('liquid-switcher');
+  if (!switcher) return;
+
+  // Update data-value for CSS highlight positioning
+  switcher.dataset.value = theme;
+
+  // Update active class on options
+  const options = switcher.querySelectorAll('.liquid-switcher-option');
+  options.forEach(option => {
+    const isActive = option.dataset.option === theme;
+    option.classList.toggle('active', isActive);
+
+    // Update radio input
+    const input = option.querySelector('input');
+    if (input) input.checked = isActive;
   });
 }

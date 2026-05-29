@@ -77,8 +77,9 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   filter: drop-shadow(0 0 8px var(--accent-glow));
 }
 
-/* Active indicator dot */
+/* Active indicator dot — defined in liquid-glass.css with Apple Liquid Glass styling */
 .bottom-nav-item.active::after {
+  /* Base positioning — full styling in liquid-glass.css */
   content: '';
   position: absolute;
   top: 0;
@@ -88,21 +89,6 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   height: 3px;
   border-radius: 0 0 3px 3px;
   background: var(--accent);
-  animation: indicatorPop 300ms var(--ease-spring);
-}
-
-@keyframes indicatorPop {
-  0% {
-    width: 0;
-    opacity: 0;
-  }
-  50% {
-    width: 28px;
-  }
-  100% {
-    width: 20px;
-    opacity: 1;
-  }
 }
 
 /* ===== CONTENT SPACING ===== */

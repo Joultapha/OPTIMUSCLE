@@ -33,7 +33,7 @@ import {
   getCurrentView,
   render,
 } from './core/appState.js';
-import { initTheme, bindThemeButtons, applyTheme } from './features/theme.js';
+import { initTheme, bindThemeButtons, bindLiquidSwitcher, applyTheme } from './features/theme.js';
 import { initSidebar } from './features/sidebar.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
@@ -201,17 +201,8 @@ function bindGlobalEvents() {
   initSidebar();
   bindThemeButtons();
 
-  // Theme toggle button (header)
-  const themeToggleBtn = document.getElementById('theme-toggle-btn');
-  if (themeToggleBtn) {
-    updateThemeToggleIcon();
-    themeToggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark');
-      applyTheme(next);
-      updateThemeToggleIcon();
-    });
-  }
+  // Apple Liquid Glass Theme Switcher
+  bindLiquidSwitcher();
 
   initCoach();
   initDraggableFab();
@@ -303,18 +294,7 @@ function bindGlobalEvents() {
   });
 }
 
-function updateThemeToggleIcon() {
-  const btn = document.getElementById('theme-toggle-btn');
-  if (!btn) return;
-  const current = document.documentElement.getAttribute('data-theme');
-  const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const lightIcon = btn.querySelector('.theme-icon-light');
-  const darkIcon = btn.querySelector('.theme-icon-dark');
-  if (lightIcon && darkIcon) {
-    lightIcon.style.display = isDark ? 'block' : 'none';
-    darkIcon.style.display = isDark ? 'none' : 'block';
-  }
-}
+
 
 // ============================================================
 // SECURITY

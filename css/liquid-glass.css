@@ -1012,10 +1012,7 @@ html[data-theme="light"] .landing-feature {
   filter: drop-shadow(0 0 10px var(--accent-glow)) !important;
 }
 
-.bottom-nav-item.active::after {
-  background: var(--grad-brand) !important;
-  box-shadow: 0 0 8px var(--accent-glow) !important;
-}
+/* Active ::after now handled by APPLE LIQUID GLASS ENHANCEMENT section below */
 
 /* ===== LOGIN CARD — LIQUID GLASS ===== */
 .login-card {
@@ -1042,7 +1039,240 @@ html[data-theme="light"] .landing-feature {
   box-shadow: 0 12px 32px rgba(0,0,0,0.30), 0 0 12px var(--accent-glow-soft) !important;
 }
 
-/* ===== THEME TOGGLE BUTTON ===== */
+/* ============================================================
+   APPLE LIQUID GLASS SWITCHER (Theme Toggle)
+   — Inspired by Apple's Liquid Glass design language
+   — 3-way switcher: Light / Dark / Auto
+   ============================================================ */
+
+.liquid-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  border: none;
+  margin: 0;
+  padding: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(187, 187, 188, 0.12);
+  backdrop-filter: blur(40px) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(40px) saturate(var(--glass-saturation));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.15),
+    inset -1.5px -1.5px 0 -2px rgba(255, 255, 255, 0.06),
+    inset -0.3px -1px 4px 0 rgba(0, 0, 0, 0.12),
+    inset 0 -4px 1px -2px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.20);
+}
+
+.liquid-switcher-legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.liquid-switcher-option {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-out);
+  color: var(--text-dim);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.liquid-switcher-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.liquid-switcher-icon {
+  width: 20px;
+  height: 20px;
+  transition: all var(--duration-base) var(--ease-out);
+  position: relative;
+  z-index: 1;
+}
+
+.liquid-switcher-option:hover {
+  color: var(--text-soft);
+}
+
+/* Active option */
+.liquid-switcher-option.active {
+  color: var(--accent-bright);
+}
+
+.liquid-switcher-option.active .liquid-switcher-icon {
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+/* ===== Sliding Highlight Pill ===== */
+.liquid-switcher-highlight {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: rgba(157, 78, 221, 0.15);
+  backdrop-filter: blur(16px) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturation));
+  box-shadow:
+    inset 0 0 0 1px rgba(157, 78, 221, 0.30),
+    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.20),
+    inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.10),
+    0 2px 8px rgba(123, 44, 191, 0.15),
+    0 0 12px rgba(123, 44, 191, 0.08);
+  transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Position the highlight based on data-value attribute */
+.liquid-switcher[data-value="light"] .liquid-switcher-highlight {
+  transform: translateX(0);
+}
+.liquid-switcher[data-value="dark"] .liquid-switcher-highlight {
+  transform: translateX(34px);
+}
+.liquid-switcher[data-value="auto"] .liquid-switcher-highlight {
+  transform: translateX(68px);
+}
+
+/* Scale animation on toggle — matches Apple's scaleToggle */
+.liquid-switcher.switching .liquid-switcher-highlight {
+  animation: liquidScaleToggle 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes liquidScaleToggle {
+  0% { scale: 1 1; }
+  50% { scale: 1.1 1; }
+  100% { scale: 1 1; }
+}
+
+/* Light theme adjustments */
+html[data-theme="light"] .liquid-switcher {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.60),
+    inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .liquid-switcher-highlight {
+  background: rgba(123, 44, 191, 0.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(123, 44, 191, 0.18),
+    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.50),
+    0 2px 8px rgba(123, 44, 191, 0.10);
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .liquid-switcher {
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+      inset 1px 2px 0 -1px rgba(255, 255, 255, 0.60),
+      inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.04),
+      0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  html[data-theme="auto"] .liquid-switcher-highlight {
+    background: rgba(123, 44, 191, 0.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 44, 191, 0.18),
+      inset 1px 2px 0 -1px rgba(255, 255, 255, 0.50),
+      0 2px 8px rgba(123, 44, 191, 0.10);
+  }
+}
+
+/* ============================================================
+   BOTTOM NAV — APPLE LIQUID GLASS ENHANCEMENT
+   ============================================================ */
+
+/* Bottom nav tab item — liquid glass pill */
+.bottom-nav-item {
+  position: relative;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-base) var(--ease-out);
+}
+
+/* Inactive tab — subtle liquid glass inset */
+.bottom-nav-item:not(.active) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0.5px 1px 0 -1px rgba(255, 255, 255, 0.06);
+}
+
+/* Active tab — liquid glass pill with glow */
+.bottom-nav-item.active {
+  background: rgba(187, 187, 188, 0.08) !important;
+  backdrop-filter: blur(16px) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturation));
+  box-shadow:
+    inset 0 0 0 1px rgba(157, 78, 221, 0.20),
+    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.15),
+    inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.08),
+    0 2px 12px rgba(123, 44, 191, 0.10),
+    0 0 8px rgba(123, 44, 191, 0.06) !important;
+}
+
+/* Active indicator dot — liquid glass style */
+.bottom-nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--grad-brand);
+  box-shadow: 0 0 8px var(--accent-glow), 0 1px 0 rgba(255, 255, 255, 0.20);
+  animation: liquidIndicatorPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes liquidIndicatorPop {
+  0% { width: 0; opacity: 0; scale: 1 0.5; }
+  50% { width: 24px; scale: 1 1.2; }
+  100% { width: 20px; opacity: 1; scale: 1 1; }
+}
+
+/* Light theme bottom nav */
+html[data-theme="light"] .bottom-nav-item.active {
+  background: rgba(123, 44, 191, 0.06) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(123, 44, 191, 0.12),
+    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.40),
+    0 2px 12px rgba(123, 44, 191, 0.06) !important;
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .bottom-nav-item.active {
+    background: rgba(123, 44, 191, 0.06) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(123, 44, 191, 0.12),
+      inset 1px 2px 0 -1px rgba(255, 255, 255, 0.40),
+      0 2px 12px rgba(123, 44, 191, 0.06) !important;
+  }
+}
+
+/* ===== THEME TOGGLE BUTTON (legacy — kept for compatibility) ===== */
 #theme-toggle-btn {
   position: relative;
 }
