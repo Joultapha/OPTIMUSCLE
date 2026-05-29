@@ -11,7 +11,8 @@
 
 const NOWPAYMENTS_PUBLIC_KEY = '3a537511-bad2-413b-8d2b-b27471c593c7';
 const NOWPAYMENTS_API_BASE = 'https://api.nowpayments.io/v1';
-const NOWPAYMENTS_CHECKOUT_URL = 'https://checkout.nowpayments.io';
+// NOWPayments hosted checkout — correct URL format
+const NOWPAYMENTS_CHECKOUT_URL = 'https://nowpayments.io/payment/';
 
 // ===== PRICING =====
 export const PRICING = {
@@ -138,16 +139,16 @@ export function createCheckoutUrl(planId) {
   const plan = PRICING[planId] || PRICING.monthly;
   const orderId = `optimuscle_${planId}_${Date.now()}`;
 
+  // ⚠️ NOWPayments hosted checkout uses SNAKE_CASE params, not camelCase
   const params = new URLSearchParams({
-    apiKey: NOWPAYMENTS_PUBLIC_KEY,
-    priceAmount: plan.price.toString(),
-    priceCurrency: plan.currency,
-    payCurrency: 'usdtsol', // USDT on Solana — low fees, fast
-    orderId: orderId,
-    orderDescription: `OPTIMUSCLE ${plan.name}`,
-    successUrl: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`,
-    cancelUrl: `${window.location.origin}${window.location.pathname}?payment=cancel`,
-    ipnCallbackUrl: '', // No IPN for now (no server)
+    apikey: NOWPAYMENTS_PUBLIC_KEY,          // lowercase 'k'!
+    price_amount: plan.price.toString(),     // snake_case
+    price_currency: plan.currency,           // snake_case
+    pay_currency: 'usdtsol',                 // USDT on Solana — low fees, fast
+    order_id: orderId,                       // snake_case
+    order_description: `OPTIMUSCLE ${plan.name}`, // snake_case
+    success_url: `${window.location.origin}${window.location.pathname}?payment=success&plan=${planId}`, // snake_case
+    cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancel`, // snake_case
   });
 
   return `${NOWPAYMENTS_CHECKOUT_URL}?${params.toString()}`;
