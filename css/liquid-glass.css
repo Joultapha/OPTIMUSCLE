@@ -7,7 +7,7 @@
    - Effet "liquid" prononcé
 ============================================================ */
 
-/* ===== VARIABLES GLASS — violet theme ===== */
+/* ===== VARIABLES GLASS — Apple Liquid Glass inspired ===== */
 :root {
   --glass-bg-1: rgba(123, 44, 191, 0.06);
   --glass-bg-2: rgba(123, 44, 191, 0.10);
@@ -19,6 +19,11 @@
   --glass-shine: rgba(255, 255, 255, 0.15);
   --glass-neutral: rgba(255, 255, 255, 0.05);
 
+  /* Apple Liquid Glass — reflex control */
+  --glass-reflex-light: 1;
+  --glass-reflex-dark: 1;
+  --glass-saturation: 160%;
+
   /* Glow ambient — violet */
   --glow-accent: 0 0 80px rgba(123, 44, 191, 0.18);
   --glow-electric: 0 0 60px rgba(124, 109, 240, 0.12);
@@ -26,13 +31,20 @@
   --glow-gold: 0 0 60px rgba(212, 168, 67, 0.10);
 
   /* Blurs — Apple-style */
-  --blur-sm: blur(20px) saturate(160%);
-  --blur-md: blur(32px) saturate(180%);
-  --blur-lg: blur(44px) saturate(200%);
-  --blur-xl: blur(60px) saturate(200%);
+  --blur-sm: blur(20px) saturate(var(--glass-saturation));
+  --blur-md: blur(32px) saturate(calc(var(--glass-saturation) + 20%));
+  --blur-lg: blur(44px) saturate(calc(var(--glass-saturation) + 40%));
+  --blur-xl: blur(60px) saturate(calc(var(--glass-saturation) + 40%));
 }
 
-/* Light theme */
+/* Light theme glass adjustments */
+html[data-theme="light"] {
+  --glass-reflex-light: 0.7;
+  --glass-reflex-dark: 0.3;
+  --glass-saturation: 140%;
+}
+
+/* Light theme — glass values */
 html[data-theme="light"] {
   --glass-bg-1: rgba(123, 44, 191, 0.04);
   --glass-bg-2: rgba(123, 44, 191, 0.07);
@@ -56,6 +68,9 @@ html[data-theme="light"] {
     --glass-highlight: rgba(255, 255, 255, 0.45);
     --glass-shine: rgba(0, 0, 0, 0.03);
     --glass-neutral: rgba(0, 0, 0, 0.03);
+    --glass-reflex-light: 0.7;
+    --glass-reflex-dark: 0.3;
+    --glass-saturation: 140%;
   }
 }
 
@@ -129,6 +144,51 @@ nav.tabs::before {
 
 html[data-theme="light"] nav.tabs {
   background: rgba(255, 255, 255, 0.68) !important;
+}
+
+/* ============================================================
+   APPLE LIQUID GLASS — Inset Shadow System
+   Multi-layer inset shadows mimic Apple's liquid glass refraction
+   ============================================================ */
+
+/* Liquid glass inset shadow mixin — applied to key glass components */
+.landing-badge-top,
+.landing-feature,
+.landing-testimonial,
+.landing-urgency,
+.landing-trust-item,
+.landing-cta-primary,
+.landing-coach-demo,
+.landing-coach-prompt,
+.btn-primary,
+.coach-fab {
+  box-shadow:
+    /* Thin border-like inset — glass edge */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    /* Top-left highlight — light source */
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.18),
+    /* Bottom-right subtle highlight */
+    inset -1.5px -1.5px 0 -2px rgba(255, 255, 255, 0.08),
+    /* Inner depth — dark bottom shadow */
+    inset -0.3px -1px 4px 0 rgba(0, 0, 0, 0.15),
+    /* Bottom inner dark — glass thickness */
+    inset 0 -4px 1px -2px rgba(0, 0, 0, 0.10),
+    /* Outer drop shadow */
+    0 4px 16px rgba(0, 0, 0, 0.20) !important;
+}
+
+/* Hover — liquid glass reactive with deeper refraction */
+.landing-feature:hover,
+.landing-coach-prompt:hover,
+.coach-fab:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(157, 78, 221, 0.20),
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.25),
+    inset -1.5px -1.5px 0 -2px rgba(255, 255, 255, 0.12),
+    inset -0.3px -1px 4px 0 rgba(0, 0, 0, 0.12),
+    inset 0 -4px 1px -2px rgba(0, 0, 0, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.30),
+    0 0 24px rgba(123, 44, 191, 0.12) !important;
 }
 
 /* ===== CARDS GLASS — visible liquid ===== */
@@ -703,23 +763,17 @@ input[type="number"] {
 /* ===== LANDING PAGE GLASS ===== */
 
 .landing-badge-top {
-  background: var(--glass-bg-2) !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border: 1px solid var(--glass-border-strong) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 4px 20px rgba(0,0,0,0.20) !important;
+  background: rgba(187, 187, 188, 0.12) !important;
+  backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
 }
 
 .landing-feature {
-  background: var(--glass-bg-2) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 4px 24px rgba(0,0,0,0.25) !important;
+  background: rgba(187, 187, 188, 0.10) !important;
+  backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
   position: relative;
   overflow: hidden;
 }
@@ -732,8 +786,8 @@ input[type="number"] {
   right: 0;
   height: 50%;
   background: linear-gradient(180deg,
-    rgba(157,78,221,0.06) 0%,
-    rgba(157,78,221,0) 100%);
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0) 100%);
   pointer-events: none;
   border-radius: inherit;
   z-index: 0;
@@ -745,75 +799,82 @@ input[type="number"] {
 }
 
 .landing-feature:hover {
-  background: var(--glass-bg-3) !important;
-  border-color: var(--glass-border-strong) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.22),
-    0 12px 44px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(123,44,191,0.18) !important;
+  background: rgba(187, 187, 188, 0.16) !important;
 }
 
 .landing-stats {
-  background: var(--glass-bg-1) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  border-top: 1px solid var(--glass-border) !important;
-  border-bottom: 1px solid var(--glass-border) !important;
+  background: rgba(187, 187, 188, 0.06) !important;
+  backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
+  border-top: none !important;
+  border-bottom: none !important;
   box-shadow:
-    inset 0 1px 0 rgba(157,78,221,0.10) !important;
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
 }
 
 .landing-testimonial {
-  background: var(--glass-bg-2) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    0 16px 52px rgba(0,0,0,0.35) !important;
+  background: rgba(187, 187, 188, 0.10) !important;
+  backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
 }
 
 .landing-urgency {
-  background: rgba(123,44,191,0.08) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-  border: 1px solid rgba(123,44,191,0.35) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 8px 36px rgba(123,44,191,0.12) !important;
+  background: rgba(187, 187, 188, 0.10) !important;
+  backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
 }
 
+/* ===== LANDING CTA — Liquid Glass Pill ===== */
 .landing-cta-primary {
+  background: rgba(187, 187, 188, 0.36) !important;
+  backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(var(--glass-saturation)) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.10),
+    inset 1.8px 3px 0 -2px rgba(255,255,255,0.22),
+    inset -1.5px -1.5px 0 -2px rgba(255,255,255,0.10),
+    inset -0.3px -1px 4px 0 rgba(0,0,0,0.12),
+    inset 0 -4px 1px -2px rgba(0,0,0,0.08),
+    0 3px 6px 0 rgba(0,0,0,0.20),
     0 6px 28px var(--accent-glow) !important;
+  color: white !important;
+}
+
+.landing-cta-primary::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent) !important;
 }
 
 .landing-cta-primary:hover {
+  background: rgba(187, 187, 188, 0.44) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.32),
-    0 12px 44px rgba(123,44,191,0.35) !important;
+    inset 0 0 0 1px rgba(157,78,221,0.25),
+    inset 1.8px 3px 0 -2px rgba(255,255,255,0.30),
+    inset -1.5px -1.5px 0 -2px rgba(255,255,255,0.15),
+    inset -0.3px -1px 4px 0 rgba(0,0,0,0.10),
+    inset 0 -4px 1px -2px rgba(0,0,0,0.06),
+    0 6px 20px rgba(0,0,0,0.25),
+    0 12px 44px rgba(123,44,191,0.30) !important;
 }
 
 .landing-trust-item {
-  background: var(--glass-bg-1);
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid var(--glass-border);
+  background: rgba(187, 187, 188, 0.10) !important;
+  backdrop-filter: blur(16px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
   padding: 6px 14px;
   border-radius: 100px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    0 2px 8px rgba(0,0,0,0.18);
 }
 
 .landing-final-cta {
   background:
     radial-gradient(ellipse at center, rgba(123,44,191,0.12) 0%, transparent 70%),
-    var(--glass-neutral) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border-top: 1px solid var(--glass-border) !important;
+    rgba(187, 187, 188, 0.04) !important;
+  backdrop-filter: blur(16px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturation)) !important;
+  border-top: none !important;
 }
 
 /* ===== TESTIMONIAL CARDS ===== */

@@ -785,7 +785,7 @@
   }
 }
 
-/* ===== KILLER FEATURE : AI COACH DEMO ===== */
+/* ===== KILLER FEATURE : AI COACH DEMO — Liquid Glass ===== */
 .landing-coach-demo-section {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -794,11 +794,12 @@
 .landing-coach-demo {
   max-width: 480px;
   margin: 0 auto;
-  background: var(--bg-elev-1);
-  border: 1px solid var(--border);
+  background: rgba(187, 187, 188, 0.10) !important;
+  backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-saturation)) !important;
+  border: none !important;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
 }
 
 .landing-coach-demo-header {
@@ -806,8 +807,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-elev-2);
+  border-bottom: none !important;
+  background: rgba(187, 187, 188, 0.06) !important;
 }
 
 .landing-coach-demo-avatar {
@@ -876,10 +877,11 @@
 }
 
 .coach-ai .landing-coach-msg-bubble {
-  background: var(--bg-elev-2);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 4px;
-  color: var(--text);
+  background: rgba(187, 187, 188, 0.10) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset 0.5px 1px 0 rgba(255,255,255,0.10) !important;
 }
 
 .coach-user .landing-coach-msg-bubble {
@@ -921,8 +923,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-elev-2);
+  border-top: none !important;
+  background: rgba(187, 187, 188, 0.04) !important;
 }
 
 .landing-coach-prompt {
@@ -933,13 +935,17 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-soft);
-  background: var(--bg-elev-1);
-  border: 1px solid var(--border);
+  background: rgba(187, 187, 188, 0.10) !important;
+  border: none !important;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
   font-family: inherit;
   white-space: nowrap;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    inset 1px 2px 0 -1px rgba(255,255,255,0.14),
+    inset -0.5px -1px 2px 0 rgba(0,0,0,0.10) !important;
 }
 
 .landing-coach-prompt svg {
@@ -948,10 +954,14 @@
 }
 
 .landing-coach-prompt:hover {
-  border-color: var(--border-accent);
-  background: var(--accent-glow-soft);
+  background: rgba(187, 187, 188, 0.18) !important;
   color: var(--accent-bright);
   transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1px rgba(157,78,221,0.20),
+    inset 1px 2px 0 -1px rgba(255,255,255,0.20),
+    inset -0.5px -1px 2px 0 rgba(0,0,0,0.08),
+    0 4px 12px rgba(123,44,191,0.12) !important;
 }
 
 .landing-coach-prompt:active {
