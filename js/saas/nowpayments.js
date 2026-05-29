@@ -127,10 +127,13 @@ export function deactivatePremium() {
  * Create a NOWPayments hosted checkout URL.
  *
  * NOWPayments hosted checkout format:
- *   https://checkout.nowpayments.io/?apikey=...&price_amount=...&...
+ *   https://nowpayments.io/payment?apikey=...&price_amount=...&...
  *
  * All params must be SNAKE_CASE.
  * Only the Public Key is used (safe for frontend).
+ *
+ * ⚠️ DO NOT use checkout.nowpayments.io — that domain does NOT exist!
+ * Use nowpayments.io/payment instead.
  *
  * @param {string} planId - 'monthly', 'yearly', or 'lifetime'
  * @returns {string} checkout URL
@@ -150,7 +153,7 @@ export function createCheckoutUrl(planId) {
     cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancel`,
   });
 
-  return `https://checkout.nowpayments.io/?${params.toString()}`;
+  return `https://nowpayments.io/payment?${params.toString()}`;
 }
 
 /**
