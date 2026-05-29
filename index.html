@@ -830,6 +830,88 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
 </section>
 
 <!-- ============================================
+     PAGE PREMIUM / SUBSCRIPTION
+============================================ -->
+<section id="page-premium" class="page">
+  <div class="premium-container">
+    <!-- Header -->
+    <div class="premium-header">
+      <div class="premium-badge">PREMIUM</div>
+      <h1 class="premium-title">Débloque tout<br><span class="text-gradient">OPTIMUSCLE</span></h1>
+      <p class="premium-sub">Accès illimité au coach IA, programmes personnalisés, export PDF et plus encore.</p>
+    </div>
+
+    <!-- Current status -->
+    <div class="premium-status" id="premium-status" style="display:none;">
+      <div class="premium-status-icon">&#10003;</div>
+      <div>
+        <div class="premium-status-label">Abonnement actif</div>
+        <div class="premium-status-plan" id="premium-status-plan">Premium Mensuel</div>
+      </div>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="premium-cards">
+      <!-- Monthly -->
+      <div class="premium-card" data-plan="monthly">
+        <div class="premium-card-header">
+          <div class="premium-card-name">Mensuel</div>
+          <div class="premium-card-price">$4.99<span>/mois</span></div>
+        </div>
+        <ul class="premium-card-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Coach IA illimité</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Programmes personnalisés</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Export PDF</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sans publicité</li>
+        </ul>
+        <button class="premium-card-btn" onclick="window.__checkoutPlan('monthly')">Payer en crypto</button>
+      </div>
+
+      <!-- Yearly — Popular -->
+      <div class="premium-card premium-card-popular" data-plan="yearly">
+        <div class="premium-card-popular-tag">POPULAIRE</div>
+        <div class="premium-card-header">
+          <div class="premium-card-name">Annuel</div>
+          <div class="premium-card-price">$39.99<span>/an</span></div>
+          <div class="premium-card-savings">-33%</div>
+        </div>
+        <ul class="premium-card-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tout le Mensuel</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Économie 33%</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Support prioritaire</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Badge exclusif</li>
+        </ul>
+        <button class="premium-card-btn premium-card-btn-popular" onclick="window.__checkoutPlan('yearly')">Payer en crypto</button>
+      </div>
+
+      <!-- Lifetime -->
+      <div class="premium-card" data-plan="lifetime">
+        <div class="premium-card-header">
+          <div class="premium-card-name">À Vie</div>
+          <div class="premium-card-price">$99.99<span></span></div>
+        </div>
+        <ul class="premium-card-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tout l'Annuel</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Accès à vie</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mises à jour futures</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Badge or</li>
+        </ul>
+        <button class="premium-card-btn" onclick="window.__checkoutPlan('lifetime')">Payer en crypto</button>
+      </div>
+    </div>
+
+    <!-- Payment info -->
+    <div class="premium-payment-info">
+      <div class="premium-payment-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Paiement sécurisé via NOWPayments
+      </div>
+      <p>USDT (Solana) • Transaction instantanée • Frais ~$0.01</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
      MODAL : Ajouter un aliment
 ============================================ -->
 <div id="nut-add-modal">
@@ -1134,6 +1216,11 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
     <button class="sidebar-item" data-action="profile" type="button">
       <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
       <span class="sidebar-item-label">Profil</span>
+    </button>
+    <button class="sidebar-item sidebar-item-premium" data-action="premium" type="button">
+      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <span class="sidebar-item-label">Premium</span>
+      <span class="sidebar-item-badge">PRO</span>
     </button>
 
     <div class="sidebar-section-title">Préférences</div>

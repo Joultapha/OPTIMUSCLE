@@ -87,6 +87,9 @@ function handleSidebarAction(action) {
     case 'coach':
       import('./coach.js').then(mod => mod.openCoachModal());
       break;
+    case 'premium':
+      window.dispatchEvent(new CustomEvent('opt:nav', { detail: { page: 'premium' } }));
+      break;
     case 'settings':
       import('./ui.js').then(mod => mod.openSettings());
       break;

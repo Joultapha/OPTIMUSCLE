@@ -34,11 +34,12 @@ import {
   render,
 } from './core/appState.js';
 import { initTheme, bindThemeButtons, bindDayNightToggle, applyTheme } from './features/theme.js';
-import { initSidebar } from './features/sidebar.js';
+import { initSidebar, closeSidebar } from './features/sidebar.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
 import { initChallenges, renderChallenges } from './features/challenges.js';
 import { initBottomNav } from './features/bottomNav.js';
+import { redirectToCheckout, checkPaymentResult, isPremiumActive, getSubscription, PRICING } from './saas/nowpayments.js';
 
 import {
   initAuth,
@@ -104,6 +105,38 @@ console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 // ============================================================
 initOnboarding();
 bindGlobalEvents();
+
+// ============================================================
+// NOWPayments — Global checkout function & payment result check
+// ============================================================
+window.__checkoutPlan = function(planId) {
+  redirectToCheckout(planId);
+};
+
+// Check if user returned from a successful payment
+const paymentResult = checkPaymentResult();
+if (paymentResult && paymentResult.success) {
+  console.log('[PAYMENT] Premium activated:', paymentResult.plan);
+  showToast('Premium activé ! Profite de toutes les fonctionnalités 🎉');
+}
+
+// Update premium status UI
+function updatePremiumUI() {
+  const statusEl = document.getElementById('premium-status');
+  const planEl = document.getElementById('premium-status-plan');
+  if (!statusEl) return;
+
+  if (isPremiumActive()) {
+    const sub = getSubscription();
+    statusEl.style.display = 'flex';
+    if (planEl && sub) planEl.textContent = sub.planName || 'Premium';
+  } else {
+    statusEl.style.display = 'none';
+  }
+}
+
+// Call on page load
+setTimeout(updatePremiumUI, 1000);
 
 // ============================================================
 // 4. GLOBAL ERROR HANDLER
@@ -223,6 +256,22 @@ function bindGlobalEvents() {
       document.getElementById('page-challenges')?.classList.add('active');
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       renderChallenges();
+      window.scrollTo(0, 0);
+    } else if (page === 'premium') {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-premium')?.classList.add('active');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      // Update premium status
+      const statusEl = document.getElementById('premium-status');
+      const planEl = document.getElementById('premium-status-plan');
+      if (statusEl && isPremiumActive()) {
+        statusEl.style.display = 'flex';
+        const sub = getSubscription();
+        if (planEl && sub) planEl.textContent = sub.planName || 'Premium';
+      } else if (statusEl) {
+        statusEl.style.display = 'none';
+      }
+      closeSidebar();
       window.scrollTo(0, 0);
     }
   });
