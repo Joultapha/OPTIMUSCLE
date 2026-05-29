@@ -1,17 +1,17 @@
 /* ============================================================
-   OPTIMUSCLE — Theme System (Dark / Light / Auto)
-   Apple Liquid Glass 3-way Switcher
+   OPTIMUSCLE — Theme System (Dark / Light)
+   Day/Night sliding toggle
    ============================================================ */
 
 const THEME_KEY = 'optimuscle_theme';
-const VALID_THEMES = ['dark', 'light', 'auto'];
+const VALID_THEMES = ['dark', 'light'];
 
 /**
  * Applique un thème à l'app.
- * @param {'dark'|'light'|'auto'} theme
+ * @param {'dark'|'light'} theme
  */
 export function applyTheme(theme) {
-  if (!VALID_THEMES.includes(theme)) theme = 'auto';
+  if (!VALID_THEMES.includes(theme)) theme = 'dark';
   document.documentElement.setAttribute('data-theme', theme);
   try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
 
@@ -23,18 +23,13 @@ export function applyTheme(theme) {
     btn.classList.toggle('active', btn.dataset.theme === theme);
   });
 
-  // Update Apple Liquid Glass Switcher
-  updateLiquidSwitcher(theme);
+  // Update Day/Night Toggle
+  updateDayNightToggle(theme);
 }
 
 function updateThemeColor(theme) {
   let color = '#050505'; // dark default
   if (theme === 'light') color = '#f5f5f7';
-  else if (theme === 'auto') {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      color = '#f5f5f7';
-    }
-  }
   let meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', color);
 }
@@ -47,7 +42,7 @@ export function getStoredTheme() {
     const stored = localStorage.getItem(THEME_KEY);
     if (VALID_THEMES.includes(stored)) return stored;
   } catch (e) {}
-  return 'auto';
+  return 'dark';
 }
 
 /**
@@ -56,21 +51,10 @@ export function getStoredTheme() {
 export function initTheme() {
   const theme = getStoredTheme();
   applyTheme(theme);
-
-  // Écouter les changements système (pour le mode auto)
-  if (window.matchMedia) {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    mq.addEventListener('change', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      if (current === 'auto') {
-        updateThemeColor('auto');
-      }
-    });
-  }
 }
 
 /**
- * Bind les boutons de switch theme (sidebar).
+ * Bind les boutons de switch theme (sidebar legacy).
  */
 export function bindThemeButtons() {
   document.querySelectorAll('.theme-option').forEach(btn => {
@@ -82,46 +66,30 @@ export function bindThemeButtons() {
 }
 
 /**
- * Bind Apple Liquid Glass Switcher events.
+ * Bind Day/Night Toggle events.
  */
-export function bindLiquidSwitcher() {
-  const switcher = document.getElementById('liquid-switcher');
-  if (!switcher) return;
+export function bindDayNightToggle() {
+  const toggle = document.getElementById('daynight-toggle');
+  if (!toggle) return;
 
-  const options = switcher.querySelectorAll('.liquid-switcher-option');
+  toggle.addEventListener('click', () => {
+    const current = toggle.dataset.theme;
+    const next = current === 'dark' ? 'light' : 'dark';
 
-  options.forEach(option => {
-    option.addEventListener('click', () => {
-      const value = option.dataset.option;
-      if (!VALID_THEMES.includes(value)) return;
+    // Add bounce animation
+    toggle.classList.add('switching');
+    setTimeout(() => toggle.classList.remove('switching'), 500);
 
-      // Add switching animation class
-      switcher.classList.add('switching');
-      setTimeout(() => switcher.classList.remove('switching'), 400);
-
-      applyTheme(value);
-    });
+    applyTheme(next);
   });
 }
 
 /**
- * Update Apple Liquid Glass Switcher UI to match current theme.
+ * Update Day/Night Toggle UI to match current theme.
  */
-function updateLiquidSwitcher(theme) {
-  const switcher = document.getElementById('liquid-switcher');
-  if (!switcher) return;
+function updateDayNightToggle(theme) {
+  const toggle = document.getElementById('daynight-toggle');
+  if (!toggle) return;
 
-  // Update data-value for CSS highlight positioning
-  switcher.dataset.value = theme;
-
-  // Update active class on options
-  const options = switcher.querySelectorAll('.liquid-switcher-option');
-  options.forEach(option => {
-    const isActive = option.dataset.option === theme;
-    option.classList.toggle('active', isActive);
-
-    // Update radio input
-    const input = option.querySelector('input');
-    if (input) input.checked = isActive;
-  });
+  toggle.dataset.theme = theme;
 }

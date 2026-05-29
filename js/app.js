@@ -33,7 +33,7 @@ import {
   getCurrentView,
   render,
 } from './core/appState.js';
-import { initTheme, bindThemeButtons, bindLiquidSwitcher, applyTheme } from './features/theme.js';
+import { initTheme, bindThemeButtons, bindDayNightToggle, applyTheme } from './features/theme.js';
 import { initSidebar } from './features/sidebar.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
@@ -202,7 +202,7 @@ function bindGlobalEvents() {
   bindThemeButtons();
 
   // Apple Liquid Glass Theme Switcher
-  bindLiquidSwitcher();
+  bindDayNightToggle();
 
   initCoach();
   initDraggableFab();

@@ -1040,164 +1040,220 @@ html[data-theme="light"] .landing-feature {
 }
 
 /* ============================================================
-   APPLE LIQUID GLASS SWITCHER (Theme Toggle)
-   — Inspired by Apple's Liquid Glass design language
-   — 3-way switcher: Light / Dark / Auto
+   APPLE LIQUID GLASS DAY/NIGHT TOGGLE
+   — Sliding pill toggle: Light (sun) ↔ Dark (moon)
+   — Liquid Glass refraction + animated scene
    ============================================================ */
 
-.liquid-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  position: relative;
+.daynight-toggle {
+  -webkit-tap-highlight-color: transparent;
   border: none;
-  margin: 0;
-  padding: 4px;
-  border-radius: var(--radius-full);
-  background: rgba(187, 187, 188, 0.12);
-  backdrop-filter: blur(40px) saturate(var(--glass-saturation));
-  -webkit-backdrop-filter: blur(40px) saturate(var(--glass-saturation));
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.daynight-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 100px;
+}
+
+.daynight-track {
+  position: relative;
+  width: 64px;
+  height: 34px;
+  border-radius: 17px;
+  overflow: hidden;
+  /* Liquid glass track — dark mode default */
+  background: linear-gradient(135deg, #1a1a2e 0%, #0d0d18 100%);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.15),
-    inset -1.5px -1.5px 0 -2px rgba(255, 255, 255, 0.06),
-    inset -0.3px -1px 4px 0 rgba(0, 0, 0, 0.12),
-    inset 0 -4px 1px -2px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.20);
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.12),
+    inset -1.5px -1.5px 0 -2px rgba(255, 255, 255, 0.05),
+    inset -0.3px -1px 4px 0 rgba(0, 0, 0, 0.20),
+    inset 0 -4px 1px -2px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.30),
+    0 0 16px rgba(123, 44, 191, 0.08);
+  transition: background 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.liquid-switcher-legend {
+/* Light mode track */
+.daynight-toggle[data-theme="light"] .daynight-track {
+  background: linear-gradient(135deg, #87CEEB 0%, #e0f0ff 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.40),
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.60),
+    inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 16px rgba(123, 44, 191, 0.06);
+}
+
+/* ===== Animated scene layer (stars, craters) ===== */
+.daynight-scene {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 400ms ease;
 }
 
-.liquid-switcher-option {
-  position: relative;
-  z-index: 2;
+/* Stars — visible only in dark mode */
+.daynight-stars {
+  position: absolute;
+  inset: 0;
+  transition: opacity 300ms ease;
+  opacity: 1;
+}
+
+.daynight-toggle[data-theme="light"] .daynight-stars {
+  opacity: 0;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+.star:nth-child(2) { animation-delay: 0.5s; width: 1.5px; height: 1.5px; }
+.star:nth-child(3) { animation-delay: 1s; width: 1px; height: 1px; }
+.star:nth-child(4) { animation-delay: 1.5s; }
+.star:nth-child(5) { animation-delay: 2s; width: 1.5px; height: 1.5px; }
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+/* Craters — visible only in dark mode on the moon knob */
+.daynight-craters {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  transition: opacity 300ms ease;
+  opacity: 1;
+}
+
+.daynight-toggle[data-theme="light"] .daynight-craters {
+  opacity: 0;
+}
+
+.crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.crater-1 { width: 5px; height: 5px; top: 2px; left: 0; }
+.crater-2 { width: 3px; height: 3px; top: 8px; left: 4px; }
+.crater-3 { width: 4px; height: 4px; top: 0; left: 6px; }
+
+/* ===== Sliding Knob ===== */
+.daynight-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--duration-base) var(--ease-out);
-  color: var(--text-dim);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.liquid-switcher-option input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.liquid-switcher-icon {
-  width: 20px;
-  height: 20px;
-  transition: all var(--duration-base) var(--ease-out);
-  position: relative;
-  z-index: 1;
-}
-
-.liquid-switcher-option:hover {
-  color: var(--text-soft);
-}
-
-/* Active option */
-.liquid-switcher-option.active {
-  color: var(--accent-bright);
-}
-
-.liquid-switcher-option.active .liquid-switcher-icon {
-  filter: drop-shadow(0 0 6px var(--accent-glow));
-}
-
-/* ===== Sliding Highlight Pill ===== */
-.liquid-switcher-highlight {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-full);
-  background: rgba(157, 78, 221, 0.15);
-  backdrop-filter: blur(16px) saturate(var(--glass-saturation));
-  -webkit-backdrop-filter: blur(16px) saturate(var(--glass-saturation));
+  /* Dark mode — moon style */
+  background: linear-gradient(145deg, #e8e8f0 0%, #c4c4d4 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(157, 78, 221, 0.30),
-    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.20),
-    inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.10),
-    0 2px 8px rgba(123, 44, 191, 0.15),
-    0 0 12px rgba(123, 44, 191, 0.08);
-  transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 1;
-  pointer-events: none;
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10);
+  transform: translateX(30px);
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #4a4a6a;
 }
 
-/* Position the highlight based on data-value attribute */
-.liquid-switcher[data-value="light"] .liquid-switcher-highlight {
-  transform: translateX(0);
-}
-.liquid-switcher[data-value="dark"] .liquid-switcher-highlight {
-  transform: translateX(34px);
-}
-.liquid-switcher[data-value="auto"] .liquid-switcher-highlight {
-  transform: translateX(68px);
-}
-
-/* Scale animation on toggle — matches Apple's scaleToggle */
-.liquid-switcher.switching .liquid-switcher-highlight {
-  animation: liquidScaleToggle 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Light mode — sun style: knob slides to the left */
+.daynight-toggle[data-theme="light"] .daynight-knob {
+  transform: translateX(0px);
+  background: linear-gradient(145deg, #FFD93D 0%, #FF9F1C 100%);
+  box-shadow:
+    0 2px 8px rgba(255, 159, 28, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 0 12px rgba(255, 217, 61, 0.25);
+  color: #fff;
 }
 
-@keyframes liquidScaleToggle {
+/* ===== Knob Icons ===== */
+.daynight-icon-sun,
+.daynight-icon-moon {
+  position: absolute;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.daynight-icon-sun {
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+}
+
+.daynight-icon-moon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Light mode: show sun, hide moon */
+.daynight-toggle[data-theme="light"] .daynight-icon-sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.daynight-toggle[data-theme="light"] .daynight-icon-moon {
+  opacity: 0;
+  transform: scale(0.5) rotate(90deg);
+}
+
+/* ===== Scale bounce animation on toggle ===== */
+.daynight-toggle.switching .daynight-knob {
+  animation: daynightBounce 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes daynightBounce {
   0% { scale: 1 1; }
-  50% { scale: 1.1 1; }
+  40% { scale: 0.88 1.08; }
+  70% { scale: 1.05 0.95; }
   100% { scale: 1 1; }
 }
 
-/* Light theme adjustments */
-html[data-theme="light"] .liquid-switcher {
-  background: rgba(255, 255, 255, 0.72);
+/* ===== Light theme page-level adjustments ===== */
+html[data-theme="light"] .daynight-toggle[data-theme="light"] .daynight-track {
+  background: linear-gradient(135deg, #87CEEB 0%, #e0f0ff 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.06),
-    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.60),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.40),
+    inset 1.8px 3px 0 -2px rgba(255, 255, 255, 0.60),
     inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.04),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 0 16px rgba(123, 44, 191, 0.06);
 }
 
-html[data-theme="light"] .liquid-switcher-highlight {
-  background: rgba(123, 44, 191, 0.08);
-  box-shadow:
-    inset 0 0 0 1px rgba(123, 44, 191, 0.18),
-    inset 1px 2px 0 -1px rgba(255, 255, 255, 0.50),
-    0 2px 8px rgba(123, 44, 191, 0.10);
-}
-
-@media (prefers-color-scheme: light) {
-  html[data-theme="auto"] .liquid-switcher {
-    background: rgba(255, 255, 255, 0.72);
-    box-shadow:
-      inset 0 0 0 1px rgba(0, 0, 0, 0.06),
-      inset 1px 2px 0 -1px rgba(255, 255, 255, 0.60),
-      inset -0.5px -1px 2px 0 rgba(0, 0, 0, 0.04),
-      0 2px 8px rgba(0, 0, 0, 0.08);
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .daynight-knob,
+  .daynight-track,
+  .daynight-stars,
+  .daynight-craters,
+  .daynight-icon-sun,
+  .daynight-icon-moon {
+    transition-duration: 0ms !important;
+    animation: none !important;
   }
-
-  html[data-theme="auto"] .liquid-switcher-highlight {
-    background: rgba(123, 44, 191, 0.08);
-    box-shadow:
-      inset 0 0 0 1px rgba(123, 44, 191, 0.18),
-      inset 1px 2px 0 -1px rgba(255, 255, 255, 0.50),
-      0 2px 8px rgba(123, 44, 191, 0.10);
+  .star {
+    animation: none !important;
   }
 }
 
