@@ -36,6 +36,11 @@ body[data-view="dashboard"][data-subpage="workout"] .bottom-nav {
   display: none !important;
 }
 
+/* Ensure bottom-nav is hidden when NOT on dashboard */
+body:not([data-view="dashboard"]) .bottom-nav {
+  display: none !important;
+}
+
 /* ===== INNER CONTAINER ===== */
 .bottom-nav-inner {
   display: flex;

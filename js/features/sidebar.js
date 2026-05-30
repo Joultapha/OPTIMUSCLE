@@ -2,7 +2,7 @@
    OPTIMUSCLE — Sidebar Menu
    ============================================================ */
 
-import { getCurrentUser } from '../core/state.js';
+import { getCurrentUser, getUserData } from '../core/state.js';
 import { setSubPage } from '../core/appState.js';
 import { sanitizeUrl, createEl, clearEl } from '../utils/sanitize.js';
 import { confirmLogout } from './auth.js';
@@ -140,17 +140,11 @@ function updateSidebarUser() {
   // Update Premium button visibility based on subscription
   const premiumBtn = document.querySelector('.sidebar-premium-btn');
   if (premiumBtn) {
-    const userData = { subscription: { status: 'active', plan: 'free' } };
     // Check if premium — hide button if already premium
-    try {
-      const { getUserData } = await import('../core/state.js');
-      const ud = getUserData();
-      if (isPremium(ud)) {
-        premiumBtn.style.display = 'none';
-      } else {
-        premiumBtn.style.display = 'flex';
-      }
-    } catch(e) {
+    const ud = getUserData();
+    if (isPremium(ud)) {
+      premiumBtn.style.display = 'none';
+    } else {
       premiumBtn.style.display = 'flex';
     }
   }
