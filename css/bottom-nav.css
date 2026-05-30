@@ -2,12 +2,22 @@
    OPTIMUSCLE V17 — Bottom Navigation Bar (Apple Liquid Glass)
    ============================================================
    5 tabs : Accueil, Training, Nutrition, Défis, Profil
-   - Floating liquid glass container
-   - Animated pill indicator that slides between tabs
-   - Apple-style glassmorphism with SVG displacement
+   - Floating liquid glass container with SVG displacement
+   - Animated water droplet pill that slides between tabs
+   - Apple-style glassmorphism with liquid refraction
    - Purple accent glow on active tab
    ============================================================ */
 
+/* ===== SVG FILTER CONTAINER — hidden ===== */
+.bottom-nav-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ===== MAIN NAV CONTAINER ===== */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -17,28 +27,19 @@
   display: none;
   justify-content: center;
   align-items: stretch;
-  padding: 6px 12px;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 12px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   height: var(--bottom-nav-height);
-  background: rgba(10, 10, 18, 0.65);
-  backdrop-filter: blur(40px) saturate(200%) brightness(0.85);
-  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(0.85);
-  border-top: 1px solid rgba(157, 78, 221, 0.12);
+  background: rgba(10, 10, 18, 0.55);
+  backdrop-filter: blur(50px) saturate(220%) brightness(0.8);
+  -webkit-backdrop-filter: blur(50px) saturate(220%) brightness(0.8);
+  border-top: 1px solid rgba(157, 78, 221, 0.08);
   box-shadow:
-    0 -8px 32px rgba(0, 0, 0, 0.40),
-    inset 0 1px 0 rgba(157, 78, 221, 0.08);
+    0 -4px 24px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* SVG filter container — hidden */
-.bottom-nav-filters {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* Visible only in dashboard */
+/* Visible only in dashboard views */
 body[data-view="dashboard"][data-subpage="home"] .bottom-nav,
 body[data-view="dashboard"][data-subpage="history"] .bottom-nav,
 body[data-view="dashboard"][data-subpage="badges"] .bottom-nav,
@@ -48,7 +49,7 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   display: flex;
 }
 
-/* ===== INNER CONTAINER — floating pill shape ===== */
+/* ===== INNER CONTAINER ===== */
 .bottom-nav-inner {
   display: flex;
   justify-content: space-around;
@@ -59,54 +60,133 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   height: 100%;
 }
 
-/* ===== SLIDING PILL INDICATOR ===== */
+/* ============================================================
+   LIQUID GLASS DROPLET PILL INDICATOR
+   ============================================================
+   This is the "water droplet" that sits on the active tab.
+   It uses SVG displacement filters for liquid distortion,
+   multiple layered gradients for glass refraction,
+   and a sliding animation that stretches like liquid.
+   ============================================================ */
+
 .bottom-nav-pill {
   position: absolute;
-  top: 4px;
+  top: 2px;
   left: 0;
   width: calc(100% / 5);
-  height: calc(100% - 8px);
-  border-radius: 16px;
-  background: linear-gradient(135deg,
-    rgba(123, 44, 191, 0.35) 0%,
-    rgba(157, 78, 221, 0.20) 50%,
-    rgba(123, 44, 191, 0.30) 100%);
-  border: 1px solid rgba(157, 78, 221, 0.35);
-  box-shadow:
-    0 2px 12px rgba(123, 44, 191, 0.30),
-    0 0 20px rgba(123, 44, 191, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  height: calc(100% - 4px);
+  border-radius: 18px;
   z-index: 0;
   pointer-events: none;
+  will-change: transform;
+
+  /* Multi-layer liquid glass background */
+  background:
+    /* Top specular highlight — the "shine" of the water droplet */
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.05) 30%,
+      transparent 50%),
+    /* Refraction gradient — simulates light bending through water */
+    linear-gradient(135deg,
+      rgba(123, 44, 191, 0.30) 0%,
+      rgba(157, 78, 221, 0.15) 40%,
+      rgba(123, 44, 191, 0.22) 70%,
+      rgba(157, 78, 221, 0.10) 100%),
+    /* Base fill — subtle tint */
+    radial-gradient(ellipse at 50% 30%,
+      rgba(157, 78, 221, 0.18) 0%,
+      rgba(123, 44, 191, 0.08) 100%);
+
+  /* Glass border */
+  border: 1px solid rgba(157, 78, 221, 0.28);
+
+  /* Complex shadow: outer glow + inner highlights = water droplet effect */
+  box-shadow:
+    /* Outer purple glow */
+    0 2px 16px rgba(123, 44, 191, 0.28),
+    0 0 28px rgba(123, 44, 191, 0.12),
+    /* Top inner highlight — light catching the droplet surface */
+    inset 0 2px 4px rgba(255, 255, 255, 0.14),
+    /* Bottom inner shadow — droplet depth */
+    inset 0 -1px 2px rgba(0, 0, 0, 0.12),
+    /* Side inner glow — refraction */
+    inset 2px 0 4px rgba(157, 78, 221, 0.06),
+    inset -2px 0 4px rgba(157, 78, 221, 0.06);
+
+  /* Fluid slide transition with spring easing */
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Pill top highlight — liquid shine */
+/* ===== DROPLET TOP SHINE LINE — liquid highlight ===== */
 .bottom-nav-pill::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 15%;
-  right: 15%;
-  height: 1px;
+  top: 1px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
   background: linear-gradient(90deg,
-    transparent,
-    rgba(255, 255, 255, 0.40),
-    transparent);
-  border-radius: 1px;
+    transparent 0%,
+    rgba(255, 255, 255, 0.50) 20%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.50) 80%,
+    transparent 100%);
+  border-radius: 2px;
+  z-index: 2;
 }
 
-/* Pill inner glow */
+/* ===== DROPLET INTERNAL REFRACTION — light caustics ===== */
 .bottom-nav-pill::after {
   content: '';
   position: absolute;
-  inset: 2px;
-  border-radius: 14px;
-  background: linear-gradient(180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 50%);
+  inset: 3px;
+  border-radius: 15px;
+  background:
+    /* Caustic light pattern — like light through water */
+    radial-gradient(ellipse 60% 40% at 35% 25%,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 70%),
+    radial-gradient(ellipse 40% 30% at 65% 70%,
+      rgba(157, 78, 221, 0.10) 0%,
+      transparent 70%);
   pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== LIQUID STRETCH ANIMATION — when pill moves ===== */
+@keyframes liquid-slide {
+  0% {
+    transform: var(--slide-from);
+    border-radius: 18px;
+  }
+  30% {
+    border-radius: 22px 12px 12px 22px;
+  }
+  50% {
+    transform: var(--slide-mid);
+    border-radius: 14px 14px 14px 14px;
+  }
+  70% {
+    border-radius: 12px 22px 22px 12px;
+  }
+  100% {
+    transform: var(--slide-to);
+    border-radius: 18px;
+  }
+}
+
+/* Bounce settle — droplet lands and wobbles */
+@keyframes droplet-settle {
+  0% { transform: scaleX(1) scaleY(1); }
+  25% { transform: scaleX(1.06) scaleY(0.94); }
+  50% { transform: scaleX(0.96) scaleY(1.04); }
+  75% { transform: scaleX(1.02) scaleY(0.98); }
+  100% { transform: scaleX(1) scaleY(1); }
+}
+
+.bottom-nav-pill.animating {
+  animation: droplet-settle 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* ===== TAB ITEM ===== */
@@ -115,22 +195,22 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 8px 4px;
+  gap: 3px;
+  padding: 6px 4px;
   border: none;
   background: none;
-  color: rgba(142, 142, 147, 0.70);
+  color: rgba(142, 142, 147, 0.60);
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 9.5px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.02em;
   position: relative;
   z-index: 1;
   min-width: 0;
   flex: 1;
   -webkit-tap-highlight-color: transparent;
-  transition: color 250ms var(--ease-out);
+  transition: color 300ms var(--ease-out);
   outline: none;
 }
 
@@ -138,18 +218,19 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   width: 22px;
   height: 22px;
   stroke-width: 1.6;
-  transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Press effect — button squishes like pressing water */
 .bottom-nav-item:active {
-  transform: scale(0.90);
+  transform: scale(0.88);
 }
 
 .bottom-nav-item:active svg {
-  transform: scale(1.15);
+  transform: scale(1.18);
 }
 
-/* ===== ACTIVE TAB ===== */
+/* ===== ACTIVE TAB — liquid glass glow ===== */
 .bottom-nav-item.active {
   color: #e8d5ff;
 }
@@ -157,8 +238,8 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
 .bottom-nav-item.active svg {
   stroke-width: 2.2;
   color: #c77dff;
-  filter: drop-shadow(0 0 8px rgba(157, 78, 221, 0.50));
-  transform: scale(1.10);
+  filter: drop-shadow(0 0 10px rgba(157, 78, 221, 0.55));
+  transform: scale(1.12);
 }
 
 .bottom-nav-item.active .bottom-nav-label {
@@ -187,26 +268,15 @@ body[data-view="dashboard"] nav.tabs {
   display: none !important;
 }
 
-/* ===== PILL SLIDE ANIMATION KEYFRAMES ===== */
-@keyframes pill-bounce {
-  0% { transform: scaleX(0.85) scaleY(1.08); }
-  50% { transform: scaleX(1.08) scaleY(0.92); }
-  100% { transform: scaleX(1) scaleY(1); }
-}
-
-.bottom-nav-pill.animating {
-  animation: pill-bounce 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 /* ===== RESPONSIVE ===== */
 @media (min-width: 600px) {
   .bottom-nav {
     left: 50%;
     transform: translateX(-50%);
     max-width: 480px;
-    border-radius: 22px 22px 0 0;
-    border-left: 1px solid rgba(157, 78, 221, 0.12);
-    border-right: 1px solid rgba(157, 78, 221, 0.12);
+    border-radius: 24px 24px 0 0;
+    border-left: 1px solid rgba(157, 78, 221, 0.08);
+    border-right: 1px solid rgba(157, 78, 221, 0.08);
   }
 }
 
@@ -216,28 +286,49 @@ body[data-view="dashboard"] nav.tabs {
   }
 }
 
-/* ===== LIGHT THEME ===== */
+/* ============================================================
+   LIGHT THEME — Liquid Glass
+   ============================================================ */
 html[data-theme="light"] .bottom-nav {
-  background: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(40px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-  border-top: 1px solid rgba(123, 44, 191, 0.12) !important;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(50px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
+  border-top: 1px solid rgba(123, 44, 191, 0.08) !important;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
 }
 
 html[data-theme="light"] .bottom-nav-pill {
-  background: linear-gradient(135deg,
-    rgba(123, 44, 191, 0.18) 0%,
-    rgba(157, 78, 221, 0.12) 50%,
-    rgba(123, 44, 191, 0.16) 100%) !important;
-  border: 1px solid rgba(123, 44, 191, 0.22) !important;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.10) 30%,
+      transparent 50%),
+    linear-gradient(135deg,
+      rgba(123, 44, 191, 0.14) 0%,
+      rgba(157, 78, 221, 0.08) 40%,
+      rgba(123, 44, 191, 0.10) 70%,
+      rgba(157, 78, 221, 0.05) 100%),
+    radial-gradient(ellipse at 50% 30%,
+      rgba(157, 78, 221, 0.08) 0%,
+      rgba(123, 44, 191, 0.02) 100%) !important;
+  border: 1px solid rgba(123, 44, 191, 0.18) !important;
   box-shadow:
-    0 2px 12px rgba(123, 44, 191, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    0 2px 12px rgba(123, 44, 191, 0.12),
+    inset 0 2px 4px rgba(255, 255, 255, 0.40),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-theme="light"] .bottom-nav-pill::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.70) 20%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.70) 80%,
+    transparent 100%) !important;
 }
 
 html[data-theme="light"] .bottom-nav-item {
-  color: rgba(99, 99, 102, 0.70);
+  color: rgba(99, 99, 102, 0.60);
 }
 
 html[data-theme="light"] .bottom-nav-item.active {
@@ -246,7 +337,7 @@ html[data-theme="light"] .bottom-nav-item.active {
 
 html[data-theme="light"] .bottom-nav-item.active svg {
   color: #7B2CBF;
-  filter: drop-shadow(0 0 6px rgba(123, 44, 191, 0.25));
+  filter: drop-shadow(0 0 8px rgba(123, 44, 191, 0.20));
 }
 
 html[data-theme="light"] .bottom-nav-item.active .bottom-nav-label {
@@ -256,23 +347,38 @@ html[data-theme="light"] .bottom-nav-item.active .bottom-nav-label {
 /* Auto light */
 @media (prefers-color-scheme: light) {
   html[data-theme="auto"] .bottom-nav {
-    background: rgba(255, 255, 255, 0.72) !important;
-    backdrop-filter: blur(40px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-    border-top: 1px solid rgba(123, 44, 191, 0.12) !important;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
+    background: rgba(255, 255, 255, 0.68) !important;
+    backdrop-filter: blur(50px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(50px) saturate(220%) !important;
+    border-top: 1px solid rgba(123, 44, 191, 0.08) !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
   }
   html[data-theme="auto"] .bottom-nav-pill {
-    background: linear-gradient(135deg,
-      rgba(123, 44, 191, 0.18) 0%,
-      rgba(157, 78, 221, 0.12) 50%,
-      rgba(123, 44, 191, 0.16) 100%) !important;
-    border: 1px solid rgba(123, 44, 191, 0.22) !important;
-    box-shadow: 0 2px 12px rgba(123, 44, 191, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.45) 0%,
+        rgba(255, 255, 255, 0.10) 30%,
+        transparent 50%),
+      linear-gradient(135deg,
+        rgba(123, 44, 191, 0.14) 0%,
+        rgba(157, 78, 221, 0.08) 40%,
+        rgba(123, 44, 191, 0.10) 70%,
+        rgba(157, 78, 221, 0.05) 100%),
+      radial-gradient(ellipse at 50% 30%,
+        rgba(157, 78, 221, 0.08) 0%,
+        rgba(123, 44, 191, 0.02) 100%) !important;
+    border: 1px solid rgba(123, 44, 191, 0.18) !important;
+    box-shadow:
+      0 2px 12px rgba(123, 44, 191, 0.12),
+      inset 0 2px 4px rgba(255, 255, 255, 0.40),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.04) !important;
   }
-  html[data-theme="auto"] .bottom-nav-item { color: rgba(99, 99, 102, 0.70); }
+  html[data-theme="auto"] .bottom-nav-pill::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent) !important;
+  }
+  html[data-theme="auto"] .bottom-nav-item { color: rgba(99, 99, 102, 0.60); }
   html[data-theme="auto"] .bottom-nav-item.active { color: #7B2CBF; }
-  html[data-theme="auto"] .bottom-nav-item.active svg { color: #7B2CBF; filter: drop-shadow(0 0 6px rgba(123, 44, 191, 0.25)); }
+  html[data-theme="auto"] .bottom-nav-item.active svg { color: #7B2CBF; filter: drop-shadow(0 0 8px rgba(123, 44, 191, 0.20)); }
   html[data-theme="auto"] .bottom-nav-item.active .bottom-nav-label { color: #7B2CBF; }
 }
 
