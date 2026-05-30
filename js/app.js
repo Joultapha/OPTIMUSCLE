@@ -186,8 +186,20 @@ setupAuthListener(async (user) => {
     loading: false,
   });
 
-  // 6. Init bottom nav après le premier render
+  // 6. Init bottom nav (with retry for robustness)
   initBottomNav();
+  // Retry if DOM wasn't ready yet
+  if (!document.querySelector('.bottom-nav-inner')) {
+    let retries = 0;
+    const retryInterval = setInterval(() => {
+      initBottomNav();
+      retries++;
+      if (document.querySelector('.bottom-nav-inner') || retries >= 10) {
+        clearInterval(retryInterval);
+        console.log('[App] Bottom nav init', document.querySelector('.bottom-nav-inner') ? 'succeeded' : 'failed after retries');
+      }
+    }, 200);
+  }
 
   // 7. Init scroll animations (landing page)
   initScrollAnimations();

@@ -1,13 +1,12 @@
 /* ============================================================
-   OPTIMUSCLE V17 — Bottom Navigation Bar (Liquid Glass)
+   OPTIMUSCLE V19 — Bottom Navigation Bar (Liquid Glass)
    ============================================================
    - Fluid sliding pill with stretch/squash (Web Animations API)
-   - Pure CSS glassmorphism (NO SVG filters)
-   - Subtle, dark, NOT too bright
+   - SVG displacement maps for true liquid glass effect
+   - Robust initialization with retry mechanism
    ============================================================ */
 
 import { setSubPage } from '../core/appState.js';
-import { haptic } from '../utils/animations.js';
 import { createEl } from '../utils/sanitize.js';
 
 let initialized = false;
@@ -43,12 +42,24 @@ const TABS = [
   },
 ];
 
+/**
+ * Initialize the bottom navigation bar.
+ * Robust: retries up to 3 times if DOM not ready.
+ */
 export function initBottomNav() {
   if (initialized) return;
-  initialized = true;
 
   const nav = document.getElementById('bottom-nav');
-  if (!nav) return;
+  if (!nav) {
+    console.warn('[BottomNav] #bottom-nav not found, will retry...');
+    return;
+  }
+
+  initialized = true;
+  console.log('[BottomNav] Initializing...');
+
+  // Inject SVG filters for liquid glass effect
+  injectSVGFilters();
 
   // Create inner container
   const inner = createEl('div', { className: 'bottom-nav-inner' });
@@ -76,6 +87,38 @@ export function initBottomNav() {
   requestAnimationFrame(() => {
     movePill(0, false);
   });
+
+  console.log('[BottomNav] Initialized successfully with', TABS.length, 'tabs');
+}
+
+/**
+ * Inject SVG filters for the liquid glass displacement effect.
+ * These create the water-droplet distortion on the pill and container.
+ */
+function injectSVGFilters() {
+  if (document.getElementById('liquid-glass-filters')) return;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('id', 'liquid-glass-filters');
+  svg.setAttribute('style', 'position:absolute;width:0;height:0;pointer-events:none;');
+  svg.setAttribute('aria-hidden', 'true');
+
+  svg.innerHTML = `
+    <defs>
+      <!-- Switcher filter: subtle displacement on the sliding pill -->
+      <filter id="liquid-switcher" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="2" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <!-- Toggler filter: very subtle displacement on the container -->
+      <filter id="liquid-toggler" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" seed="5" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  `;
+
+  document.body.appendChild(svg);
 }
 
 /**
@@ -144,7 +187,10 @@ function movePill(targetIndex, animate = true) {
 }
 
 function handleTabClick(tabId) {
-  haptic('light');
+  // Haptic feedback (safe - won't break if unavailable)
+  try {
+    if (navigator.vibrate) navigator.vibrate(8);
+  } catch(e) {}
 
   const index = TABS.findIndex(t => t.id === tabId);
   if (index === -1) return;
@@ -164,12 +210,12 @@ function handleTabClick(tabId) {
   switch (tabId) {
     case 'home':
       setSubPage('home');
-      import('./ui.js').then(mod => mod.renderHome());
+      import('./ui.js').then(mod => { if (mod.renderHome) mod.renderHome(); });
       break;
 
     case 'training':
       setSubPage('training');
-      import('./ui.js').then(mod => mod.renderHome());
+      import('./ui.js').then(mod => { if (mod.renderHome) mod.renderHome(); });
       break;
 
     case 'nutrition':
@@ -184,6 +230,7 @@ function handleTabClick(tabId) {
 
     case 'profile':
       setSubPage('profile');
+      import('./ui.js').then(mod => { if (mod.renderProfile) mod.renderProfile(); });
       break;
   }
 }

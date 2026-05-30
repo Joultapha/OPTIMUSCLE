@@ -30,6 +30,7 @@ export const PLANS = {
   premium_monthly: {
     id: 'premium_monthly',
     stripeId: 'price_XXXXX_monthly',  // À remplacer par ton vrai Price ID Stripe
+    paddleId: 'pri_XXXXX_monthly',    // À remplacer par ton vrai Paddle Product ID
     name: 'Premium Mensuel',
     price: 4.99,
     interval: 'month',
@@ -46,6 +47,7 @@ export const PLANS = {
   premium_yearly: {
     id: 'premium_yearly',
     stripeId: 'price_XXXXX_yearly',
+    paddleId: 'pri_XXXXX_yearly',    // À remplacer par ton vrai Paddle Product ID
     name: 'Premium Annuel',
     price: 39.99,
     interval: 'year',
@@ -63,6 +65,7 @@ export const PLANS = {
   premium_lifetime: {
     id: 'premium_lifetime',
     stripeId: 'price_XXXXX_lifetime',
+    paddleId: 'pri_XXXXX_lifetime',    // À remplacer par ton vrai Paddle Product ID
     name: 'Premium Lifetime',
     price: 99.99,
     interval: 'lifetime',
