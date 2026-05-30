@@ -27,15 +27,14 @@
   box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.30);
 }
 
-/* Visible only in dashboard views */
-body[data-view="dashboard"][data-subpage="home"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="training"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="history"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="badges"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="profile"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="nutrition"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="challenges"] .bottom-nav {
-  display: flex;
+/* Visible on ALL dashboard views (regardless of subpage) */
+body[data-view="dashboard"] .bottom-nav {
+  display: flex !important;
+}
+
+/* Hide on workout subpage (full screen mode) */
+body[data-view="dashboard"][data-subpage="workout"] .bottom-nav {
+  display: none !important;
 }
 
 /* ===== INNER CONTAINER ===== */

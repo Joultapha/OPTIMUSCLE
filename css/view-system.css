@@ -22,7 +22,9 @@ body:not([data-view="dashboard"]) #page-home,
 body:not([data-view="dashboard"]) #page-history,
 body:not([data-view="dashboard"]) #page-badges,
 body:not([data-view="dashboard"]) #page-profile,
-body:not([data-view="dashboard"]) #page-workout {
+body:not([data-view="dashboard"]) #page-workout,
+body:not([data-view="dashboard"]) #page-nutrition,
+body:not([data-view="dashboard"]) #page-challenges {
   display: none !important;
 }
 
