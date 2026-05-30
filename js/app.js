@@ -88,6 +88,10 @@ initTheme();
 setLoading(true);
 render('app-start');
 
+// ⭐ Flag pour ignorer le premier fire null de Firebase (race condition)
+let authResolved = false;
+let authResolveTimer = null;
+
 // Fallback: if app doesn't load in 15s, hide loading and show error
 setTimeout(() => {
   const ls = document.getElementById('app-loading-screen');
@@ -102,6 +106,7 @@ setTimeout(() => {
 // 2. INIT FIREBASE (dynamic imports — resilient to CDN failures)
 // ============================================================
 let firebaseApp, auth, db;
+let firebaseAvailable = false;
 
 try {
   // Dynamic import: if CDN is down or version doesn't exist,
@@ -117,6 +122,7 @@ try {
 
   // Init auth via auth.js (which uses its own dynamic import)
   auth = await initAuth(firebaseApp);
+  firebaseAvailable = true;
 
 } catch (e) {
   console.error('[APP] Firebase init failed (dynamic import):', e);
@@ -131,9 +137,8 @@ try {
 
 cleanupOldEntries();
 
-// Hide native loading screen (CSS takes over from here)
-const loadingScreen = document.getElementById('app-loading-screen');
-if (loadingScreen) loadingScreen.style.display = 'none';
+// ⭐ NE PAS cacher le loading screen ici — attendre que l'auth soit résolu
+// Le loading screen sera caché par le auth listener ou le fallback
 
 console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 
@@ -159,18 +164,58 @@ window.addEventListener('unhandledrejection', (event) => {
 // ============================================================
 // 5. AUTH STATE LISTENER = SEULE source de décision de flow
 // ============================================================
+if (firebaseAvailable) {
 try {
 setupAuthListener(async (user) => {
-  console.log('[AUTH] User changed:', user ? user.email : 'null');
+  console.log('[AUTH] User changed:', user ? user.email : 'null', '| authResolved:', authResolved);
+
+  // ⭐ IMPORTANT : Firebase onAuthStateChanged tire TOUJOURS avec null en premier
+  // avant de résoudre avec l'utilisateur réel (si session existe).
+  // On ignore ce premier fire null pour éviter un flash vers la landing page.
+  if (!user && !authResolved) {
+    console.log('[AUTH] Ignoring initial null fire (Firebase session check)');
+    // Ne PAS afficher la landing page — attendre que Firebase résolve
+    // le vrai état d'auth dans les prochaines millisecondes
+    
+    // ⭐ Safety: si après 3s on n'a toujours pas de user, c'est qu'on est vraiment
+    // pas connecté — on accepte le null
+    if (!authResolveTimer) {
+      authResolveTimer = setTimeout(() => {
+        if (!authResolved) {
+          console.log('[AUTH] Auth resolve timeout — user is truly not authenticated');
+          authResolved = true;
+          // Cacher le loading screen
+          const ls = document.getElementById('app-loading-screen');
+          if (ls) ls.style.display = 'none';
+          updateAppState({ loading: false, isAuthenticated: false });
+        }
+      }, 3000);
+    }
+    return;
+  }
+
+  // ⭐ Marquer l'auth comme résolu (on a eu au moins une réponse non-null,
+  // ou un null après le premier fire)
+  if (!authResolved) {
+    authResolved = true;
+    if (authResolveTimer) {
+      clearTimeout(authResolveTimer);
+      authResolveTimer = null;
+    }
+  }
 
   if (!user) {
-    // ===== UTILISATEUR NON CONNECTÉ → LANDING (puis LOGIN) =====
+    // ===== UTILISATEUR VRAIMENT NON CONNECTÉ (pas un race condition) =====
     setCurrentUser(null);
     setUserData(null);
     resetState();
 
     // ⭐ Reset hasSeenLanding pour re-voir la landing après déconnexion
     try { localStorage.removeItem('hasSeenLanding'); } catch(e) {}
+
+    // Cacher le loading screen
+    const ls = document.getElementById('app-loading-screen');
+    if (ls) ls.style.display = 'none';
 
     updateAppState({
       isAuthenticated: false,
@@ -184,7 +229,6 @@ setupAuthListener(async (user) => {
   // ===== UTILISATEUR CONNECTÉ =====
 
   // 1. Pendant le chargement des données : loading
-  setLoading(true);
   setCurrentUser(user);
   resetState();
 
@@ -218,23 +262,32 @@ setupAuthListener(async (user) => {
     resetOnboardingUI();
   }
 
-  // 5. UN SEUL update final → render
+  // 5. Cacher le loading screen AVANT le render final
+  const ls = document.getElementById('app-loading-screen');
+  if (ls) ls.style.display = 'none';
+
+  // 6. UN SEUL update final → render
   updateAppState({
     isAuthenticated: true,
     onboardingCompleted: onboardingDone,
     loading: false,
   });
 
-  // 6. Init bottom nav
+  // 7. Init bottom nav
   initBottomNav();
 
-  // 7. Init scroll animations (landing page)
+  // 8. Init scroll animations (landing page)
   initScrollAnimations();
 });
 } catch (e) {
   console.warn('[APP] Auth listener not set up (Firebase unavailable):', e.message);
   // Show landing page for non-authenticated users
+  const ls = document.getElementById('app-loading-screen');
+  if (ls) ls.style.display = 'none';
   updateAppState({ loading: false, isAuthenticated: false });
+}
+} else {
+  // Firebase not available — already handled above
 }
 
 // ============================================================

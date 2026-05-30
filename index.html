@@ -56,10 +56,8 @@
   <noscript><div style="margin-top:16px;color:#d94848;font-size:14px;">JavaScript est requis pour utiliser cette application.</div></noscript>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-<!-- Fallback 1: if JS loads but Firebase fails, show landing after 5s -->
-<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls&&ls.style.display!=='none'){document.body.setAttribute('data-view','landing');ls.style.display='none';}},5000);</script>
-<!-- Fallback 2: absolutely force everything visible at 12s -->
-<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls)ls.style.cssText='display:none!important';var landing=document.getElementById('view-landing');if(landing)landing.style.cssText='display:block!important';document.body.setAttribute('data-view','landing');},12000);</script>
+<!-- Fallback: if JS loads but app fails completely, show landing after 8s -->
+<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls&&ls.style.display!=='none'){ls.style.display='none';document.body.setAttribute('data-view','landing');}},8000);</script>
 
 <!-- ============================================
      LANDING PAGE (avant inscription)

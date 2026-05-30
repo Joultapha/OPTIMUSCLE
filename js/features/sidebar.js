@@ -299,8 +299,9 @@ function handlePaddleCheckout(planId) {
       window.Paddle.Checkout.open({
         product: plan.paddleId || plan.stripeId,
         successCallback: () => {
-          import('../utils/notifications.js').then(mod => mod.showToast('Bienvenue en Premium ! 🎉'));
-          overlay.classList.remove('show');
+          import('../utils/notifications.js').then(mod => mod.showToast('Bienvenue en Premium !'));
+          const overlayEl = document.getElementById('premium-modal-overlay');
+          if (overlayEl) overlayEl.classList.remove('show');
         },
         closeCallback: () => {
           // User closed checkout

@@ -118,6 +118,10 @@ let pendingRender = false;
  * - Le CSS gère qui est visible
  * - JS ne touche JAMAIS à .style.display des views
  */
+// ⭐ Track last view to avoid unnecessary scroll/re-render
+let lastRenderedView = null;
+let lastRenderedSubPage = null;
+
 export function render(reason = 'unknown') {
   // Évite les renders concurrents (boucle infinie)
   if (renderInProgress) {
@@ -129,11 +133,26 @@ export function render(reason = 'unknown') {
 
   try {
     const view = getCurrentView();
-    console.log(`[RENDER] reason="${reason}" → view="${view}"`, getAppState());
+    const subPage = appState.currentSubPage;
+    const viewChanged = view !== lastRenderedView;
+    const subPageChanged = subPage !== lastRenderedSubPage;
+
+    // ⭐ Skip render si rien n'a changé (sauf si forcé)
+    if (!viewChanged && !subPageChanged && reason !== 'manual' && reason !== 'updateAppState') {
+      renderInProgress = false;
+      return;
+    }
+
+    console.log(`[RENDER] reason="${reason}" → view="${view}" subPage="${subPage}"` +
+      (viewChanged ? ' [VIEW CHANGED]' : '') +
+      (subPageChanged ? ' [SUBPAGE CHANGED]' : ''));
+
+    lastRenderedView = view;
+    lastRenderedSubPage = subPage;
 
     // ⭐ UNE SEULE source de vérité visuelle : data-view sur body
     document.body.setAttribute('data-view', view);
-    document.body.setAttribute('data-subpage', appState.currentSubPage);
+    document.body.setAttribute('data-subpage', subPage);
 
     // Update les éléments visuels (active class) pour compat ancien CSS
     const allPages = document.querySelectorAll('.page');
@@ -157,7 +176,7 @@ export function render(reason = 'unknown') {
       landing: null,  // géré séparément
       login: null,
       onboarding: 'page-onboarding',
-      dashboard: subpageToPage[appState.currentSubPage] || 'page-home',
+      dashboard: subpageToPage[subPage] || 'page-home',
     };
 
     const pageId = pageMap[view];
@@ -177,8 +196,8 @@ export function render(reason = 'unknown') {
     }
 
     // Header / settings : visibles UNIQUEMENT sur dashboard
-    const showAppShell = (view === 'dashboard' && appState.currentSubPage !== 'workout');
-    const showHeaderOnly = (view === 'dashboard' && appState.currentSubPage === 'workout');
+    const showAppShell = (view === 'dashboard' && subPage !== 'workout');
+    const showHeaderOnly = (view === 'dashboard' && subPage === 'workout');
 
     const headerEl = document.getElementById('app-header');
     const tabsEl = document.getElementById('tabs');
@@ -193,11 +212,14 @@ export function render(reason = 'unknown') {
 
     // Tab actif (pour le visuel des tabs)
     document.querySelectorAll('.tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.tab === appState.currentSubPage);
+      t.classList.toggle('active', t.dataset.tab === subPage);
     });
 
-    // Scroll en haut sur les changements de view majeurs
-    window.scrollTo(0, 0);
+    // ⭐ Scroll en haut UNIQUEMENT quand la view principale change
+    // (pas sur les changements de subpage — évite les sauts)
+    if (viewChanged) {
+      window.scrollTo(0, 0);
+    }
 
   } catch (e) {
     console.error('[RENDER] Erreur:', e);
