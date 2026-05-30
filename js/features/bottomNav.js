@@ -1,16 +1,18 @@
 /* ============================================================
-   OPTIMUSCLE — Bottom Navigation Bar (Feature)
+   OPTIMUSCLE V17 — Bottom Navigation Bar (Apple Liquid Glass)
    ============================================================
    5 tabs : Accueil, Training, Nutrition, Défis, Profil
-   Remplace les tabs comme navigation principale.
-   La sidebar reste pour : settings, historique, badges, coach, logout.
-============================================================ */
+   - Floating liquid glass container with pill indicator
+   - Animated sliding pill that follows the active tab
+   - Apple-style glassmorphism
+   ============================================================ */
 
 import { setSubPage } from '../core/appState.js';
 import { haptic } from '../utils/animations.js';
 import { createEl } from '../utils/sanitize.js';
 
 let initialized = false;
+let currentTab = 'home';
 
 const TABS = [
   {
@@ -47,33 +49,77 @@ export function initBottomNav() {
   const nav = document.getElementById('bottom-nav');
   if (!nav) return;
 
-  // Créer les items de nav
-  TABS.forEach(tab => {
+  // Create inner container
+  const inner = createEl('div', { className: 'bottom-nav-inner' });
+
+  // Create sliding pill indicator
+  const pill = createEl('div', { className: 'bottom-nav-pill' });
+
+  // Create nav items
+  TABS.forEach((tab, index) => {
     const btn = createEl('button', {
       className: 'bottom-nav-item' + (tab.id === 'home' ? ' active' : ''),
-      attrs: { type: 'button', 'data-tab': tab.id },
+      attrs: { type: 'button', 'data-tab': tab.id, 'data-index': index },
     });
     btn.innerHTML = tab.icon;
     btn.appendChild(createEl('span', { className: 'bottom-nav-label', text: tab.label }));
     btn.addEventListener('click', () => handleTabClick(tab.id));
-    nav.appendChild(btn);
+    inner.appendChild(btn);
   });
+
+  inner.appendChild(pill);
+  nav.appendChild(inner);
+
+  // Position pill on initial active tab
+  requestAnimationFrame(() => {
+    movePill(0, false);
+  });
+}
+
+/**
+ * Move the pill indicator to the given tab index
+ * @param {number} index - tab index (0-4)
+ * @param {boolean} animate - whether to add bounce animation
+ */
+function movePill(index, animate = true) {
+  const pill = document.querySelector('.bottom-nav-pill');
+  if (!pill) return;
+
+  const x = index * 100; // percentage
+  pill.style.transform = `translateX(${x}%)`;
+
+  if (animate) {
+    pill.classList.remove('animating');
+    // Trigger reflow to restart animation
+    void pill.offsetWidth;
+    pill.classList.add('animating');
+    setTimeout(() => pill.classList.remove('animating'), 400);
+  }
 }
 
 function handleTabClick(tabId) {
   haptic('light');
 
-  // Mettre à jour l'UI du bottom nav
+  const index = TABS.findIndex(t => t.id === tabId);
+  if (index === -1) return;
+
+  // Skip if already active
+  if (tabId === currentTab) return;
+  currentTab = tabId;
+
+  // Update active state
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.classList.toggle('active', item.dataset.tab === tabId);
   });
+
+  // Move pill with animation
+  movePill(index, true);
 
   // Navigation
   if (tabId === 'home') {
     setSubPage('home');
     import('./ui.js').then(mod => mod.renderHome());
   } else if (tabId === 'training') {
-    // Aller à la page d'accueil avec focus sur "ta semaine"
     setSubPage('home');
     import('./ui.js').then(mod => mod.renderHome());
   } else if (tabId === 'nutrition') {
@@ -90,7 +136,12 @@ function handleTabClick(tabId) {
  * Met à jour l'onglet actif du bottom nav.
  */
 export function setActiveBottomTab(tabId) {
+  const index = TABS.findIndex(t => t.id === tabId);
+  if (index === -1) return;
+
+  currentTab = tabId;
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
     item.classList.toggle('active', item.dataset.tab === tabId);
   });
+  movePill(index, true);
 }

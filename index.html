@@ -21,11 +21,11 @@
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com;
   font-src 'self' https://fonts.gstatic.com data:;
   img-src 'self' data: https: blob:;
-  connect-src 'self' https://world.openfoodfacts.org https://api.groq.com https://generativelanguage.googleapis.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://api.stripe.com https://api.nowpayments.io https://firebaseappcheck.googleapis.com wss://*.firebaseio.com;
-  frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://js.stripe.com https://hooks.stripe.com https://www.google.com https://www.recaptcha.net https://nowpayments.io;
+  connect-src 'self' https://world.openfoodfacts.org https://api.groq.com https://generativelanguage.googleapis.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://api.stripe.com https://firebaseappcheck.googleapis.com wss://*.firebaseio.com;
+  frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://js.stripe.com https://hooks.stripe.com https://www.google.com https://www.recaptcha.net;
   object-src 'none';
   base-uri 'self';
-  form-action 'self' https://accounts.google.com https://nowpayments.io;
+  form-action 'self' https://accounts.google.com;
 ">
 
 <link rel="stylesheet" href="css/variables.css">
@@ -378,7 +378,13 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
 
   <!-- FOOTER -->
   <div class="landing-footer">
-    © 2026 OPTIMUSCLE — POUSSE TES LIMITES
+    <span>© 2026 OPTIMUSCLE — POUSSE TES LIMITES</span>
+    <div class="landing-footer-links">
+      <a href="/legal/pricing.html">Tarifs</a>
+      <a href="/legal/terms.html">CGU</a>
+      <a href="/legal/privacy.html">Confidentialité</a>
+      <a href="/legal/refund.html">Remboursement</a>
+    </div>
   </div>
 
 </div>
@@ -492,36 +498,9 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
     <button class="header-btn" id="settings-btn" type="button" aria-label="Paramètres">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
-    <!-- Apple Liquid Glass Day/Night Toggle -->
-    <button class="daynight-toggle" id="daynight-toggle" type="button" aria-label="Basculer jour/nuit" data-theme="dark">
-      <div class="daynight-track">
-        <div class="daynight-scene">
-          <!-- Stars (visible in dark mode) -->
-          <div class="daynight-stars">
-            <span class="star" style="top:12%;left:18%"></span>
-            <span class="star" style="top:28%;left:72%"></span>
-            <span class="star" style="top:55%;left:45%"></span>
-            <span class="star" style="top:20%;left:55%"></span>
-            <span class="star" style="top:65%;left:22%"></span>
-          </div>
-          <!-- Craters (visible in dark mode on the moon) -->
-          <div class="daynight-craters">
-            <span class="crater crater-1"></span>
-            <span class="crater crater-2"></span>
-            <span class="crater crater-3"></span>
-          </div>
-        </div>
-        <!-- Sliding knob -->
-        <div class="daynight-knob">
-          <svg class="daynight-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="4" fill="currentColor"/>
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <svg class="daynight-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </div>
-      </div>
+    <button class="header-btn" id="theme-toggle-btn" type="button" aria-label="Changer le thème">
+      <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
     <div id="user-avatar-wrap" style="display:none;"></div>
   </div>
@@ -830,88 +809,6 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
 </section>
 
 <!-- ============================================
-     PAGE PREMIUM / SUBSCRIPTION
-============================================ -->
-<section id="page-premium" class="page">
-  <div class="premium-container">
-    <!-- Header -->
-    <div class="premium-header">
-      <div class="premium-badge">PREMIUM</div>
-      <h1 class="premium-title">Débloque tout<br><span class="text-gradient">OPTIMUSCLE</span></h1>
-      <p class="premium-sub">Accès illimité au coach IA, programmes personnalisés, export PDF et plus encore.</p>
-    </div>
-
-    <!-- Current status -->
-    <div class="premium-status" id="premium-status" style="display:none;">
-      <div class="premium-status-icon">&#10003;</div>
-      <div>
-        <div class="premium-status-label">Abonnement actif</div>
-        <div class="premium-status-plan" id="premium-status-plan">Premium Mensuel</div>
-      </div>
-    </div>
-
-    <!-- Pricing Cards -->
-    <div class="premium-cards">
-      <!-- Monthly -->
-      <div class="premium-card" data-plan="monthly">
-        <div class="premium-card-header">
-          <div class="premium-card-name">Mensuel</div>
-          <div class="premium-card-price">$4.99<span>/mois</span></div>
-        </div>
-        <ul class="premium-card-features">
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Coach IA illimité</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Programmes personnalisés</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Export PDF</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sans publicité</li>
-        </ul>
-        <button class="premium-card-btn" onclick="window.__checkoutPlan('monthly')">Payer en crypto</button>
-      </div>
-
-      <!-- Yearly — Popular -->
-      <div class="premium-card premium-card-popular" data-plan="yearly">
-        <div class="premium-card-popular-tag">POPULAIRE</div>
-        <div class="premium-card-header">
-          <div class="premium-card-name">Annuel</div>
-          <div class="premium-card-price">$39.99<span>/an</span></div>
-          <div class="premium-card-savings">-33%</div>
-        </div>
-        <ul class="premium-card-features">
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tout le Mensuel</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Économie 33%</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Support prioritaire</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Badge exclusif</li>
-        </ul>
-        <button class="premium-card-btn premium-card-btn-popular" onclick="window.__checkoutPlan('yearly')">Payer en crypto</button>
-      </div>
-
-      <!-- Lifetime -->
-      <div class="premium-card" data-plan="lifetime">
-        <div class="premium-card-header">
-          <div class="premium-card-name">À Vie</div>
-          <div class="premium-card-price">$99.99<span></span></div>
-        </div>
-        <ul class="premium-card-features">
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tout l'Annuel</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Accès à vie</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mises à jour futures</li>
-          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Badge or</li>
-        </ul>
-        <button class="premium-card-btn" onclick="window.__checkoutPlan('lifetime')">Payer en crypto</button>
-      </div>
-    </div>
-
-    <!-- Payment info -->
-    <div class="premium-payment-info">
-      <div class="premium-payment-badge">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Paiement sécurisé via NOWPayments
-      </div>
-      <p>USDT (Solana) • Transaction instantanée • Frais ~$0.01</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================
      MODAL : Ajouter un aliment
 ============================================ -->
 <div id="nut-add-modal">
@@ -1216,11 +1113,6 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
     <button class="sidebar-item" data-action="profile" type="button">
       <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
       <span class="sidebar-item-label">Profil</span>
-    </button>
-    <button class="sidebar-item sidebar-item-premium" data-action="premium" type="button">
-      <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-      <span class="sidebar-item-label">Premium</span>
-      <span class="sidebar-item-badge">PRO</span>
     </button>
 
     <div class="sidebar-section-title">Préférences</div>

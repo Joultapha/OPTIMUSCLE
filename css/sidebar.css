@@ -250,24 +250,6 @@ body.sidebar-open .sidebar {
   letter-spacing: 0.05em;
 }
 
-/* Premium sidebar item */
-.sidebar-item-premium {
-  background: linear-gradient(90deg, rgba(123,44,191,0.10) 0%, rgba(123,44,191,0.03) 100%) !important;
-  border-color: rgba(123,44,191,0.15) !important;
-}
-
-.sidebar-item-premium:hover {
-  background: linear-gradient(90deg, rgba(123,44,191,0.18) 0%, rgba(123,44,191,0.06) 100%) !important;
-  border-color: rgba(123,44,191,0.25) !important;
-}
-
-.sidebar-item-premium .sidebar-item-badge {
-  background: linear-gradient(135deg, #FFD700, #FF8C00);
-  color: #1a1a2e;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-}
-
 /* ===== THEME SWITCH (dans la sidebar) ===== */
 .theme-switcher {
   margin: 16px 12px;

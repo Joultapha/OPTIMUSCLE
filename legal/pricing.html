@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tarifs — OPTIMUSCLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--accent:#7B2CBF;--accent-bright:#9D4EDD;--accent-glow:rgba(123,44,191,0.30);--bg:#000;--bg1:#0d0d12;--bg2:#16161e;--text:#f5f5f7;--text-soft:#d1d1d6;--text-dim:#8e8e93;--border:rgba(255,255,255,0.08);--gold:#d4a843;--gold-glow:rgba(212,168,67,0.20)}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0}
+.header{background:linear-gradient(135deg,rgba(123,44,191,0.15),rgba(0,0,0,0));border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;background:linear-gradient(135deg,#7B2CBF,#9D4EDD);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);font-size:.85rem;margin-top:4px}
+.container{max-width:800px;margin:0 auto;padding:32px 20px 64px}
+
+/* Free plan */
+.free-section{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:32px}
+.free-section h2{color:var(--text);font-size:1.2rem;margin-bottom:8px}
+.free-section .price{font-size:1.8rem;font-weight:800;color:var(--text-soft)}
+.free-section ul{list-style:none;padding:0;margin-top:16px}
+.free-section li{padding:8px 0;border-bottom:1px solid var(--border);color:var(--text-soft);font-size:.9rem}
+.free-section li::before{content:'✓';margin-right:8px;color:var(--text-dim)}
+.free-section li:last-child{border-bottom:none}
+
+/* Premium cards */
+.premium-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:24px}
+.card{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:24px;position:relative;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-2px);border-color:rgba(123,44,191,0.3)}
+.card.popular{border-color:var(--accent);box-shadow:0 4px 24px var(--accent-glow)}
+.card.popular::before{content:'POPULAIRE';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7B2CBF,#9D4EDD);color:#fff;font-size:.7rem;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:1px}
+.card.lifetime{border-color:var(--gold);box-shadow:0 4px 24px var(--gold-glow)}
+.card h3{font-size:1rem;color:var(--text);margin-bottom:4px}
+.card .price{font-size:2rem;font-weight:800;margin:8px 0 4px}
+.card .price span{font-size:.85rem;font-weight:400;color:var(--text-dim)}
+.card .savings{display:inline-block;background:rgba(60,179,113,0.15);color:#5fcf8e;font-size:.75rem;font-weight:600;padding:2px 10px;border-radius:20px;margin-bottom:12px}
+.card ul{list-style:none;padding:0;margin-top:16px}
+.card li{padding:6px 0;color:var(--text-soft);font-size:.85rem}
+.card li::before{content:'✓';margin-right:8px;color:var(--accent-bright)}
+
+/* Comparison table */
+.compare{margin-top:40px}
+.compare h2{color:var(--accent-bright);font-size:1.15rem;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.compare table{width:100%;border-collapse:collapse;font-size:.85rem}
+.compare th,.compare td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left}
+.compare th{color:var(--accent-bright);font-weight:600}
+.compare td{color:var(--text-soft)}
+.compare td:first-child{color:var(--text);font-weight:500}
+.compare .yes{color:#5fcf8e}
+.compare .no{color:var(--text-dim)}
+
+/* FAQ */
+.faq{margin-top:40px}
+.faq h2{color:var(--accent-bright);font-size:1.15rem;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.faq-item{border-bottom:1px solid var(--border);padding:16px 0}
+.faq-item h3{color:var(--text-soft);font-size:.92rem;margin-bottom:6px}
+.faq-item p{color:var(--text-dim);font-size:.85rem}
+
+/* Payment info */
+.payment-info{text-align:center;margin-top:40px;padding:20px;background:var(--bg1);border:1px solid var(--border);border-radius:12px}
+.payment-info p{color:var(--text-dim);font-size:.82rem}
+.payment-info svg{vertical-align:middle;margin-right:6px}
+
+/* CTA */
+.cta{text-align:center;margin-top:32px}
+.cta a{display:inline-block;background:linear-gradient(135deg,#7B2CBF,#9D4EDD);color:#fff;padding:14px 36px;border-radius:12px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.cta a:hover{transform:translateY(-2px);box-shadow:0 6px 24px var(--accent-glow)}
+
+.footer{text-align:center;padding:32px 20px;color:var(--text-dim);font-size:.8rem;border-top:1px solid var(--border)}
+.footer a{color:var(--text-dim);margin:0 12px}
+
+@media(max-width:500px){
+  .premium-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>OPTIMUSCLE</h1>
+  <p>Tarifs & Forfaits</p>
+</div>
+
+<div class="container">
+
+<!-- Free -->
+<div class="free-section">
+  <h2>Gratuit</h2>
+  <div class="price">0 €</div>
+  <ul>
+    <li>3 séances par semaine maximum</li>
+    <li>Historique sur 30 jours</li>
+    <li>Exercices de base</li>
+    <li>Programmes prédéfinis</li>
+    <li>Suivi de progression</li>
+  </ul>
+</div>
+
+<!-- Premium plans -->
+<h2 style="color:var(--accent-bright);font-size:1.15rem;margin-bottom:4px">Premium</h2>
+<p style="color:var(--text-dim);font-size:.88rem;margin-bottom:16px">Débloque tout le potentiel d'OPTIMUSCLE</p>
+
+<div class="premium-grid">
+
+  <div class="card">
+    <h3>Mensuel</h3>
+    <div class="price">4,99 €<span>/mois</span></div>
+    <ul>
+      <li>Coach IA illimité</li>
+      <li>Programmes personnalisés</li>
+      <li>Export PDF</li>
+      <li>Sans publicité</li>
+      <li>Nutrition avancée</li>
+      <li>Historique illimité</li>
+    </ul>
+  </div>
+
+  <div class="card popular">
+    <h3>Annuel</h3>
+    <div class="price">39,99 €<span>/an</span></div>
+    <span class="savings">-33%</span>
+    <ul>
+      <li>Tout le Mensuel</li>
+      <li>Économie de 33%</li>
+      <li>Support prioritaire</li>
+      <li>Badge exclusif</li>
+      <li>Accès anticipé</li>
+      <li>Historique illimité</li>
+    </ul>
+  </div>
+
+  <div class="card lifetime">
+    <h3>À Vie</h3>
+    <div class="price">99,99 €<span></span></div>
+    <ul>
+      <li>Tout l'Annuel</li>
+      <li>Accès à vie</li>
+      <li>Mises à jour futures</li>
+      <li>Badge or</li>
+      <li>Paiement unique</li>
+      <li>Pas de renouvellement</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Comparison -->
+<div class="compare">
+  <h2>Comparaison des fonctionnalités</h2>
+  <table>
+    <tr><th>Fonctionnalité</th><th>Gratuit</th><th>Premium</th></tr>
+    <tr><td>Séances / semaine</td><td>3</td><td class="yes">Illimité</td></tr>
+    <tr><td>Coach IA</td><td class="no">Non</td><td class="yes">Illimité</td></tr>
+    <tr><td>Programmes personnalisés</td><td class="no">Non</td><td class="yes">Oui</td></tr>
+    <tr><td>Export PDF</td><td class="no">Non</td><td class="yes">Oui</td></tr>
+    <tr><td>Publicités</td><td class="no">Oui</td><td class="yes">Aucune</td></tr>
+    <tr><td>Suivi nutrition</td><td>Basique</td><td class="yes">Avancé</td></tr>
+    <tr><td>Historique</td><td>30 jours</td><td class="yes">Illimité</td></tr>
+    <tr><td>Challenges</td><td>Lecture</td><td class="yes">Participation</td></tr>
+    <tr><td>Support</td><td>Email</td><td class="yes">Prioritaire</td></tr>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <h2>Questions fréquentes</h2>
+  <div class="faq-item">
+    <h3>Puis-je annuler à tout moment ?</h3>
+    <p>Oui, vous pouvez annuler votre abonnement à tout moment. Vous conservez l'accès Premium jusqu'à la fin de la période payée.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Y a-t-il une garantie de remboursement ?</h3>
+    <p>Oui, nous offrons une garantie satisfait ou remboursé de 14 jours sur tous les plans. Consultez notre <a href="/legal/refund.html" style="color:var(--accent-bright)">politique de remboursement</a>.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Le plan À Vie est-il vraiment à vie ?</h3>
+    <p>Oui ! Vous payez une seule fois et avez accès à toutes les fonctionnalités Premium pour toujours, y compris les mises à jour futures.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Quels moyens de paiement acceptez-vous ?</h3>
+    <p>Nous acceptons les cartes Visa, Mastercard et autres moyens de paiement via notre partenaire Paddle.</p>
+  </div>
+</div>
+
+<!-- Payment info -->
+<div class="payment-info">
+  <p><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Paiement sécurisé par Paddle</p>
+  <p style="margin-top:4px">Visa • Mastercard • Garantie 14 jours • Annulation anytime</p>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <a href="/">Commencer gratuitement</a>
+</div>
+
+</div>
+
+<div class="footer">
+  <a href="/legal/terms.html">CGU</a>
+  <a href="/legal/privacy.html">Confidentialité</a>
+  <a href="/legal/refund.html">Remboursement</a>
+  <a href="/legal/pricing.html">Tarifs</a>
+</div>
+
+</body>
+</html>

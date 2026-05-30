@@ -33,13 +33,12 @@ import {
   getCurrentView,
   render,
 } from './core/appState.js';
-import { initTheme, bindThemeButtons, bindDayNightToggle, applyTheme } from './features/theme.js';
-import { initSidebar, closeSidebar } from './features/sidebar.js';
+import { initTheme, bindThemeButtons, applyTheme } from './features/theme.js';
+import { initSidebar } from './features/sidebar.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
 import { initChallenges, renderChallenges } from './features/challenges.js';
 import { initBottomNav } from './features/bottomNav.js';
-import { redirectToCheckout, checkPaymentResult, isPremiumActive, getSubscription, PRICING } from './saas/nowpayments.js';
 
 import {
   initAuth,
@@ -105,38 +104,6 @@ console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 // ============================================================
 initOnboarding();
 bindGlobalEvents();
-
-// ============================================================
-// NOWPayments — Global checkout function & payment result check
-// ============================================================
-window.__checkoutPlan = function(planId) {
-  redirectToCheckout(planId);
-};
-
-// Check if user returned from a successful payment
-const paymentResult = checkPaymentResult();
-if (paymentResult && paymentResult.success) {
-  console.log('[PAYMENT] Premium activated:', paymentResult.plan);
-  showToast('Premium activé ! Profite de toutes les fonctionnalités 🎉');
-}
-
-// Update premium status UI
-function updatePremiumUI() {
-  const statusEl = document.getElementById('premium-status');
-  const planEl = document.getElementById('premium-status-plan');
-  if (!statusEl) return;
-
-  if (isPremiumActive()) {
-    const sub = getSubscription();
-    statusEl.style.display = 'flex';
-    if (planEl && sub) planEl.textContent = sub.planName || 'Premium';
-  } else {
-    statusEl.style.display = 'none';
-  }
-}
-
-// Call on page load
-setTimeout(updatePremiumUI, 1000);
 
 // ============================================================
 // 4. GLOBAL ERROR HANDLER
@@ -234,8 +201,17 @@ function bindGlobalEvents() {
   initSidebar();
   bindThemeButtons();
 
-  // Apple Liquid Glass Theme Switcher
-  bindDayNightToggle();
+  // Theme toggle button (header)
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  if (themeToggleBtn) {
+    updateThemeToggleIcon();
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark');
+      applyTheme(next);
+      updateThemeToggleIcon();
+    });
+  }
 
   initCoach();
   initDraggableFab();
@@ -256,22 +232,6 @@ function bindGlobalEvents() {
       document.getElementById('page-challenges')?.classList.add('active');
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       renderChallenges();
-      window.scrollTo(0, 0);
-    } else if (page === 'premium') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-premium')?.classList.add('active');
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      // Update premium status
-      const statusEl = document.getElementById('premium-status');
-      const planEl = document.getElementById('premium-status-plan');
-      if (statusEl && isPremiumActive()) {
-        statusEl.style.display = 'flex';
-        const sub = getSubscription();
-        if (planEl && sub) planEl.textContent = sub.planName || 'Premium';
-      } else if (statusEl) {
-        statusEl.style.display = 'none';
-      }
-      closeSidebar();
       window.scrollTo(0, 0);
     }
   });
@@ -343,7 +303,18 @@ function bindGlobalEvents() {
   });
 }
 
-
+function updateThemeToggleIcon() {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  const current = document.documentElement.getAttribute('data-theme');
+  const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const lightIcon = btn.querySelector('.theme-icon-light');
+  const darkIcon = btn.querySelector('.theme-icon-dark');
+  if (lightIcon && darkIcon) {
+    lightIcon.style.display = isDark ? 'block' : 'none';
+    darkIcon.style.display = isDark ? 'none' : 'block';
+  }
+}
 
 // ============================================================
 // SECURITY
