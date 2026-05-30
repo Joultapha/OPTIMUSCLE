@@ -88,40 +88,15 @@ initTheme();
 setLoading(true);
 render('app-start');
 
-// Fallback: if app doesn't load in 15s, hide loading and show error
-setTimeout(() => {
-  const ls = document.getElementById('app-loading-screen');
-  const status = document.getElementById('loading-status');
-  if (ls && ls.style.display !== 'none') {
-    if (status) status.textContent = 'Erreur de chargement. Vérifie ta connexion et recharge.';
-    console.error('[APP] Loading timeout — Firebase may be unreachable');
-  }
-}, 15000);
-
 // ============================================================
 // 2. INIT FIREBASE
 // ============================================================
-let firebaseApp, auth, db;
-try {
-  firebaseApp = initializeApp(firebaseConfig);
-  auth = await initAuth(firebaseApp);
-  db = getDatabase(firebaseApp);
-  initDatabase(db, ref, set, get);
-} catch (e) {
-  console.error('[APP] Firebase init failed:', e);
-  const status = document.getElementById('loading-status');
-  if (status) status.textContent = 'Erreur de connexion. Recharge la page.';
-  // Still allow app to function in offline mode
-  updateAppState({ loading: false });
-  throw e;
-}
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = await initAuth(firebaseApp);
+const db = getDatabase(firebaseApp);
+initDatabase(db, ref, set, get);
 
 cleanupOldEntries();
-
-// Hide native loading screen (CSS takes over from here)
-const loadingScreen = document.getElementById('app-loading-screen');
-if (loadingScreen) loadingScreen.style.display = 'none';
-
 console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 
 // ============================================================
@@ -211,8 +186,20 @@ setupAuthListener(async (user) => {
     loading: false,
   });
 
-  // 6. Init bottom nav
+  // 6. Init bottom nav (with retry for robustness)
   initBottomNav();
+  // Retry if DOM wasn't ready yet
+  if (!document.querySelector('.bottom-nav-inner')) {
+    let retries = 0;
+    const retryInterval = setInterval(() => {
+      initBottomNav();
+      retries++;
+      if (document.querySelector('.bottom-nav-inner') || retries >= 10) {
+        clearInterval(retryInterval);
+        console.log('[App] Bottom nav init', document.querySelector('.bottom-nav-inner') ? 'succeeded' : 'failed after retries');
+      }
+    }, 200);
+  }
 
   // 7. Init scroll animations (landing page)
   initScrollAnimations();

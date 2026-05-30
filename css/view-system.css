@@ -68,14 +68,6 @@ body[data-view="dashboard"][data-subpage="workout"] #tabs {
   display: none !important;
 }
 
-/* ===== LOADING SCREEN ===== */
-#app-loading-screen {
-  display: flex;
-}
-body:not([data-view="loading"]) #app-loading-screen {
-  display: none !important;
-}
-
 
 
 /* Aussi sur tablet/desktop, le body reste full pour la landing */
