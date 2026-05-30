@@ -1002,3 +1002,122 @@ html[data-theme="light"] .landing-coach-prompt,
 @media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-coach-prompt { background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.08); color: var(--text-soft); } }
 html[data-theme="light"] .landing-coach-prompt:hover,
 @media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-coach-prompt:hover { background: rgba(123,44,191,0.06); border-color: rgba(123,44,191,0.20); color: var(--accent); } }
+
+/* ===== PRICING GRID ===== */
+.landing-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+@media (max-width: 500px) {
+  .landing-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.landing-pricing-card {
+  position: relative;
+  padding: 24px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-2);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.landing-pricing-featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 32px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  background: linear-gradient(180deg, rgba(123,44,191,0.12) 0%, var(--glass-bg-2) 100%);
+}
+
+.landing-pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--grad-brand);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 4px 16px;
+  border-radius: 100px;
+}
+
+.landing-pricing-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+}
+
+.landing-pricing-price {
+  font-family: var(--font-display);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.landing-pricing-price span {
+  font-size: 16px;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+}
+
+.landing-pricing-annual {
+  font-size: 12px;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.landing-pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  text-align: left;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-pricing-features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+}
+
+.landing-pricing-features li svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.landing-pricing-features .landing-pricing-disabled {
+  color: var(--text-dimmer);
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Light mode pricing cards */
+html[data-theme="light"] .landing-pricing-card,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.06); } }
+html[data-theme="light"] .landing-pricing-featured,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-featured { background: linear-gradient(180deg, rgba(123,44,191,0.06) 0%, rgba(255,255,255,0.85) 100%); border-color: var(--accent); box-shadow: 0 0 32px rgba(123,44,191,0.10), inset 0 1px 0 rgba(255,255,255,0.15); } }
+html[data-theme="light"] .landing-pricing-name,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-name { color: #1a1a2e; } }
+html[data-theme="light"] .landing-pricing-price,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-price { color: #1a1a2e; } }
+html[data-theme="light"] .landing-pricing-price span,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-price span { color: #6b6b80; } }
+html[data-theme="light"] .landing-pricing-features li,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-features li { color: #2d2d44; } }
+html[data-theme="light"] .landing-pricing-features .landing-pricing-disabled,
+@media (prefers-color-scheme: light) { html[data-theme="auto"] .landing-pricing-features .landing-pricing-disabled { color: #9a9ab0; } }

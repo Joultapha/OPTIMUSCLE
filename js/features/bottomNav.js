@@ -44,14 +44,23 @@ const TABS = [
 
 /**
  * Initialize the bottom navigation bar.
- * Robust: retries up to 3 times if DOM not ready.
+ * Robust: retries up to 5 times with delay if DOM not ready.
  */
+let retryCount = 0;
+const MAX_RETRIES = 5;
+
 export function initBottomNav() {
   if (initialized) return;
 
   const nav = document.getElementById('bottom-nav');
   if (!nav) {
-    console.warn('[BottomNav] #bottom-nav not found, will retry...');
+    retryCount++;
+    if (retryCount < MAX_RETRIES) {
+      console.warn(`[BottomNav] #bottom-nav not found, retry ${retryCount}/${MAX_RETRIES}...`);
+      setTimeout(() => initBottomNav(), 300);
+    } else {
+      console.error('[BottomNav] #bottom-nav not found after max retries');
+    }
     return;
   }
 

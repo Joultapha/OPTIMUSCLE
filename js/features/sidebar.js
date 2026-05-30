@@ -2,7 +2,7 @@
    OPTIMUSCLE — Sidebar Menu
    ============================================================ */
 
-import { getCurrentUser } from '../core/state.js';
+import { getCurrentUser, getUserData } from '../core/state.js';
 import { setSubPage } from '../core/appState.js';
 import { sanitizeUrl, createEl, clearEl } from '../utils/sanitize.js';
 import { confirmLogout } from './auth.js';
@@ -140,17 +140,11 @@ function updateSidebarUser() {
   // Update Premium button visibility based on subscription
   const premiumBtn = document.querySelector('.sidebar-premium-btn');
   if (premiumBtn) {
-    const userData = { subscription: { status: 'active', plan: 'free' } };
     // Check if premium — hide button if already premium
-    try {
-      const { getUserData } = await import('../core/state.js');
-      const ud = getUserData();
-      if (isPremium(ud)) {
-        premiumBtn.style.display = 'none';
-      } else {
-        premiumBtn.style.display = 'flex';
-      }
-    } catch(e) {
+    const ud = getUserData();
+    if (isPremium(ud)) {
+      premiumBtn.style.display = 'none';
+    } else {
       premiumBtn.style.display = 'flex';
     }
   }
@@ -158,6 +152,7 @@ function updateSidebarUser() {
 
 /**
  * Open Premium subscription modal with Paddle integration
+ * Shows 2 well-distinct plans: Purple Monthly + Gold Annual
  */
 function openPremiumModal() {
   let overlay = document.getElementById('premium-modal-overlay');
@@ -170,69 +165,108 @@ function openPremiumModal() {
   }
   clearEl(overlay);
 
-  const modal = createEl('div', { className: 'modal', attrs: { style: 'max-width: 400px; text-align: center;' } });
+  const modal = createEl('div', { className: 'modal', attrs: { style: 'max-width: 420px; text-align: center; padding: 28px 24px;' } });
 
   // Header
   modal.appendChild(createEl('div', {
     className: 'badge-unlock-anim',
-    html: '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(212,168,67,0.15)"/></svg>',
+    html: '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(212,168,67,0.15)"/></svg>',
   }));
 
   modal.appendChild(createEl('h3', {
-    attrs: { style: 'background: var(--grad-premium); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; margin: 12px 0 4px;' },
+    attrs: { style: 'background: var(--grad-premium); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 22px; margin: 12px 0 4px; font-family: var(--font-display); letter-spacing: 2px;' },
     text: 'OPTIMUSCLE PREMIUM',
   }));
 
   modal.appendChild(createEl('p', {
-    attrs: { style: 'color: var(--text-dim); font-size: 14px; margin-bottom: 20px;' },
+    attrs: { style: 'color: var(--text-dim); font-size: 13px; margin-bottom: 20px;' },
     text: 'Débloque tout le potentiel de ton entraînement',
   }));
 
-  // Features list
-  const features = [
-    { icon: '⚡', text: 'Programmes illimités (6+ séances/sem)' },
-    { icon: '🎯', text: 'Coach IA 24/7 — réponses personnalisées' },
-    { icon: '📊', text: 'Historique complet (365 jours)' },
-    { icon: '🎬', text: 'Démos vidéo HD' },
-    { icon: '📄', text: 'Export PDF de tes programmes' },
-    { icon: '🚫', text: 'Sans publicité' },
+  // ====== PLAN CARDS — bien distincts ======
+  const plansContainer = createEl('div', { attrs: { style: 'display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;' } });
+
+  // --- MONTHLY PLAN CARD (Purple) ---
+  const monthlyCard = createEl('div', {
+    attrs: { style: 'background: linear-gradient(135deg, rgba(123,44,191,0.20) 0%, rgba(123,44,191,0.08) 100%); border: 1px solid rgba(157,78,221,0.35); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;' },
+    on: {
+      click: () => handlePaddleCheckout('premium_monthly'),
+      mouseenter: (e) => { e.currentTarget.style.borderColor = 'rgba(157,78,221,0.6)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(123,44,191,0.20)'; },
+      mouseleave: (e) => { e.currentTarget.style.borderColor = 'rgba(157,78,221,0.35)'; e.currentTarget.style.boxShadow = 'none'; },
+    },
+  });
+  // Top shine
+  monthlyCard.appendChild(createEl('div', {
+    attrs: { style: 'position: absolute; top: 0; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, rgba(157,78,221,0.5), transparent);' },
+  }));
+  monthlyCard.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: rgba(199,125,255,0.90); margin-bottom: 8px; font-family: var(--font-display);' },
+    text: 'PREMIUM MENSUEL',
+  }));
+  monthlyCard.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 28px; font-weight: 800; color: white; line-height: 1;' },
+    text: '4,99€/MOIS',
+  }));
+  monthlyCard.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 11px; color: var(--text-dim); margin-top: 6px;' },
+    text: 'Sans engagement · Annule quand tu veux',
+  }));
+  plansContainer.appendChild(monthlyCard);
+
+  // --- ANNUAL PLAN CARD (Gold) ---
+  const yearlyCard = createEl('div', {
+    attrs: { style: 'background: linear-gradient(135deg, rgba(212,168,67,0.06) 0%, rgba(13,13,18,0.92) 100%); border: 1px solid rgba(212,168,67,0.35); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;' },
+    on: {
+      click: () => handlePaddleCheckout('premium_yearly'),
+      mouseenter: (e) => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(212,168,67,0.15)'; },
+      mouseleave: (e) => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.35)'; e.currentTarget.style.boxShadow = 'none'; },
+    },
+  });
+  // Top shine
+  yearlyCard.appendChild(createEl('div', {
+    attrs: { style: 'position: absolute; top: 0; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,168,67,0.5), transparent);' },
+  }));
+  // Badge économie
+  const annualHeader = createEl('div', { attrs: { style: 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;' } });
+  annualHeader.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: var(--gold); font-family: var(--font-display);' },
+    text: 'PREMIUM ANNUEL',
+  }));
+  annualHeader.appendChild(createEl('span', {
+    attrs: { style: 'background: var(--grad-premium); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;' },
+    text: '-33%',
+  }));
+  yearlyCard.appendChild(annualHeader);
+  yearlyCard.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 28px; font-weight: 800; color: var(--gold); line-height: 1;' },
+    text: '39,99€/AN',
+  }));
+  yearlyCard.appendChild(createEl('div', {
+    attrs: { style: 'font-size: 12px; color: var(--text-dim); margin-top: 4px;' },
+    text: '3,33€/mois · Économise 20€/an',
+  }));
+  plansContainer.appendChild(yearlyCard);
+
+  modal.appendChild(plansContainer);
+
+  // Features list (compact)
+  const featuresGrid = createEl('div', { attrs: { style: 'display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; text-align: left; margin-bottom: 16px; font-size: 12px; color: var(--text-soft);' } });
+  const featureItems = [
+    '⚡ Programmes illimités',
+    '🎯 Coach IA 24/7',
+    '📊 Historique 365j',
+    '🎬 Démos vidéo HD',
+    '📄 Export PDF',
+    '🚫 Sans pub',
   ];
-
-  features.forEach(f => {
-    const row = createEl('div', {
-      attrs: { style: 'display: flex; align-items: center; gap: 10px; padding: 8px 0; text-align: left; font-size: 14px;' },
-    });
-    row.appendChild(createEl('span', { attrs: { style: 'font-size: 18px; width: 24px; text-align: center;' }, text: f.icon }));
-    row.appendChild(createEl('span', { text: f.text }));
-    modal.appendChild(row);
+  featureItems.forEach(f => {
+    featuresGrid.appendChild(createEl('span', { text: f }));
   });
-
-  // Plans
-  const plansDiv = createEl('div', { attrs: { style: 'margin-top: 20px; display: flex; flex-direction: column; gap: 10px;' } });
-
-  // Monthly plan
-  const monthlyBtn = createEl('button', {
-    className: 'btn btn-primary',
-    attrs: { type: 'button', style: 'width: 100%; justify-content: center;' },
-    html: `<span style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:16px;font-weight:700;">Premium Mensuel</span><span style="font-size:13px;opacity:0.8;">4,99€/mois</span></span>`,
-    on: { click: () => handlePaddleCheckout('premium_monthly') },
-  });
-  plansDiv.appendChild(monthlyBtn);
-
-  // Yearly plan
-  const yearlyBtn = createEl('button', {
-    className: 'btn btn-ghost',
-    attrs: { type: 'button', style: 'width: 100%; justify-content: center; border-color: var(--gold) !important; color: var(--gold) !important;' },
-    html: `<span style="display:flex;flex-direction:column;align-items:center;"><span style="font-size:16px;font-weight:700;">Premium Annuel <span style="font-size:11px;background:var(--grad-premium);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">-33%</span></span><span style="font-size:13px;opacity:0.8;">39,99€/an (3,33€/mois)</span></span>`,
-    on: { click: () => handlePaddleCheckout('premium_yearly') },
-  });
-  plansDiv.appendChild(yearlyBtn);
-
-  modal.appendChild(plansDiv);
+  modal.appendChild(featuresGrid);
 
   // Paddle badge
   modal.appendChild(createEl('div', {
-    attrs: { style: 'margin-top: 16px; font-size: 12px; color: var(--text-dimmer); display: flex; align-items: center; justify-content: center; gap: 6px;' },
+    attrs: { style: 'font-size: 11px; color: var(--text-dimmer); display: flex; align-items: center; justify-content: center; gap: 6px;' },
     html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Paiement sécurisé par Paddle',
   }));
 

@@ -2,19 +2,15 @@
    OPTIMUSCLE — Authentication (sécurisé)
    ============================================================ */
 
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence,
-  sendPasswordResetEmail,
-  deleteUser,
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+// ⚠️ Dynamic imports for Firebase — prevents black screen if CDN is unreachable
+let firebaseAuth = null;
+let authInstance = null;
+
+async function loadFirebaseAuth() {
+  if (firebaseAuth) return firebaseAuth;
+  firebaseAuth = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js");
+  return firebaseAuth;
+}
 
 import { validateEmailField, validatePasswordField } from '../utils/validation.js';
 import {
@@ -30,12 +26,12 @@ import { confirmModal, showToast } from '../utils/notifications.js';
 import { createEl, clearEl } from '../utils/sanitize.js';
 
 let isRegisterMode = false;
-let authInstance = null;
 
 export async function initAuth(firebaseApp) {
-  authInstance = getAuth(firebaseApp);
+  const auth = await loadFirebaseAuth();
+  authInstance = auth.getAuth(firebaseApp);
   // Persistance locale (mais session unique par device)
-  await setPersistence(authInstance, browserLocalPersistence).catch(() => {});
+  await auth.setPersistence(authInstance, auth.browserLocalPersistence).catch(() => {});
 
   // Démarrer le timer anti-bot dès l'init
   startFormTimer('login');
@@ -47,9 +43,10 @@ export function getAuthInstance() {
   return authInstance;
 }
 
-export function setupAuthListener(callback) {
+export async function setupAuthListener(callback) {
   if (!authInstance) throw new Error('Auth not initialized');
-  onAuthStateChanged(authInstance, callback);
+  const auth = await loadFirebaseAuth();
+  auth.onAuthStateChanged(authInstance, callback);
 }
 
 // ========== UI HELPERS ==========
@@ -108,10 +105,11 @@ export async function loginGoogle() {
 
   showLoginLoading(true);
   try {
-    const provider = new GoogleAuthProvider();
+    const auth = await loadFirebaseAuth();
+    const provider = new auth.GoogleAuthProvider();
     // Bonne pratique : prompt 'select_account' pour éviter le mauvais compte
     provider.setCustomParameters({ prompt: 'select_account' });
-    await signInWithPopup(authInstance, provider);
+    await auth.signInWithPopup(authInstance, provider);
     resetAttempts('login');
   } catch (e) {
     showLoginLoading(false);
@@ -165,10 +163,11 @@ export async function handleEmailAuth() {
   showLoginLoading(true);
 
   try {
+    const auth = await loadFirebaseAuth();
     if (isRegisterMode) {
-      await createUserWithEmailAndPassword(authInstance, email, pass);
+      await auth.createUserWithEmailAndPassword(authInstance, email, pass);
     } else {
-      await signInWithEmailAndPassword(authInstance, email, pass);
+      await auth.signInWithEmailAndPassword(authInstance, email, pass);
     }
     resetAttempts('login');
   } catch (e) {
@@ -202,7 +201,8 @@ export async function confirmLogout() {
     danger: true,
   });
   if (confirmed) {
-    signOut(authInstance);
+    const auth = await loadFirebaseAuth();
+    auth.signOut(authInstance);
   }
 }
 
@@ -215,7 +215,8 @@ export async function handlePasswordReset() {
   if (!resetEmail) return;
 
   try {
-    await sendPasswordResetEmail(authInstance, resetEmail);
+    const auth = await loadFirebaseAuth();
+    await auth.sendPasswordResetEmail(authInstance, resetEmail);
     showToast('📧 Email de réinitialisation envoyé !');
   } catch (e) {
     const msgs = {
@@ -324,7 +325,8 @@ export async function handleDeleteAccount() {
   }
 
   try {
-    await deleteUser(user);
+    const auth = await loadFirebaseAuth();
+    await auth.deleteUser(user);
     showToast('Compte supprimé');
   } catch (e) {
     if (e.code === 'auth/requires-recent-login') {

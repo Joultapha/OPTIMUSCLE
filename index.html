@@ -48,6 +48,19 @@
 </head>
 <body data-view="loading" data-subpage="home">
 
+<!-- Loading Screen (visible immediately, before JS loads) -->
+<div id="app-loading-screen" style="position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;background:#000!important;color:#f5f5f7;font-family:'Inter',-apple-system,sans-serif;">
+  <div style="width:40px;height:40px;border:3px solid rgba(123,44,191,0.2);border-top-color:#7B2CBF;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;"></div>
+  <div style="font-family:'Bebas Neue','Impact',sans-serif;font-size:24px;letter-spacing:0.05em;margin-bottom:6px;">OPTIMUSCLE</div>
+  <div style="font-size:13px;color:#8e8e93;" id="loading-status">Chargement...</div>
+  <noscript><div style="margin-top:16px;color:#d94848;font-size:14px;">JavaScript est requis pour utiliser cette application.</div></noscript>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<!-- Fallback 1: if JS loads but Firebase fails, show landing after 5s -->
+<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls&&ls.style.display!=='none'){document.body.setAttribute('data-view','landing');ls.style.display='none';}},5000);</script>
+<!-- Fallback 2: absolutely force everything visible at 12s -->
+<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls)ls.style.cssText='display:none!important';var landing=document.getElementById('view-landing');if(landing)landing.style.cssText='display:block!important';document.body.setAttribute('data-view','landing');},12000);</script>
+
 <!-- ============================================
      LANDING PAGE (avant inscription)
 ============================================ -->
@@ -344,6 +357,53 @@
           <div class="landing-table-col landing-table-highlight landing-table-price">Gratuit</div>
           <div class="landing-table-col landing-table-price">60-100€</div>
           <div class="landing-table-col landing-table-price">30-50€</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="landing-section" style="padding-top: 0;">
+    <div class="landing-section-inner">
+      <span class="landing-section-eyebrow">Tarifs</span>
+      <h2 class="landing-section-title">Choisis ton <span class="text-gradient">plan</span></h2>
+      <p class="landing-section-subtitle">Commence gratuitement. Passe Premium quand tu es prêt.</p>
+
+      <div class="landing-pricing-grid">
+        <!-- FREE PLAN -->
+        <div class="landing-pricing-card">
+          <div class="landing-pricing-name">Gratuit</div>
+          <div class="landing-pricing-price">0€<span>/mois</span></div>
+          <ul class="landing-pricing-features">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 3 séances par semaine</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Programme personnalisé</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Historique 30 jours</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Badges de base</li>
+            <li class="landing-pricing-disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Coach IA</li>
+            <li class="landing-pricing-disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Démos vidéo HD</li>
+            <li class="landing-pricing-disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Export PDF</li>
+          </ul>
+          <button class="landing-cta-secondary" id="landing-pricing-free" type="button">Commencer gratuitement</button>
+        </div>
+
+        <!-- PREMIUM PLAN -->
+        <div class="landing-pricing-card landing-pricing-featured">
+          <div class="landing-pricing-badge">POPULAIRE</div>
+          <div class="landing-pricing-name">Premium</div>
+          <div class="landing-pricing-price">4,99€<span>/mois</span></div>
+          <div class="landing-pricing-annual">ou 39,99€/an — économise 33%</div>
+          <ul class="landing-pricing-features">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Séances illimitées</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Programme personnalisé</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Historique illimité</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Tous les badges</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Coach IA 24/7</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Démos vidéo HD</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Export PDF</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Programmes personnalisés</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sans publicité</li>
+          </ul>
+          <button class="landing-cta-primary" id="landing-pricing-premium" type="button">Passer Premium</button>
         </div>
       </div>
     </div>
@@ -982,7 +1042,7 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
 
 <!-- ============ SCRIPTS ============ -->
 <!-- Paddle SDK for Premium subscriptions -->
-<script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+<script async src="https://cdn.paddle.com/paddle/paddle.js"></script>
 <script type="module" src="js/app.js"></script>
 
 <!-- Landing AI Coach Demo (standalone, no modules) -->

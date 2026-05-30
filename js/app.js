@@ -5,8 +5,8 @@
    Toute décision de rendu passe par appState.render()
 */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+// ⚠️ Firebase imports are now DYNAMIC to prevent black screen if CDN is unreachable
+// Static imports would kill the entire module if the CDN URL is 404
 
 import { firebaseConfig, APP_NAME, APP_VERSION } from './core/config.js';
 import {
@@ -88,15 +88,53 @@ initTheme();
 setLoading(true);
 render('app-start');
 
+// Fallback: if app doesn't load in 15s, hide loading and show error
+setTimeout(() => {
+  const ls = document.getElementById('app-loading-screen');
+  const status = document.getElementById('loading-status');
+  if (ls && ls.style.display !== 'none') {
+    if (status) status.textContent = 'Erreur de chargement. Vérifie ta connexion et recharge.';
+    console.error('[APP] Loading timeout — Firebase may be unreachable');
+  }
+}, 15000);
+
 // ============================================================
-// 2. INIT FIREBASE
+// 2. INIT FIREBASE (dynamic imports — resilient to CDN failures)
 // ============================================================
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = await initAuth(firebaseApp);
-const db = getDatabase(firebaseApp);
-initDatabase(db, ref, set, get);
+let firebaseApp, auth, db;
+
+try {
+  // Dynamic import: if CDN is down or version doesn't exist,
+  // only this try/catch fails — the rest of the app still works
+  const [appModule, dbModule] = await Promise.all([
+    import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+    import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"),
+  ]);
+
+  firebaseApp = appModule.initializeApp(firebaseConfig);
+  db = dbModule.getDatabase(firebaseApp);
+  initDatabase(db, dbModule.ref, dbModule.set, dbModule.get);
+
+  // Init auth via auth.js (which uses its own dynamic import)
+  auth = await initAuth(firebaseApp);
+
+} catch (e) {
+  console.error('[APP] Firebase init failed (dynamic import):', e);
+  const status = document.getElementById('loading-status');
+  if (status) status.textContent = 'Connexion impossible. Mode hors-ligne...';
+  // Still allow app to function in offline mode — show landing page
+  const loadingScreen = document.getElementById('app-loading-screen');
+  if (loadingScreen) loadingScreen.style.display = 'none';
+  updateAppState({ loading: false, isAuthenticated: false });
+  // Do NOT throw — allow the app to continue in offline/landing mode
+}
 
 cleanupOldEntries();
+
+// Hide native loading screen (CSS takes over from here)
+const loadingScreen = document.getElementById('app-loading-screen');
+if (loadingScreen) loadingScreen.style.display = 'none';
+
 console.log(`${APP_NAME} v${APP_VERSION} initialized`);
 
 // ============================================================
@@ -121,6 +159,7 @@ window.addEventListener('unhandledrejection', (event) => {
 // ============================================================
 // 5. AUTH STATE LISTENER = SEULE source de décision de flow
 // ============================================================
+try {
 setupAuthListener(async (user) => {
   console.log('[AUTH] User changed:', user ? user.email : 'null');
 
@@ -186,24 +225,17 @@ setupAuthListener(async (user) => {
     loading: false,
   });
 
-  // 6. Init bottom nav (with retry for robustness)
+  // 6. Init bottom nav
   initBottomNav();
-  // Retry if DOM wasn't ready yet
-  if (!document.querySelector('.bottom-nav-inner')) {
-    let retries = 0;
-    const retryInterval = setInterval(() => {
-      initBottomNav();
-      retries++;
-      if (document.querySelector('.bottom-nav-inner') || retries >= 10) {
-        clearInterval(retryInterval);
-        console.log('[App] Bottom nav init', document.querySelector('.bottom-nav-inner') ? 'succeeded' : 'failed after retries');
-      }
-    }, 200);
-  }
 
   // 7. Init scroll animations (landing page)
   initScrollAnimations();
 });
+} catch (e) {
+  console.warn('[APP] Auth listener not set up (Firebase unavailable):', e.message);
+  // Show landing page for non-authenticated users
+  updateAppState({ loading: false, isAuthenticated: false });
+}
 
 // ============================================================
 // 6. EVENT LISTENERS GLOBAUX
@@ -213,15 +245,25 @@ function bindGlobalEvents() {
   initSidebar();
   bindThemeButtons();
 
-  // Theme toggle button (header)
+  // Theme toggle button (header) — v16 style toggle
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     updateThemeToggleIcon();
     themeToggleBtn.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : current === 'light' ? 'dark' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark');
+      // Cycle: auto → dark → light → auto
+      let next;
+      if (current === 'auto' || !current) {
+        next = 'dark';
+      } else if (current === 'dark') {
+        next = 'light';
+      } else {
+        next = 'auto';
+      }
       applyTheme(next);
       updateThemeToggleIcon();
+      // Haptic feedback
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch(e) {}
     });
   }
 
@@ -251,6 +293,8 @@ function bindGlobalEvents() {
   on('landing-cta-start', 'click', () => setHasSeenLanding(true));
   on('landing-cta-login', 'click', () => setHasSeenLanding(true));
   on('landing-cta-final', 'click', () => setHasSeenLanding(true));
+  on('landing-pricing-free', 'click', () => setHasSeenLanding(true));
+  on('landing-pricing-premium', 'click', () => setHasSeenLanding(true));
 
   on('btn-google', 'click', loginGoogle);
   on('btn-email-action', 'click', handleEmailAuth);
@@ -322,9 +366,14 @@ function updateThemeToggleIcon() {
   const lightIcon = btn.querySelector('.theme-icon-light');
   const darkIcon = btn.querySelector('.theme-icon-dark');
   if (lightIcon && darkIcon) {
+    // v16 style: sun icon shown when dark (click to go light), moon icon when light (click to go dark)
     lightIcon.style.display = isDark ? 'block' : 'none';
     darkIcon.style.display = isDark ? 'none' : 'block';
   }
+  // Also update sidebar theme buttons
+  document.querySelectorAll('.theme-option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.theme === current);
+  });
 }
 
 // ============================================================
