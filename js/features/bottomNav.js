@@ -1,11 +1,10 @@
 /* ============================================================
-   OPTIMUSCLE V17 — Bottom Navigation Bar (Apple Liquid Glass)
+   OPTIMUSCLE V17 — Bottom Navigation Bar (Liquid Glass)
    ============================================================
    5 tabs : Accueil, Training, Nutrition, Défis, Profil
    - Liquid glass water droplet indicator
-   - Fluid sliding animation between tabs
-   - SVG displacement filter for liquid distortion
-   - Spring physics for droplet wobble
+   - Fluid sliding animation with stretch
+   - Pure CSS effects — no SVG filters
    ============================================================ */
 
 import { setSubPage } from '../core/appState.js';
@@ -45,44 +44,6 @@ const TABS = [
   },
 ];
 
-/* ===== SVG FILTERS for liquid glass distortion ===== */
-const SVG_FILTERS = `
-<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;">
-  <defs>
-    <!-- Liquid glass displacement — subtle distortion -->
-    <filter id="liquid-glass" x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.012 0.015"
-        numOctaves="3"
-        seed="42"
-        result="noise"
-      />
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="noise"
-        scale="3"
-        xChannelSelector="R"
-        yChannelSelector="G"
-      />
-    </filter>
-
-    <!-- Active droplet glow filter -->
-    <filter id="droplet-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-      <feColorMatrix in="blur" type="matrix"
-        values="0 0 0 0 0.48
-                0 0 0 0 0.17
-                0 0 0 0 0.75
-                0 0 0 0.3 0" result="colorBlur"/>
-      <feMerge>
-        <feMergeNode in="colorBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-</svg>`;
-
 export function initBottomNav() {
   if (initialized) return;
   initialized = true;
@@ -90,17 +51,11 @@ export function initBottomNav() {
   const nav = document.getElementById('bottom-nav');
   if (!nav) return;
 
-  // Inject SVG filters into the nav
-  const filterWrap = createEl('div', { className: 'bottom-nav-filters' });
-  filterWrap.innerHTML = SVG_FILTERS;
-  nav.appendChild(filterWrap);
-
   // Create inner container
   const inner = createEl('div', { className: 'bottom-nav-inner' });
 
   // Create the liquid glass pill/droplet
   const pill = createEl('div', { className: 'bottom-nav-pill' });
-  pill.style.filter = 'url(#droplet-glow)';
   pillEl = pill;
 
   // Create nav items
@@ -118,7 +73,7 @@ export function initBottomNav() {
   inner.appendChild(pill);
   nav.appendChild(inner);
 
-  // Position pill on initial active tab
+  // Position pill on initial active tab (no animation)
   requestAnimationFrame(() => {
     movePill(0, false);
   });
@@ -126,10 +81,7 @@ export function initBottomNav() {
 
 /**
  * Animate the liquid droplet pill to the target tab index.
- * Uses a spring-physics-inspired animation with stretch effect.
- *
- * @param {number} targetIndex - target tab index (0-4)
- * @param {boolean} animate - whether to animate
+ * Uses Web Animations API for fluid stretch effect.
  */
 function movePill(targetIndex, animate = true) {
   if (!pillEl) return;
@@ -137,79 +89,56 @@ function movePill(targetIndex, animate = true) {
   const fromIndex = currentIndex;
 
   if (!animate) {
-    // Instant positioning — no animation
     pillEl.style.transition = 'none';
     pillEl.style.transform = `translateX(${targetIndex * 100}%)`;
-    // Force reflow then restore transition
     void pillEl.offsetWidth;
     pillEl.style.transition = '';
     currentIndex = targetIndex;
     return;
   }
 
-  // Calculate distance for stretch effect
-  const distance = Math.abs(targetIndex - fromIndex);
-  const direction = targetIndex > fromIndex ? 1 : -1;
-
-  // Add liquid stretch class for the direction-aware animation
-  pillEl.classList.remove('animating');
-
-  // Use Web Animations API for precise spring physics
   const startX = fromIndex * 100;
   const endX = targetIndex * 100;
-  const midX = startX + (endX - startX) * 0.5;
-
-  // Overshoot amount based on distance
-  const overshoot = Math.min(distance * 3, 8);
+  const distance = Math.abs(targetIndex - fromIndex);
+  const direction = targetIndex > fromIndex ? 1 : -1;
+  const overshoot = Math.min(distance * 2, 5);
 
   const keyframes = [
     {
       transform: `translateX(${startX}%) scaleX(1) scaleY(1)`,
-      borderRadius: '18px',
       offset: 0
     },
     {
-      transform: `translateX(${startX + direction * 5}%) scaleX(${1 + distance * 0.03}) scaleY(${1 - distance * 0.02})`,
-      borderRadius: '20px 14px 14px 20px',
+      transform: `translateX(${startX + direction * 3}%) scaleX(${1 + distance * 0.02}) scaleY(${1 - distance * 0.015})`,
       offset: 0.15
     },
     {
-      transform: `translateX(${midX}%) scaleX(${1 + distance * 0.06}) scaleY(${1 - distance * 0.03})`,
-      borderRadius: '14px',
+      transform: `translateX(${(startX + endX) / 2}%) scaleX(${1 + distance * 0.04}) scaleY(${1 - distance * 0.02})`,
       offset: 0.45
     },
     {
-      transform: `translateX(${endX - direction * overshoot}%) scaleX(1.02) scaleY(0.98)`,
-      borderRadius: '14px 20px 20px 14px',
+      transform: `translateX(${endX - direction * overshoot}%) scaleX(1.01) scaleY(0.99)`,
       offset: 0.75
     },
     {
-      transform: `translateX(${endX + direction * 2}%) scaleX(0.97) scaleY(1.03)`,
-      borderRadius: '18px',
+      transform: `translateX(${endX + direction * 1}%) scaleX(0.98) scaleY(1.02)`,
       offset: 0.88
     },
     {
-      transform: `translateX(${endX}%) scaleX(1.01) scaleY(0.99)`,
-      borderRadius: '18px',
-      offset: 0.94
-    },
-    {
       transform: `translateX(${endX}%) scaleX(1) scaleY(1)`,
-      borderRadius: '18px',
       offset: 1
     }
   ];
 
-  const animation = pillEl.animate(keyframes, {
-    duration: 450 + distance * 40,
+  const anim = pillEl.animate(keyframes, {
+    duration: 400 + distance * 30,
     easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
     fill: 'forwards'
   });
 
-  // After animation ends, set final position with CSS transform
-  animation.onfinish = () => {
+  anim.onfinish = () => {
     pillEl.style.transform = `translateX(${endX}%)`;
-    animation.cancel(); // Remove the animation, CSS transform takes over
+    anim.cancel();
   };
 
   currentIndex = targetIndex;
@@ -221,20 +150,15 @@ function handleTabClick(tabId) {
   const index = TABS.findIndex(t => t.id === tabId);
   if (index === -1) return;
 
-  // Skip if already active
   if (tabId === currentTab) return;
   currentTab = tabId;
 
-  // Update active state with a slight delay for visual fluidity
+  // Update active state
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
-    if (item.dataset.tab === tabId) {
-      item.classList.add('active');
-    } else {
-      item.classList.remove('active');
-    }
+    item.classList.toggle('active', item.dataset.tab === tabId);
   });
 
-  // Move liquid droplet with animation
+  // Move droplet
   movePill(index, true);
 
   // Navigation
@@ -255,8 +179,7 @@ function handleTabClick(tabId) {
 }
 
 /**
- * Update the active tab in the bottom nav.
- * Called externally when navigation happens from other UI.
+ * Update the active tab (called externally).
  */
 export function setActiveBottomTab(tabId) {
   const index = TABS.findIndex(t => t.id === tabId);
