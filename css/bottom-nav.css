@@ -68,6 +68,7 @@ body:not([data-view="dashboard"]) .bottom-nav {
   will-change: transform;
 
   /* SVG liquid glass filter — subtle displacement */
+  /* If the SVG filter is not found, browsers ignore this rule (no crash) */
   filter: url(#liquid-switcher);
 
   /* CSS glass body */

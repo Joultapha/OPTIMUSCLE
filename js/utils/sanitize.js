@@ -79,7 +79,7 @@ export function sanitizeUrl(url) {
  *     attrs: { 'data-id': '123' }
  *   });
  */
-export function createEl(tag, { className, text, html, attrs = {}, children = [], on = {} } = {}) {
+export function createEl(tag, { className, text, html, style, attrs = {}, children = [], on = {} } = {}) {
   const el = document.createElement(tag);
   if (className) el.className = className;
 
@@ -92,6 +92,11 @@ export function createEl(tag, { className, text, html, attrs = {}, children = []
   // À utiliser avec prudence et seulement pour des templates contrôlés
   if (html !== undefined) {
     el.innerHTML = html;
+  }
+
+  // style = inline CSS string (ex: 'margin-top:12px;display:block;')
+  if (style !== undefined && style !== null) {
+    el.style.cssText = String(style);
   }
 
   // Attributs (échappés)

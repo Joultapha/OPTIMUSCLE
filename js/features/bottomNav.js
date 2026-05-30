@@ -95,6 +95,17 @@ export function initBottomNav() {
   // Position pill on initial active tab (no animation)
   requestAnimationFrame(() => {
     movePill(0, false);
+    // Safety: if SVG filter causes rendering issues, remove it
+    setTimeout(() => {
+      const pill = document.querySelector('.bottom-nav-pill');
+      if (pill) {
+        const rect = pill.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+          console.warn('[BottomNav] SVG filter may be causing rendering issues, removing filter');
+          pill.style.filter = 'none';
+        }
+      }
+    }, 500);
   });
 
   console.log('[BottomNav] Initialized successfully with', TABS.length, 'tabs');
@@ -115,12 +126,12 @@ function injectSVGFilters() {
   svg.innerHTML = `
     <defs>
       <!-- Switcher filter: subtle displacement on the sliding pill -->
-      <filter id="liquid-switcher" x="-10%" y="-10%" width="120%" height="120%">
+      <filter id="liquid-switcher" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="2" result="noise"/>
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
       <!-- Toggler filter: very subtle displacement on the container -->
-      <filter id="liquid-toggler" x="-5%" y="-5%" width="110%" height="110%">
+      <filter id="liquid-toggler" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" seed="5" result="noise"/>
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
       </filter>

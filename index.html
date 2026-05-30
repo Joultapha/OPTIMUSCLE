@@ -56,8 +56,9 @@
   <noscript><div style="margin-top:16px;color:#d94848;font-size:14px;">JavaScript est requis pour utiliser cette application.</div></noscript>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-<!-- Fallback: if JS loads but app fails completely, show landing after 8s -->
-<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls&&ls.style.display!=='none'){ls.style.display='none';document.body.setAttribute('data-view','landing');}},8000);</script>
+<!-- Fallback: if JS loads but app fails completely, show error after 12s -->
+<!-- ⚠️ Do NOT force data-view='landing' here — it bypasses appState and causes random landing page redirects -->
+<script>setTimeout(function(){var ls=document.getElementById('app-loading-screen');if(ls&&ls.style.display!=='none'){ls.style.display='none';var st=document.getElementById('loading-status');if(st)st.textContent='Chargement lent... Vérifie ta connexion et recharge la page.';}},12000);</script>
 
 <!-- ============================================
      LANDING PAGE (avant inscription)

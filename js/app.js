@@ -92,13 +92,22 @@ render('app-start');
 let authResolved = false;
 let authResolveTimer = null;
 
-// Fallback: if app doesn't load in 15s, hide loading and show error
+// Fallback: if app doesn't load in 15s, show error (but do NOT force landing page)
 setTimeout(() => {
   const ls = document.getElementById('app-loading-screen');
   const status = document.getElementById('loading-status');
   if (ls && ls.style.display !== 'none') {
-    if (status) status.textContent = 'Erreur de chargement. Vérifie ta connexion et recharge.';
-    console.error('[APP] Loading timeout — Firebase may be unreachable');
+    if (status) status.textContent = 'Chargement lent... Vérifie ta connexion.';
+    console.warn('[APP] Loading timeout — Firebase may be slow');
+    // ⚠️ Do NOT force landing page here — let appState handle routing
+    // Only hide loading screen if Firebase truly never responded
+    if (!authResolved) {
+      authResolved = true;
+      ls.style.display = 'none';
+      // Show the appropriate view based on hasSeenLanding
+      const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
+      updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
+    }
   }
 }, 15000);
 
@@ -177,19 +186,21 @@ setupAuthListener(async (user) => {
     // Ne PAS afficher la landing page — attendre que Firebase résolve
     // le vrai état d'auth dans les prochaines millisecondes
     
-    // ⭐ Safety: si après 3s on n'a toujours pas de user, c'est qu'on est vraiment
-    // pas connecté — on accepte le null
+    // ⭐ Safety: si après 5s on n'a toujours pas de user, c'est qu'on est vraiment
+    // pas connecté — on accepte le null (increased from 3s to 5s for slower connections)
     if (!authResolveTimer) {
       authResolveTimer = setTimeout(() => {
         if (!authResolved) {
-          console.log('[AUTH] Auth resolve timeout — user is truly not authenticated');
+          console.log('[AUTH] Auth resolve timeout (5s) — user is truly not authenticated');
           authResolved = true;
           // Cacher le loading screen
           const ls = document.getElementById('app-loading-screen');
           if (ls) ls.style.display = 'none';
-          updateAppState({ loading: false, isAuthenticated: false });
+          // Respect hasSeenLanding from localStorage
+          const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
+          updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
         }
-      }, 3000);
+      }, 5000);
     }
     return;
   }
@@ -211,6 +222,9 @@ setupAuthListener(async (user) => {
     resetState();
 
     // ⭐ Reset hasSeenLanding pour re-voir la landing après déconnexion
+    // But only if this is a real logout, not a page refresh without session
+    // We check if we had previously seen the landing to avoid showing it
+    // again on refresh when user was already on login page
     try { localStorage.removeItem('hasSeenLanding'); } catch(e) {}
 
     // Cacher le loading screen
