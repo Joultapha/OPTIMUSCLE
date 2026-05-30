@@ -1,10 +1,10 @@
 /* ============================================================
-   OPTIMUSCLE V17 — Bottom Navigation Bar (Liquid Glass)
+   OPTIMUSCLE V17 — Bottom Navigation Bar (Apple Liquid Glass)
    ============================================================
-   5 tabs : Accueil, Training, Nutrition, Défis, Profil
-   - Subtle liquid glass droplet indicator
-   - Fluid sliding animation
-   - Dark, NOT too bright
+   Converted from apple-liquid-glass-switcher.tsx to pure CSS
+   - SVG displacement map filters for liquid distortion
+   - ScaleToggle animations for fluid transitions
+   - Dark, NOT too bright — subtle liquid glass
    ============================================================ */
 
 /* ===== SVG FILTER CONTAINER — hidden ===== */
@@ -58,7 +58,8 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
 }
 
 /* ============================================================
-   LIQUID GLASS DROPLET PILL — dark & subtle
+   LIQUID GLASS DROPLET PILL
+   Uses SVG displacement map from apple-liquid-glass-switcher
    ============================================================ */
 
 .bottom-nav-pill {
@@ -72,7 +73,10 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   pointer-events: none;
   will-change: transform;
 
-  /* Dark liquid glass — very subtle */
+  /* Apply SVG displacement filter for liquid glass distortion */
+  filter: url(#switcher);
+
+  /* Dark liquid glass — subtle */
   background:
     linear-gradient(180deg,
       rgba(255, 255, 255, 0.04) 0%,
@@ -92,7 +96,7 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Very subtle top highlight line */
+/* Top highlight line */
 .bottom-nav-pill::before {
   content: '';
   position: absolute;
@@ -110,7 +114,7 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   z-index: 2;
 }
 
-/* Inner refraction — barely visible */
+/* Inner refraction */
 .bottom-nav-pill::after {
   content: '';
   position: absolute;
@@ -123,13 +127,32 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   z-index: 1;
 }
 
-/* ===== BOUNCE SETTLE ===== */
+/* ===== SCALE TOGGLE ANIMATIONS (from apple-liquid-glass-switcher) ===== */
+@keyframes scaleToggle {
+  0% { scale: 1 1; }
+  50% { scale: 1.1 1; }
+  100% { scale: 1 1; }
+}
+
+@keyframes scaleToggle2 {
+  0% { scale: 1 1; }
+  50% { scale: 1.2 1; }
+  100% { scale: 1 1; }
+}
+
+@keyframes scaleToggle3 {
+  0% { scale: 1 1; }
+  50% { scale: 1.1 1; }
+  100% { scale: 1 1; }
+}
+
+/* Pill bounce on tab change */
 @keyframes droplet-settle {
-  0% { transform: scaleX(1) scaleY(1); }
-  25% { transform: scaleX(1.05) scaleY(0.95); }
-  50% { transform: scaleX(0.97) scaleY(1.03); }
-  75% { transform: scaleX(1.01) scaleY(0.99); }
-  100% { transform: scaleX(1) scaleY(1); }
+  0% { scale: 1 1; }
+  25% { scale: 1.05 0.95; }
+  50% { scale: 0.97 1.03; }
+  75% { scale: 1.01 0.99; }
+  100% { scale: 1 1; }
 }
 
 .bottom-nav-pill.animating {
@@ -186,6 +209,7 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   color: #c77dff;
   filter: drop-shadow(0 0 5px rgba(157, 78, 221, 0.30));
   transform: scale(1.06);
+  animation: scaleToggle3 300ms ease-out;
 }
 
 .bottom-nav-item.active .bottom-nav-label {
@@ -324,5 +348,6 @@ html[data-theme="light"] .bottom-nav-item.active .bottom-nav-label {
   .bottom-nav-item svg,
   .bottom-nav-item {
     transition: none !important;
+    animation: none !important;
   }
 }
