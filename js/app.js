@@ -222,17 +222,16 @@ function bindGlobalEvents() {
   window.addEventListener('opt:nav', (e) => {
     const page = e.detail?.page;
     if (page === 'nutrition') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-nutrition')?.classList.add('active');
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      setSubPage('nutrition');
       renderNutrition();
       window.scrollTo(0, 0);
+      // Update bottom nav active tab
+      import('./features/bottomNav.js').then(mod => { if (mod.setActiveBottomTab) mod.setActiveBottomTab('nutrition'); });
     } else if (page === 'challenges') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-challenges')?.classList.add('active');
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      setSubPage('challenges');
       renderChallenges();
       window.scrollTo(0, 0);
+      import('./features/bottomNav.js').then(mod => { if (mod.setActiveBottomTab) mod.setActiveBottomTab('challenges'); });
     }
   });
 

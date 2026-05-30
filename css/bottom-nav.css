@@ -1,20 +1,11 @@
 /* ============================================================
-   OPTIMUSCLE V17 — Bottom Navigation Bar (Apple Liquid Glass)
+   OPTIMUSCLE V17 — Bottom Navigation Bar (Pure CSS Liquid Glass)
    ============================================================
-   Converted from apple-liquid-glass-switcher.tsx to pure CSS
-   - SVG displacement map filters for liquid distortion
-   - ScaleToggle animations for fluid transitions
-   - Dark, NOT too bright — subtle liquid glass
+   NO SVG filters — pure CSS only
+   - Glassmorphism via gradients, borders, box-shadows
+   - Fluid sliding pill with Web Animations API
+   - Subtle, dark, NOT too bright
    ============================================================ */
-
-/* ===== SVG FILTER CONTAINER — hidden ===== */
-.bottom-nav-filters {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
 
 /* ===== MAIN NAV CONTAINER ===== */
 .bottom-nav {
@@ -29,7 +20,7 @@
   padding: 6px 10px;
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   height: var(--bottom-nav-height);
-  background: rgba(8, 8, 14, 0.80);
+  background: rgba(8, 8, 14, 0.82);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-top: 1px solid rgba(157, 78, 221, 0.06);
@@ -38,11 +29,12 @@
 
 /* Visible only in dashboard views */
 body[data-view="dashboard"][data-subpage="home"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="training"] .bottom-nav,
 body[data-view="dashboard"][data-subpage="history"] .bottom-nav,
 body[data-view="dashboard"][data-subpage="badges"] .bottom-nav,
 body[data-view="dashboard"][data-subpage="profile"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="nutrition-view"] .bottom-nav,
-body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
+body[data-view="dashboard"][data-subpage="nutrition"] .bottom-nav,
+body[data-view="dashboard"][data-subpage="challenges"] .bottom-nav {
   display: flex;
 }
 
@@ -58,8 +50,7 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
 }
 
 /* ============================================================
-   LIQUID GLASS DROPLET PILL
-   Uses SVG displacement map from apple-liquid-glass-switcher
+   LIQUID GLASS PILL — Pure CSS, NO SVG filters
    ============================================================ */
 
 .bottom-nav-pill {
@@ -73,48 +64,47 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   pointer-events: none;
   will-change: transform;
 
-  /* Apply SVG displacement filter for liquid glass distortion */
-  filter: url(#switcher);
-
-  /* Dark liquid glass — subtle */
+  /* NO SVG filter — pure CSS glass */
   background:
+    /* Top highlight — glass reflection */
     linear-gradient(180deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      transparent 50%),
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 40%),
+    /* Main glass body — subtle purple tint */
     linear-gradient(135deg,
-      rgba(123, 44, 191, 0.12) 0%,
+      rgba(123, 44, 191, 0.10) 0%,
       rgba(157, 78, 221, 0.04) 50%,
-      rgba(123, 44, 191, 0.08) 100%);
+      rgba(123, 44, 191, 0.07) 100%);
 
-  border: 1px solid rgba(157, 78, 221, 0.15);
+  border: 1px solid rgba(157, 78, 221, 0.12);
 
   box-shadow:
-    0 1px 6px rgba(123, 44, 191, 0.10),
+    0 1px 4px rgba(123, 44, 191, 0.08),
     inset 0 1px 1px rgba(255, 255, 255, 0.04),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.08);
+    inset 0 -1px 1px rgba(0, 0, 0, 0.06);
 
   transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Top highlight line */
+/* Top shine line */
 .bottom-nav-pill::before {
   content: '';
   position: absolute;
   top: 1px;
-  left: 25%;
-  right: 25%;
+  left: 20%;
+  right: 20%;
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.12) 30%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.12) 70%,
+    rgba(255, 255, 255, 0.10) 30%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.10) 70%,
     transparent 100%);
   border-radius: 1px;
   z-index: 2;
 }
 
-/* Inner refraction */
+/* Inner caustic / refraction */
 .bottom-nav-pill::after {
   content: '';
   position: absolute;
@@ -127,29 +117,17 @@ body[data-view="dashboard"][data-subpage="challenges-view"] .bottom-nav {
   z-index: 1;
 }
 
-/* ===== SCALE TOGGLE ANIMATIONS (from apple-liquid-glass-switcher) ===== */
-@keyframes scaleToggle {
-  0% { scale: 1 1; }
-  50% { scale: 1.1 1; }
-  100% { scale: 1 1; }
-}
-
-@keyframes scaleToggle2 {
-  0% { scale: 1 1; }
-  50% { scale: 1.2 1; }
-  100% { scale: 1 1; }
-}
-
+/* ===== SCALE ANIMATIONS ===== */
 @keyframes scaleToggle3 {
   0% { scale: 1 1; }
   50% { scale: 1.1 1; }
   100% { scale: 1 1; }
 }
 
-/* Pill bounce on tab change */
+/* Pill squash/settle on tab change */
 @keyframes droplet-settle {
   0% { scale: 1 1; }
-  25% { scale: 1.05 0.95; }
+  25% { scale: 1.04 0.96; }
   50% { scale: 0.97 1.03; }
   75% { scale: 1.01 0.99; }
   100% { scale: 1 1; }
@@ -270,15 +248,15 @@ html[data-theme="light"] .bottom-nav {
 html[data-theme="light"] .bottom-nav-pill {
   background:
     linear-gradient(180deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      transparent 50%),
+      rgba(255, 255, 255, 0.18) 0%,
+      transparent 40%),
     linear-gradient(135deg,
-      rgba(123, 44, 191, 0.06) 0%,
+      rgba(123, 44, 191, 0.05) 0%,
       rgba(157, 78, 221, 0.02) 50%,
       rgba(123, 44, 191, 0.04) 100%) !important;
   border: 1px solid rgba(123, 44, 191, 0.10) !important;
   box-shadow:
-    0 1px 6px rgba(123, 44, 191, 0.06),
+    0 1px 4px rgba(123, 44, 191, 0.05),
     inset 0 1px 1px rgba(255, 255, 255, 0.20),
     inset 0 -1px 1px rgba(0, 0, 0, 0.02) !important;
 }
@@ -286,9 +264,9 @@ html[data-theme="light"] .bottom-nav-pill {
 html[data-theme="light"] .bottom-nav-pill::before {
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.25) 30%,
-    rgba(255, 255, 255, 0.30) 50%,
-    rgba(255, 255, 255, 0.25) 70%,
+    rgba(255, 255, 255, 0.22) 30%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.22) 70%,
     transparent 100%) !important;
 }
 
@@ -321,17 +299,17 @@ html[data-theme="light"] .bottom-nav-item.active .bottom-nav-label {
   html[data-theme="auto"] .bottom-nav-pill {
     background:
       linear-gradient(180deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        transparent 50%),
+        rgba(255, 255, 255, 0.18) 0%,
+        transparent 40%),
       linear-gradient(135deg,
-        rgba(123, 44, 191, 0.06) 0%,
+        rgba(123, 44, 191, 0.05) 0%,
         rgba(157, 78, 221, 0.02) 50%,
         rgba(123, 44, 191, 0.04) 100%) !important;
     border: 1px solid rgba(123, 44, 191, 0.10) !important;
-    box-shadow: 0 1px 6px rgba(123, 44, 191, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.20) !important;
+    box-shadow: 0 1px 4px rgba(123, 44, 191, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.20) !important;
   }
   html[data-theme="auto"] .bottom-nav-pill::before {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.30), transparent) !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent) !important;
   }
   html[data-theme="auto"] .bottom-nav-item { color: rgba(99, 99, 102, 0.50); }
   html[data-theme="auto"] .bottom-nav-item.active { color: #7B2CBF; }

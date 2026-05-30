@@ -76,7 +76,7 @@ export function setHasSeenLanding(value) {
 }
 
 export function setSubPage(page) {
-  const allowed = ['home', 'history', 'badges', 'profile', 'workout'];
+  const allowed = ['home', 'history', 'badges', 'profile', 'workout', 'training', 'nutrition', 'challenges'];
   if (!allowed.includes(page)) return;
   appState.currentSubPage = page;
   render('setSubPage:' + page);
@@ -139,13 +139,25 @@ export function render(reason = 'unknown') {
     const allPages = document.querySelectorAll('.page');
     allPages.forEach(p => p.classList.remove('active'));
 
-    // Définir quelle page-X doit être active (compat CSS legacy)
+    // Mapping subpage → page element ID
+    const subpageToPage = {
+      home: 'page-home',
+      history: 'page-history',
+      badges: 'page-badges',
+      profile: 'page-profile',
+      workout: 'page-workout',
+      training: 'page-home',       // Training = home page content
+      nutrition: 'page-nutrition',
+      challenges: 'page-challenges',
+    };
+
+    // Définir quelle page-X doit être active
     const pageMap = {
       loading: null,
       landing: null,  // géré séparément
       login: null,
       onboarding: 'page-onboarding',
-      dashboard: 'page-' + appState.currentSubPage,
+      dashboard: subpageToPage[appState.currentSubPage] || 'page-home',
     };
 
     const pageId = pageMap[view];
@@ -164,7 +176,7 @@ export function render(reason = 'unknown') {
       }
     }
 
-    // Header / tabs / settings : visibles UNIQUEMENT sur dashboard
+    // Header / settings : visibles UNIQUEMENT sur dashboard
     const showAppShell = (view === 'dashboard' && appState.currentSubPage !== 'workout');
     const showHeaderOnly = (view === 'dashboard' && appState.currentSubPage === 'workout');
 
@@ -174,7 +186,8 @@ export function render(reason = 'unknown') {
     const avatarEl = document.getElementById('user-avatar-wrap');
 
     if (headerEl) headerEl.style.display = (showAppShell || showHeaderOnly) ? 'flex' : 'none';
-    if (tabsEl) tabsEl.style.display = showAppShell ? 'flex' : 'none';
+    // Old tabs toujours cachées — on utilise bottom-nav maintenant
+    if (tabsEl) tabsEl.style.display = 'none';
     if (settingsEl) settingsEl.style.display = (showAppShell || showHeaderOnly) ? 'grid' : 'none';
     if (avatarEl) avatarEl.style.display = (showAppShell || showHeaderOnly) ? 'block' : 'none';
 

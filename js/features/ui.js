@@ -37,6 +37,8 @@ export function switchTab(tab) {
   setSubPage(tab);
   const handlers = { home: renderHome, history: renderHistory, badges: renderBadges, profile: renderProfile };
   if (handlers[tab]) handlers[tab]();
+  // Sync bottom nav active tab
+  import('./bottomNav.js').then(mod => { if (mod.setActiveBottomTab) mod.setActiveBottomTab(tab); }).catch(() => {});
   haptic('light');
 }
 
