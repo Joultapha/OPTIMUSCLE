@@ -1,8 +1,9 @@
 /* ============================================================
-   OPTIMUSCLE V19 — Bottom Navigation Bar (Liquid Glass)
+   OPTIMUSCLE V20 — Bottom Navigation Bar (Liquid Glass)
    ============================================================
    - Fluid sliding pill with stretch/squash (Web Animations API)
-   - SVG displacement maps for true liquid glass effect
+   - Pure CSS glassmorphism — NO SVG displacement filter
+   - Crisp, well-defined borders
    - Robust initialization with retry mechanism
    ============================================================ */
 
@@ -67,9 +68,6 @@ export function initBottomNav() {
   initialized = true;
   console.log('[BottomNav] Initializing...');
 
-  // Inject SVG filters for liquid glass effect
-  injectSVGFilters();
-
   // Create inner container
   const inner = createEl('div', { className: 'bottom-nav-inner' });
 
@@ -95,51 +93,13 @@ export function initBottomNav() {
   // Position pill on initial active tab (no animation)
   requestAnimationFrame(() => {
     movePill(0, false);
-    // Safety: if SVG filter causes rendering issues, remove it
-    setTimeout(() => {
-      const pill = document.querySelector('.bottom-nav-pill');
-      if (pill) {
-        const rect = pill.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
-          console.warn('[BottomNav] SVG filter may be causing rendering issues, removing filter');
-          pill.style.filter = 'none';
-        }
-      }
-    }, 500);
   });
 
   console.log('[BottomNav] Initialized successfully with', TABS.length, 'tabs');
 }
 
-/**
- * Inject SVG filters for the liquid glass displacement effect.
- * These create the water-droplet distortion on the pill and container.
- */
-function injectSVGFilters() {
-  if (document.getElementById('liquid-glass-filters')) return;
-
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('id', 'liquid-glass-filters');
-  svg.setAttribute('style', 'position:absolute;width:0;height:0;pointer-events:none;');
-  svg.setAttribute('aria-hidden', 'true');
-
-  svg.innerHTML = `
-    <defs>
-      <!-- Switcher filter: subtle displacement on the sliding pill -->
-      <filter id="liquid-switcher" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="2" result="noise"/>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-      <!-- Toggler filter: very subtle displacement on the container -->
-      <filter id="liquid-toggler" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="2" seed="5" result="noise"/>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-    </defs>
-  `;
-
-  document.body.appendChild(svg);
-}
+// SVG filter injection removed — pure CSS glassmorphism now (v20)
+// The feDisplacementMap filter was causing blurry/undefined borders on the pill.
 
 /**
  * Animate the liquid droplet pill to the target tab index.
