@@ -9,9 +9,15 @@
 
    ÉTAT DE L'APP :
      loading: true            → écran de chargement
-     !isAuthenticated         → page login
+     !isAuthenticated         → page login / landing
      !onboardingCompleted     → questionnaire onboarding
      onboardingCompleted      → dashboard
+
+   ⭐ FIX v25: Removed "reconnecting" state — it was causing the loading
+   screen to stay visible because:
+   1) data-view="reconnecting" had no CSS rule to hide the loading screen
+   2) The app would get stuck showing the loading screen forever
+   Instead, if Firebase is slow, we just show landing/login after 4s.
 */
 
 // ============================================================
@@ -37,7 +43,7 @@ export function getAppState() {
  * Décide quelle vue afficher selon l'état utilisateur.
  * C'est la SEULE source de décision.
  *
- * @returns {"loading"|"login"|"onboarding"|"dashboard"}
+ * @returns {"loading"|"landing"|"login"|"onboarding"|"dashboard"}
  */
 export function getCurrentView() {
   if (appState.loading) return 'loading';
@@ -116,7 +122,8 @@ let pendingRender = false;
  * Architecture :
  * - 1 attribut data-view sur body
  * - Le CSS gère qui est visible
- * - JS ne touche JAMAIS à .style.display des views
+ * - ⭐ FIX v25: render() also directly hides the loading screen when
+ *   transitioning away from "loading" view (belt + suspenders)
  */
 // ⭐ Track last view to avoid unnecessary scroll/re-render
 let lastRenderedView = null;
@@ -153,6 +160,13 @@ export function render(reason = 'unknown') {
     // ⭐ UNE SEULE source de vérité visuelle : data-view sur body
     document.body.setAttribute('data-view', view);
     document.body.setAttribute('data-subpage', subPage);
+
+    // ⭐ FIX v25: When transitioning away from loading, directly hide the loading screen
+    // This is a safety measure in addition to the CSS data-view rules
+    if (view !== 'loading') {
+      const loadingEl = document.getElementById('app-loading-screen');
+      if (loadingEl) loadingEl.style.display = 'none';
+    }
 
     // Update les éléments visuels (active class) pour compat ancien CSS
     const allPages = document.querySelectorAll('.page');

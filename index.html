@@ -38,7 +38,7 @@
 <body data-view="loading" data-subpage="home">
 
 <!-- Loading Screen (visible immediately, before JS loads) -->
-<div id="app-loading-screen" style="position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;background:#000!important;color:#f5f5f7;font-family:'Inter',-apple-system,sans-serif;">
+<div id="app-loading-screen" style="position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;color:#f5f5f7;font-family:'Inter',-apple-system,sans-serif;">
   <div id="loading-spinner" style="width:40px;height:40px;border:3px solid rgba(123,44,191,0.2);border-top-color:#7B2CBF;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;"></div>
   <div style="font-family:'Bebas Neue','Impact',sans-serif;font-size:24px;letter-spacing:0.05em;margin-bottom:6px;">OPTIMUSCLE</div>
   <div style="font-size:13px;color:#8e8e93;" id="loading-status">Chargement...</div>
@@ -46,12 +46,18 @@
   <noscript><div style="margin-top:16px;color:#d94848;font-size:14px;">JavaScript est requis pour utiliser cette application.</div></noscript>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-<!-- Robust fallback: detects if app.js failed to load, shows retry button -->
-<!-- ⭐ FIX v25: Simplified fallback — no "reconnecting" state, direct landing/login -->
+<!-- ⭐ FIX v25: Fallback script — directly hides loading screen when data-view changes -->
 <script>
 (function(){
   var retryBtn=document.getElementById('loading-retry-btn');
   var statusEl=document.getElementById('loading-status');
+  var loadingScreen=document.getElementById('app-loading-screen');
+
+  // Helper: hide loading screen DOM element directly (belt + suspenders)
+  function hideLoading(){
+    var ls=document.getElementById('app-loading-screen');
+    if(ls) ls.style.display='none';
+  }
 
   // Show retry button after 2s if still loading
   setTimeout(function(){
@@ -72,26 +78,27 @@
         var hasSeen=false;
         try{hasSeen=localStorage.getItem('hasSeenLanding')==='1';}catch(e){}
         if(hasSeen){
-          // Returning user → show login page
           document.body.setAttribute('data-view','login');
           var loginEl=document.getElementById('page-login');
           if(loginEl)loginEl.classList.remove('hidden');
-          window.__appReady=true;
         } else {
-          // New user → show landing page
           document.body.setAttribute('data-view','landing');
-          // Bind landing CTAs so buttons work even if app.js crashed
           var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium','landing-pricing-elite'];
           ctaBtns.forEach(function(id){
             var btn=document.getElementById(id);
             if(btn)btn.addEventListener('click',function(){
               try{localStorage.setItem('hasSeenLanding','1');}catch(e){}
               document.body.setAttribute('data-view','login');
+              hideLoading();
               var loginEl=document.getElementById('page-login');
               if(loginEl)loginEl.classList.remove('hidden');
             });
           });
         }
+        // ⭐ CRITICAL FIX v25: Actually HIDE the loading screen DOM element!
+        // The CSS data-view rule hides it, but we also hide it directly for safety.
+        hideLoading();
+        window.__appReady=true;
       }
     }
   },3000);

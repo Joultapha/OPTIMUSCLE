@@ -1,16 +1,17 @@
 /* ============================================================
    OPTIMUSCLE — Entry point (utilise appState UNIQUEMENT)
    ============================================================
-   v25 — FIXES:
-   - ⭐ CRITICAL: Added missing getAppState import (was causing ENTIRE
-     app.js to crash with ReferenceError, leaving loading screen stuck)
-   - Loading screen stuck: root cause was getAppState() called at line
-     122 but never imported from appState.js
-   - Level-up Continue button: works now (was broken because app.js
-     crashed before event handlers were bound)
-   - Unresponsive buttons: same root cause — app.js crash
+   v25 — CRITICAL FIXES:
+   - ⭐ CRITICAL: Removed !important from loading screen inline style
+     (inline !important overrides CSS !important, so loading screen
+     could NEVER be hidden by the CSS data-view rules)
+   - hideLoadingScreen() now DIRECTLY hides the DOM element
+   - Removed broken getAppState() call (was not imported, caused crash)
+   - Removed "reconnecting" state (doesn't exist in appState)
+   - Simplified auth timeout flow (4s max)
+   - Level-up Continue button works (was broken by app.js crash)
+   - Unresponsive buttons fixed (same root cause)
    - Landing page refresh: proper hasSeenLanding flow
-   - Simplified reconnecting logic (removed fragile timeout chain)
 */
 
 // ⚠️ Firebase imports are now DYNAMIC to prevent black screen if CDN is unreachable
@@ -114,8 +115,14 @@ let authResolved = false;
 let globalEventsBound = false;
 
 // ⭐ Helper : cacher le loading screen de façon fiable
+// ⭐ FIX v25: Now DIRECTLY hides the DOM element (not just setting flags)
 function hideLoadingScreen(reason) {
   console.log('[APP] Loading screen hidden — reason:', reason);
+  // ⭐ CRITICAL FIX: Actually hide the loading screen DOM element!
+  const ls = document.getElementById('app-loading-screen');
+  if (ls) {
+    ls.style.display = 'none';
+  }
   // ⭐ Signal to inline fallback that app is ready
   window.__appReady = true;
   // ⭐ Signal that loading was dismissed so app.js doesn't re-show it
@@ -135,7 +142,7 @@ function bindLandingCTAs() {
 bindLandingCTAs();
 
 // ⭐ FIX v25: Simplified timeout — if Firebase/auth doesn't resolve in 4s,
-// show the appropriate page directly (no "reconnecting" state that keeps spinner)
+// show the appropriate page directly
 setTimeout(() => {
   if (!authResolved) {
     console.warn('[APP] Auth timeout (4s) — showing page without Firebase');
@@ -155,7 +162,7 @@ let firebaseAvailable = false;
 try {
   // Dynamic import: if CDN is down or version doesn't exist,
   // only this try/catch fails — the rest of the app still works
-  // ⭐ Reduced timeout to 5s (was 10s) — don't hang forever on slow CDN
+  // ⭐ Reduced timeout to 5s — don't hang forever on slow CDN
   const firebasePromise = Promise.all([
     import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
     import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"),
@@ -473,7 +480,6 @@ function initDraggableFab() {
   let isDragging = false;
   let startX, startY, initialX, initialY;
   let hasMoved = false;
-  // ⭐ FIX v24: Track drag start time to distinguish click vs drag
   let dragStartTime = 0;
 
   function onStart(e) {
@@ -495,9 +501,8 @@ function initDraggableFab() {
     const touch = e.touches ? e.touches[0] : e;
     const dx = touch.clientX - startX;
     const dy = touch.clientY - startY;
-    // ⭐ FIX v24: Only count as moved if truly significant movement (>10px)
     if (Math.abs(dx) > 10 || Math.abs(dy) > 10) hasMoved = true;
-    if (!hasMoved) return; // Don't move the FAB for small movements
+    if (!hasMoved) return;
     const newX = initialX + dx;
     const newY = initialY + dy;
     fab.style.position = 'fixed';
@@ -514,7 +519,6 @@ function initDraggableFab() {
     fab.style.cursor = 'grab';
     fab.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
 
-    // Only snap if we actually moved
     if (hasMoved) {
       const rect = fab.getBoundingClientRect();
       const vw = window.innerWidth;
@@ -532,19 +536,14 @@ function initDraggableFab() {
     }
   }
 
-  // ⭐ FIX v24: Only listen on the FAB itself, not window-level
-  // Window-level listeners were intercepting clicks on OTHER elements
   fab.addEventListener('mousedown', onStart);
-  fab.addEventListener('touchstart', onStart, { passive: true }); // passive: don't block scroll
-  // Keep window-level for move/end but only process if isDragging
+  fab.addEventListener('touchstart', onStart, { passive: true });
   window.addEventListener('mousemove', onMove);
   window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('mouseup', onEnd);
   window.addEventListener('touchend', onEnd);
 
-  // ⭐ FIX v24: Improved click detection — only block click if truly dragged
   fab.addEventListener('click', (e) => {
-    // If user dragged (moved >10px or held >300ms), don't open coach
     if (hasMoved || (Date.now() - dragStartTime > 300)) {
       e.stopImmediatePropagation();
       e.preventDefault();
