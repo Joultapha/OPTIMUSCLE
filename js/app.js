@@ -312,7 +312,7 @@ function bindGlobalEvents() {
   initSidebar();
   bindThemeButtons();
 
-  // Theme toggle button (header) — v16 style toggle
+  // Theme toggle switch (header) — Liquid Glass pill toggle
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     updateThemeToggleIcon();
@@ -329,8 +329,23 @@ function bindGlobalEvents() {
       }
       applyTheme(next);
       updateThemeToggleIcon();
+      // Animate the pill with squash effect
+      const pill = themeToggleBtn.querySelector('.theme-toggle-pill');
+      if (pill) {
+        pill.classList.remove('animating');
+        void pill.offsetWidth;
+        pill.classList.add('animating');
+        pill.addEventListener('animationend', () => pill.classList.remove('animating'), { once: true });
+      }
       // Haptic feedback
       try { if (navigator.vibrate) navigator.vibrate(8); } catch(e) {}
+    });
+    // Keyboard support
+    themeToggleBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        themeToggleBtn.click();
+      }
     });
   }
 
@@ -430,13 +445,16 @@ function updateThemeToggleIcon() {
   if (!btn) return;
   const current = document.documentElement.getAttribute('data-theme');
   const isDark = current === 'dark' || (current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const lightIcon = btn.querySelector('.theme-icon-light');
-  const darkIcon = btn.querySelector('.theme-icon-dark');
-  if (lightIcon && darkIcon) {
-    // v16 style: sun icon shown when dark (click to go light), moon icon when light (click to go dark)
-    lightIcon.style.display = isDark ? 'block' : 'none';
-    darkIcon.style.display = isDark ? 'none' : 'block';
+  const sunIcon = btn.querySelector('.theme-icon-sun');
+  const moonIcon = btn.querySelector('.theme-icon-moon');
+  if (sunIcon && moonIcon) {
+    // Dark mode: sun is active (click to go light), Light mode: moon is active (click to go dark)
+    sunIcon.classList.toggle('active', isDark);
+    moonIcon.classList.toggle('active', !isDark);
   }
+  // Update ARIA
+  btn.setAttribute('aria-checked', !isDark);
+  btn.setAttribute('aria-label', isDark ? 'Passer en mode clair' : 'Passer en mode sombre');
   // Also update sidebar theme buttons
   document.querySelectorAll('.theme-option').forEach(opt => {
     opt.classList.toggle('active', opt.dataset.theme === current);
