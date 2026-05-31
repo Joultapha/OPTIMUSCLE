@@ -20,6 +20,7 @@ import { showToast, confirmModal } from '../utils/notifications.js';
 import { haptic } from '../utils/animations.js';
 import { GROQ_API_KEY } from '../core/config.js';
 import { hasFeature, getFeatureLevel } from '../saas/subscription.js';
+import { showToastWithAction } from '../utils/notifications.js';
 
 let currentMealType = 'breakfast';
 let currentSearchTimeout = null;
@@ -63,13 +64,21 @@ function ensureNutritionState() {
 // RENDU PRINCIPAL : page Nutrition
 // ============================================================
 export function renderNutrition() {
-  // ⭐ Premium gate : Nutrition basique pour gratuits, complet pour Premium
+  // ⭐ Premium gate : Nutrition réservé Premium
   const userData = getUserData();
   const nutritionLevel = getFeatureLevel(userData, 'nutritionTracking');
 
-  // Si nutritionLevel === false → feature pas du tout disponible
+  // Si nutritionLevel === false → feature pas du tout disponible (FREE)
   // Si 'basic' → onboarding + vue limitée
   // Si 'advanced' → tout le dashboard
+
+  // ⭐ FREE users: show locked view
+  if (nutritionLevel === false) {
+    showToast('Suivi nutritionnel disponible avec Premium');
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    renderNutritionLocked();
+    return;
+  }
 
   ensureNutritionState();
   const nut = getState().nutrition;
@@ -692,6 +701,38 @@ async function resetNutritionOnboarding() {
   nut.onboardingDone = false;
   await save();
   renderNutrition();
+}
+
+// ============================================================
+// LOCKED VIEW (free users)
+// ============================================================
+function renderNutritionLocked() {
+  const container = document.getElementById('nutrition-content');
+  if (!container) return;
+  clearEl(container);
+
+  container.appendChild(createEl('div', {
+    className: 'nut-onb-wrap',
+    html: `
+      <div class="nut-onb-header">
+        <span class="label-eyebrow"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="11" width="18" height="11" rx="2" fill="rgba(212,168,67,0.1)"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Suivi nutritionnel</span>
+        <h1>Suivi <span class="text-gradient">nutritionnel</span></h1>
+        <p>Suis tes calories, macros et hydratation au quotidien. Disponible avec Premium.</p>
+      </div>
+      <div style="text-align:center;padding:32px 0;">
+        <div style="margin-bottom:16px;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" fill="rgba(212,168,67,0.08)"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <button class="btn btn-primary chal-locked-btn" type="button" id="nut-locked-premium-btn">Voir les plans Premium</button>
+      </div>
+    `,
+  }));
+
+  setTimeout(() => {
+    document.getElementById('nut-locked-premium-btn')?.addEventListener('click', () => {
+      import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    });
+  }, 10);
 }
 
 // ============================================================

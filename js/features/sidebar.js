@@ -397,5 +397,5 @@ function handlePaddleCheckout(planId) {
   }
 
   // Fallback: redirect to pricing page
-  window.location.href = '/legal/pricing.html';
+  window.location.href = 'legal/pricing.html';
 }

@@ -44,6 +44,8 @@ export function renderChallenges() {
   // ⭐ Premium gate : Défis communautaires réservés Premium
   const userData = getUserData();
   if (!hasFeature(userData, 'communityChallenges')) {
+    showToast('Défis communautaires disponibles avec Premium');
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
     renderChallengesLocked();
     return;
   }

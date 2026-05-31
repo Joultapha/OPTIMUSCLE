@@ -503,6 +503,13 @@ function openExerciseEditor(exIdx) {
   const ex = d.exercises[exIdx];
   if (!ex) return;
 
+  // ⭐ Premium gate: custom programs reserved for Premium
+  if (!hasFeature(getUserData(), 'customPrograms')) {
+    showToast('Programmes personnalisés disponibles avec Premium');
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    return;
+  }
+
   let overlay = document.getElementById('ex-editor-overlay');
   if (!overlay) {
     overlay = createEl('div', {
@@ -576,6 +583,13 @@ function openSubstituteDialog(exIdx) {
   const d = state.program[state.currentDay];
   const ex = d.exercises[exIdx];
   if (!ex) return;
+
+  // ⭐ Premium gate: custom programs reserved for Premium
+  if (!hasFeature(getUserData(), 'customPrograms')) {
+    showToast('Programmes personnalisés disponibles avec Premium');
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    return;
+  }
 
   // Get user's place from profile
   const place = state.profile?.place || 'home_none';

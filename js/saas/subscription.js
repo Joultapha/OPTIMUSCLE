@@ -38,7 +38,7 @@ export const PLANS = {
       earlyAccess: false,
       prioritySupport: false,
       communityChallenges: false,
-      nutritionTracking: 'basic',
+      nutritionTracking: false,
     }
   },
   premium_monthly: {

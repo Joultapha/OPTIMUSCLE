@@ -198,6 +198,28 @@ function handleTabClick(tabId) {
   const index = TABS.findIndex(t => t.id === tabId);
   if (index === -1) return;
 
+  // ⭐ Premium gate : vérifier si l'onglet est verrouillé pour les gratuits
+  const tab = TABS[index];
+  if (tab.premiumFeature) {
+    const userData = getUserData();
+    if (!hasFeature(userData, tab.premiumFeature)) {
+      // Onglet verrouillé — afficher upsell au lieu de naviguer
+      try { if (navigator.vibrate) navigator.vibrate(30); } catch(e) {}
+      import('../utils/notifications.js').then(mod => {
+        mod.showToastWithAction(
+          tab.id === 'challenges' ? 'Défis disponibles avec Premium' : 'Fonctionnalité Premium',
+          'Voir les plans',
+          4000
+        ).then(clicked => {
+          if (clicked) {
+            import('./sidebar.js').then(sMod => { if (sMod.openPremiumModal) sMod.openPremiumModal(); });
+          }
+        });
+      });
+      return; // ⛔ Ne pas naviguer
+    }
+  }
+
   if (tabId === currentTab) return;
   currentTab = tabId;
 

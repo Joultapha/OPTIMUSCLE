@@ -311,6 +311,15 @@ function hideTypingIndicator() {
 export async function sendMessage(text) {
   text = String(text || '').trim();
   if (!text) return;
+
+  // ⭐ Premium gate: Coach IA reserved for Premium subscribers
+  const ud = getUserData();
+  if (!hasFeature(ud, 'aiCoach')) {
+    showToast('Coach IA disponible avec Premium');
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    return;
+  }
+
   if (text.length > 500) {
     showToast('Message trop long (max 500 caractères)');
     return;

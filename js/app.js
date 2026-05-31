@@ -3,6 +3,12 @@
    ============================================================
    Cette version ne touche PLUS jamais au DOM des pages directement.
    Toute décision de rendu passe par appState.render()
+
+   ⭐ ROBUSTESSE :
+   - Firebase est chargé dynamiquement (pas de blocage si CDN down)
+   - Chaque init() est wrappé dans try/catch (un crash n'en empêche pas un autre)
+   - Les CTAs landing sont bindés IMMÉDIATEMENT (pas besoin d'attendre Firebase)
+   - Fallbacks multiples pour cacher le loading screen
 */
 
 // ⚠️ Firebase imports are now DYNAMIC to prevent black screen if CDN is unreachable
@@ -86,31 +92,71 @@ initTheme();
 // ============================================================
 // 1. APP START → loading screen uniquement
 // ============================================================
-setLoading(true);
-render('app-start');
+
+// ⭐ CRITICAL: Check if fallback already showed landing page
+// If the inline fallback already set data-view to something other than "loading",
+// DON'T override it back to loading — that causes the stuck loading screen
+if (window.__optFallbackFired) {
+  console.log('[APP] Fallback already fired — skipping setLoading(true)');
+} else {
+  setLoading(true);
+  render('app-start');
+}
+
+// ⭐ NE PAS mettre __appReady = true ici !
+// On le mettra seulement quand l'app est VRAIMENT prête.
+// Sinon le fallback inline pense que l'app est chargée.
 
 // ⭐ Flag pour ignorer le premier fire null de Firebase (race condition)
 let authResolved = false;
 let authResolveTimer = null;
+let globalEventsBound = false;
 
-// Fallback: if app doesn't load in 15s, show error (but do NOT force landing page)
+// ⭐ Helper : cacher le loading screen de façon fiable
+function hideLoadingScreen(reason) {
+  const ls = document.getElementById('app-loading-screen');
+  if (ls) {
+    const isVisible = getComputedStyle(ls).display !== 'none';
+    if (isVisible) {
+      ls.style.setProperty('display', 'none', 'important');
+      console.log('[APP] Loading screen hidden — reason:', reason);
+    }
+  }
+  // ⭐ Signal to inline fallback that app is ready
+  window.__appReady = true;
+  // ⭐ Signal that loading was dismissed so app.js doesn't re-show it
+  window.__optFallbackFired = true;
+}
+
+// ⭐ Bind landing page CTAs IMMEDIATELY (before Firebase)
+// This way, even if Firebase takes 10s, the landing buttons work right away
+function bindLandingCTAs() {
+  on('landing-cta-start', 'click', () => setHasSeenLanding(true));
+  on('landing-cta-login', 'click', () => setHasSeenLanding(true));
+  on('landing-cta-final', 'click', () => setHasSeenLanding(true));
+  on('landing-pricing-free', 'click', () => setHasSeenLanding(true));
+  on('landing-pricing-premium', 'click', () => setHasSeenLanding(true));
+}
+bindLandingCTAs();
+
+// Fallback: if app doesn't resolve in 4s, force hide loading screen
 setTimeout(() => {
   const ls = document.getElementById('app-loading-screen');
   const status = document.getElementById('loading-status');
-  if (ls && ls.style.display !== 'none') {
+  const retryBtn = document.getElementById('loading-retry-btn');
+  const isVisible = ls && getComputedStyle(ls).display !== 'none';
+  if (isVisible) {
     if (status) status.textContent = 'Chargement lent... Vérifie ta connexion.';
-    console.warn('[APP] Loading timeout — Firebase may be slow');
-    // ⚠️ Do NOT force landing page here — let appState handle routing
-    // Only hide loading screen if Firebase truly never responded
+    if (retryBtn) retryBtn.style.display = 'block';
+    console.warn('[APP] Loading timeout (4s) — Firebase may be slow');
     if (!authResolved) {
       authResolved = true;
-      ls.style.display = 'none';
-      // Show the appropriate view based on hasSeenLanding
+      hideLoadingScreen('4s-timeout');
       const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
       updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
     }
   }
-}, 15000);
+}, 4000);
 
 // ============================================================
 // 2. INIT FIREBASE (dynamic imports — resilient to CDN failures)
@@ -121,10 +167,17 @@ let firebaseAvailable = false;
 try {
   // Dynamic import: if CDN is down or version doesn't exist,
   // only this try/catch fails — the rest of the app still works
-  const [appModule, dbModule] = await Promise.all([
+  // ⭐ Reduced timeout to 5s (was 10s) — don't hang forever on slow CDN
+  const firebasePromise = Promise.all([
     import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
     import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"),
   ]);
+  
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Firebase CDN timeout (5s)')), 5000)
+  );
+  
+  const [appModule, dbModule] = await Promise.race([firebasePromise, timeoutPromise]);
 
   firebaseApp = appModule.initializeApp(firebaseConfig);
   db = dbModule.getDatabase(firebaseApp);
@@ -135,40 +188,38 @@ try {
   firebaseAvailable = true;
 
 } catch (e) {
-  console.error('[APP] Firebase init failed (dynamic import):', e);
+  console.error('[APP] Firebase init failed:', e.message || e);
+  firebaseAvailable = false;
   const status = document.getElementById('loading-status');
-  if (status) status.textContent = 'Connexion impossible. Mode hors-ligne...';
+  if (status) status.textContent = 'Mode hors-ligne...';
   // Still allow app to function in offline mode — show landing page
-  const loadingScreen = document.getElementById('app-loading-screen');
-  if (loadingScreen) loadingScreen.style.display = 'none';
-  updateAppState({ loading: false, isAuthenticated: false });
+  hideLoadingScreen('firebase-failed');
+  const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
+  updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
   // Do NOT throw — allow the app to continue in offline/landing mode
 }
 
 cleanupOldEntries();
 
-// ⭐ NE PAS cacher le loading screen ici — attendre que l'auth soit résolu
-// Le loading screen sera caché par le auth listener ou le fallback
-
-console.log(`${APP_NAME} v${APP_VERSION} initialized`);
+console.log(`${APP_NAME} v${APP_VERSION} initialized (Firebase: ${firebaseAvailable ? 'OK' : 'OFFLINE'})`);
 
 // ============================================================
-// 3. INIT MODULES
+// 3. INIT MODULES (chaque init est wrappé dans try/catch)
 // ============================================================
-initOnboarding();
-bindGlobalEvents();
+try { initOnboarding(); } catch (e) { console.error('[APP] initOnboarding failed:', e); }
+try { bindGlobalEvents(); } catch (e) { console.error('[APP] bindGlobalEvents failed:', e); }
 
 // ============================================================
 // 4. GLOBAL ERROR HANDLER
 // ============================================================
 window.addEventListener('error', (event) => {
   console.error('[GLOBAL ERROR]', event.error || event.message);
-  showToast('Une erreur est survenue. Réessaie.');
+  try { showToast('Une erreur est survenue. Réessaie.'); } catch (e) {}
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('[UNHANDLED REJECTION]', event.reason);
-  showToast('Erreur réseau. Vérifie ta connexion.');
+  try { showToast('Erreur réseau. Vérifie ta connexion.'); } catch (e) {}
 });
 
 // ============================================================
@@ -184,30 +235,24 @@ setupAuthListener(async (user) => {
   // On ignore ce premier fire null pour éviter un flash vers la landing page.
   if (!user && !authResolved) {
     console.log('[AUTH] Ignoring initial null fire (Firebase session check)');
-    // Ne PAS afficher la landing page — attendre que Firebase résolve
-    // le vrai état d'auth dans les prochaines millisecondes
     
-    // ⭐ Safety: si après 5s on n'a toujours pas de user, c'est qu'on est vraiment
-    // pas connecté — on accepte le null (increased from 3s to 5s for slower connections)
+    // ⭐ Safety: si après 2s on n'a toujours pas de user, c'est qu'on est vraiment
+    // pas connecté — on accepte le null
     if (!authResolveTimer) {
       authResolveTimer = setTimeout(() => {
         if (!authResolved) {
-          console.log('[AUTH] Auth resolve timeout (5s) — user is truly not authenticated');
+          console.log('[AUTH] Auth resolve timeout (2s) — user is truly not authenticated');
           authResolved = true;
-          // Cacher le loading screen
-          const ls = document.getElementById('app-loading-screen');
-          if (ls) ls.style.display = 'none';
-          // Respect hasSeenLanding from localStorage
+          hideLoadingScreen('auth-2s-timeout');
           const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
           updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
         }
-      }, 5000);
+      }, 2000);
     }
     return;
   }
 
-  // ⭐ Marquer l'auth comme résolu (on a eu au moins une réponse non-null,
-  // ou un null après le premier fire)
+  // ⭐ Marquer l'auth comme résolu
   if (!authResolved) {
     authResolved = true;
     if (authResolveTimer) {
@@ -217,21 +262,15 @@ setupAuthListener(async (user) => {
   }
 
   if (!user) {
-    // ===== UTILISATEUR VRAIMENT NON CONNECTÉ (pas un race condition) =====
+    // ===== UTILISATEUR VRAIMENT NON CONNECTÉ =====
     setCurrentUser(null);
     setUserData(null);
     resetState();
 
-    // ⭐ Reset hasSeenLanding pour re-voir la landing après déconnexion
-    // But only if this is a real logout, not a page refresh without session
-    // We check if we had previously seen the landing to avoid showing it
-    // again on refresh when user was already on login page
+    // Reset hasSeenLanding après déconnexion
     try { localStorage.removeItem('hasSeenLanding'); } catch(e) {}
 
-    // Cacher le loading screen
-    const ls = document.getElementById('app-loading-screen');
-    if (ls) ls.style.display = 'none';
-
+    hideLoadingScreen('auth-null-user');
     updateAppState({
       isAuthenticated: false,
       onboardingCompleted: false,
@@ -242,12 +281,10 @@ setupAuthListener(async (user) => {
   }
 
   // ===== UTILISATEUR CONNECTÉ =====
-
-  // 1. Pendant le chargement des données : loading
   setCurrentUser(user);
   resetState();
 
-  // 2. Charger les données depuis Firebase
+  // Charger les données depuis Firebase
   try {
     await Promise.all([
       loadUserData(user.uid),
@@ -260,7 +297,7 @@ setupAuthListener(async (user) => {
   await checkWeekReset();
   updateAvatar(user);
 
-  // 3. Décider : onboarding terminé ou pas ?
+  // Décider : onboarding terminé ou pas ?
   const state = getState();
   const hasProfile = !!(state && state.profile && state.profile.goal);
   const hasProgram = !!(state && state.program && Array.isArray(state.program) && state.program.length === 7);
@@ -268,7 +305,6 @@ setupAuthListener(async (user) => {
 
   console.log('[FLOW] hasProfile:', hasProfile, '| hasProgram:', hasProgram, '→ onboardingDone:', onboardingDone);
 
-  // 4. Préparer l'UI selon le cas
   if (onboardingDone) {
     renderHome();
     scheduleReminder();
@@ -277,28 +313,20 @@ setupAuthListener(async (user) => {
     resetOnboardingUI();
   }
 
-  // 5. Cacher le loading screen AVANT le render final
-  const ls = document.getElementById('app-loading-screen');
-  if (ls) ls.style.display = 'none';
+  hideLoadingScreen('auth-user-ready');
 
-  // 6. UN SEUL update final → render
   updateAppState({
     isAuthenticated: true,
     onboardingCompleted: onboardingDone,
     loading: false,
   });
 
-  // 7. Init bottom nav
-  initBottomNav();
-
-  // 8. Init scroll animations (landing page)
-  initScrollAnimations();
+  try { initBottomNav(); } catch (e) { console.error('[APP] initBottomNav failed:', e); }
+  try { initScrollAnimations(); } catch (e) { console.error('[APP] initScrollAnimations failed:', e); }
 });
 } catch (e) {
   console.warn('[APP] Auth listener not set up (Firebase unavailable):', e.message);
-  // Show landing page for non-authenticated users
-  const ls = document.getElementById('app-loading-screen');
-  if (ls) ls.style.display = 'none';
+  hideLoadingScreen('auth-listener-failed');
   updateAppState({ loading: false, isAuthenticated: false });
 }
 } else {
@@ -309,9 +337,14 @@ setupAuthListener(async (user) => {
 // 6. EVENT LISTENERS GLOBAUX
 // ============================================================
 function bindGlobalEvents() {
+  if (globalEventsBound) return;
+  globalEventsBound = true;
+
   // ⭐ Init sidebar + theme buttons + coach IA
-  initSidebar();
-  bindThemeButtons();
+  // Chaque init est wrappé dans try/catch pour qu'un crash
+  // n'empêche pas les autres de s'initialiser
+  try { initSidebar(); } catch (e) { console.error('[APP] initSidebar failed:', e); }
+  try { bindThemeButtons(); } catch (e) { console.error('[APP] bindThemeButtons failed:', e); }
 
   // Theme toggle switch (header) — Liquid Glass pill toggle
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -319,7 +352,6 @@ function bindGlobalEvents() {
     updateThemeToggleIcon();
     themeToggleBtn.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
-      // Cycle: auto → dark → light → auto
       let next;
       if (current === 'auto' || !current) {
         next = 'dark';
@@ -330,7 +362,6 @@ function bindGlobalEvents() {
       }
       applyTheme(next);
       updateThemeToggleIcon();
-      // Animate the pill with squash effect
       const pill = themeToggleBtn.querySelector('.theme-toggle-pill');
       if (pill) {
         pill.classList.remove('animating');
@@ -338,10 +369,8 @@ function bindGlobalEvents() {
         pill.classList.add('animating');
         pill.addEventListener('animationend', () => pill.classList.remove('animating'), { once: true });
       }
-      // Haptic feedback
       try { if (navigator.vibrate) navigator.vibrate(8); } catch(e) {}
     });
-    // Keyboard support
     themeToggleBtn.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -350,11 +379,11 @@ function bindGlobalEvents() {
     });
   }
 
-  initCoach();
-  initDraggableFab();
-  initNutrition();
-  initChallenges();
-  initDevMode();
+  try { initCoach(); } catch (e) { console.error('[APP] initCoach failed:', e); }
+  try { initDraggableFab(); } catch (e) { console.error('[APP] initDraggableFab failed:', e); }
+  try { initNutrition(); } catch (e) { console.error('[APP] initNutrition failed:', e); }
+  try { initChallenges(); } catch (e) { console.error('[APP] initChallenges failed:', e); }
+  try { initDevMode(); } catch (e) { console.error('[APP] initDevMode failed:', e); }
 
   // Listener pour navigation custom (sidebar → pages spéciales)
   window.addEventListener('opt:nav', (e) => {
@@ -363,7 +392,6 @@ function bindGlobalEvents() {
       setSubPage('nutrition');
       renderNutrition();
       window.scrollTo(0, 0);
-      // Update bottom nav active tab
       import('./features/bottomNav.js').then(mod => { if (mod.setActiveBottomTab) mod.setActiveBottomTab('nutrition'); });
     } else if (page === 'challenges') {
       setSubPage('challenges');
@@ -373,28 +401,19 @@ function bindGlobalEvents() {
     }
   });
 
-  // ⭐ Landing page CTAs
-  on('landing-cta-start', 'click', () => setHasSeenLanding(true));
-  on('landing-cta-login', 'click', () => setHasSeenLanding(true));
-  on('landing-cta-final', 'click', () => setHasSeenLanding(true));
-  on('landing-pricing-free', 'click', () => setHasSeenLanding(true));
-  on('landing-pricing-premium', 'click', () => setHasSeenLanding(true));
-
+  // Auth buttons
   on('btn-google', 'click', loginGoogle);
   on('btn-email-action', 'click', handleEmailAuth);
   on('toggle-mode', 'click', toggleAuthMode);
   on('btn-logout', 'click', confirmLogout);
 
-  // ⭐ Password reset
   on('btn-forgot-password', 'click', handlePasswordReset);
-
-  // ⭐ Account deletion
   on('btn-delete-account', 'click', handleDeleteAccount);
 
   on('input-password', 'keydown', e => { if (e.key === 'Enter') handleEmailAuth(); });
   on('input-password2', 'keydown', e => { if (e.key === 'Enter') handleEmailAuth(); });
   on('input-email', 'keydown', e => {
-    if (e.key === 'Enter') document.getElementById('input-password').focus();
+    if (e.key === 'Enter') document.getElementById('input-password')?.focus();
   });
 
   on('settings-btn', 'click', openSettings);
@@ -424,7 +443,6 @@ function bindGlobalEvents() {
   on('btn-close-badge', 'click', closeBadgeModal);
   on('badge-modal', 'click', e => { if (e.target === e.currentTarget) closeBadgeModal(); });
 
-  // Refaire le questionnaire (custom modal)
   on('btn-reset-profile', 'click', async () => {
     const { confirmModal } = await import('./utils/notifications.js');
     const confirmed = await confirmModal('Refaire le questionnaire ? Ton historique et tes badges seront conservés.', {
@@ -450,14 +468,11 @@ function updateThemeToggleIcon() {
   const sunIcon = btn.querySelector('.theme-icon-sun');
   const moonIcon = btn.querySelector('.theme-icon-moon');
   if (sunIcon && moonIcon) {
-    // Dark mode: sun is active (click to go light), Light mode: moon is active (click to go dark)
     sunIcon.classList.toggle('active', isDark);
     moonIcon.classList.toggle('active', !isDark);
   }
-  // Update ARIA
   btn.setAttribute('aria-checked', !isDark);
   btn.setAttribute('aria-label', isDark ? 'Passer en mode clair' : 'Passer en mode sombre');
-  // Also update sidebar theme buttons
   document.querySelectorAll('.theme-option').forEach(opt => {
     opt.classList.toggle('active', opt.dataset.theme === current);
   });
@@ -466,9 +481,10 @@ function updateThemeToggleIcon() {
 // ============================================================
 // SECURITY
 // ============================================================
-if (!window.location.hostname.includes('localhost')) {
-  try { Object.freeze(Object.prototype); } catch (e) {}
-}
+// ⭐ REMOVED: Object.freeze(Object.prototype) was breaking Firebase
+// initialization and other libraries that extend Object.prototype.
+// This caused the loading screen to be permanently stuck on GitHub Pages.
+// Real security comes from Firebase Rules + server-side validation.
 
 // ============================================================
 // DRAGGABLE COACH FAB
@@ -516,7 +532,6 @@ function initDraggableFab() {
     fab.style.cursor = 'grab';
     fab.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
 
-    // Snap to nearest edge
     const rect = fab.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -524,7 +539,6 @@ function initDraggableFab() {
     fab.style.left = snapX + 'px';
     fab.style.right = 'auto';
 
-    // Keep within vertical bounds
     const minY = 80;
     const maxY = vh - rect.height - 80;
     const currentTop = rect.top;
@@ -540,8 +554,6 @@ function initDraggableFab() {
   window.addEventListener('mouseup', onEnd);
   window.addEventListener('touchend', onEnd);
 
-  // Override click to only open if not dragging
-  const originalClick = fab.onclick;
   fab.addEventListener('click', (e) => {
     if (hasMoved) {
       e.stopImmediatePropagation();
@@ -565,14 +577,13 @@ let devTapCount = 0;
 let devTapTimer = null;
 
 function initDevMode() {
-  // ⭐ ?dev=1 dans l'URL → demande aussi le PIN maintenant
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('dev') === '1') {
     console.log('[DEV] Mode dev détecté via URL — PIN requis');
     setTimeout(() => showDevPinInput(), 2000);
   }
 
-  // 5 taps on logo → PIN input (not directly the panel)
+  // 5 taps on logo → PIN input
   const logoEl = document.getElementById('app-logo') || document.querySelector('.sidebar-logo');
   if (logoEl) {
     logoEl.addEventListener('click', () => {
@@ -606,17 +617,14 @@ function initDevMode() {
  * Si déjà authentifié, ouvre directement le panneau dev.
  */
 function showDevPinInput() {
-  // Si déjà authentifié → directement le panneau
   if (isDevVerified()) {
     showDevPanel();
     return;
   }
 
-  // Supprimer l'existant
   const existing = document.getElementById('dev-pin-modal');
   if (existing) { existing.remove(); return; }
 
-  // Add shake animation keyframe (once)
   if (!document.getElementById('dev-shake-keyframe')) {
     const style = document.createElement('style');
     style.id = 'dev-shake-keyframe';
@@ -683,10 +691,8 @@ function showDevPinInput() {
   const errorEl = document.getElementById('dev-pin-error');
   const submitBtn = document.getElementById('dev-pin-submit');
 
-  // Focus input
   setTimeout(() => pinInput?.focus(), 200);
 
-  // Pin input styling on focus
   pinInput?.addEventListener('focus', () => {
     pinInput.style.borderColor = '#7c3aed';
   });
@@ -701,20 +707,16 @@ function showDevPinInput() {
       return;
     }
     if (verifyDevPin(pin)) {
-      // ✅ PIN correct
       markDevVerified();
       overlay.remove();
       showToast('Mode dev activé (expire dans 2h)');
       showDevPanel();
     } else {
-      // ❌ PIN incorrect
       errorEl.textContent = 'Code incorrect';
       pinInput.value = '';
       pinInput.focus();
-      // Animation shake
       card.style.animation = 'devShake 0.4s ease';
       setTimeout(() => { card.style.animation = ''; }, 400);
-      // Rouge flash sur l'input
       pinInput.style.borderColor = '#ef4444';
       setTimeout(() => { pinInput.style.borderColor = '#333'; }, 1500);
     }
@@ -727,16 +729,13 @@ function showDevPinInput() {
 }
 
 function showDevPanel() {
-  // Remove existing panel
   const existing = document.getElementById('dev-panel');
   if (existing) { existing.remove(); return; }
-  // Also remove any leftover backdrop
   document.getElementById('dev-panel-backdrop')?.remove();
 
   const currentPlan = getDevPlan();
   const currentPlanId = currentPlan ? currentPlan.id : 'free';
 
-  // Calculer le temps restant avant expiration
   let expiryText = '';
   try {
     const data = JSON.parse(sessionStorage.getItem('opt_dev_verified'));
@@ -812,20 +811,17 @@ function showDevPanel() {
 
   document.body.appendChild(panel);
 
-  // Backdrop
   const backdrop = document.createElement('div');
   backdrop.id = 'dev-panel-backdrop';
   backdrop.style.cssText = 'position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.5);';
   backdrop.addEventListener('click', () => { panel.remove(); backdrop.remove(); });
   document.body.appendChild(backdrop);
 
-  // Close button
   document.getElementById('dev-panel-close')?.addEventListener('click', () => {
     panel.remove();
     backdrop.remove();
   });
 
-  // Plan buttons
   panel.querySelectorAll('.dev-plan-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const planId = btn.dataset.plan;
@@ -833,12 +829,10 @@ function showDevPanel() {
       panel.remove();
       backdrop.remove();
       showToast(`Dev: plan changé → ${PLANS[planId]?.name || planId}`);
-      // Reload to apply changes everywhere
       setTimeout(() => window.location.reload(), 500);
     });
   });
 
-  // Reset button
   document.getElementById('dev-reset-btn')?.addEventListener('click', () => {
     revokeDevVerification();
     panel.remove();
