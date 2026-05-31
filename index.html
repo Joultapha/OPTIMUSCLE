@@ -63,26 +63,38 @@
     }
   },2000);
 
-  // After 3s, force-show landing page if still stuck
+  // After 3s, force-show appropriate page if still stuck
   setTimeout(function(){
     var ls=document.getElementById('app-loading-screen');
     if(ls){
       var comp=window.getComputedStyle(ls);
       if(comp.display!=='none'){
         window.__optFallbackFired=true;
-        ls.style.setProperty('display','none','important');
-        document.body.setAttribute('data-view','landing');
-        // Bind landing CTAs so buttons work even if app.js crashed
-        var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium'];
-        ctaBtns.forEach(function(id){
-          var btn=document.getElementById(id);
-          if(btn)btn.addEventListener('click',function(){
-            try{localStorage.setItem('hasSeenLanding','1');}catch(e){}
-            document.body.setAttribute('data-view','login');
-            var loginEl=document.getElementById('page-login');
-            if(loginEl)loginEl.classList.remove('hidden');
+        // ⭐ FIX: Si l'utilisateur a DÉJÀ vu la landing, ne PAS la re-montrer
+        // ça évite le flash landing → dashboard au refresh
+        var hasSeen=false;
+        try{hasSeen=localStorage.getItem('hasSeenLanding')==='1';}catch(e){}
+        if(hasSeen){
+          // Utilisateur connu → état "reconnecting" (garde le spinner visible)
+          // mais n'affiche PAS la landing page
+          document.body.setAttribute('data-view','reconnecting');
+          window.__appReady=true;
+        } else {
+          // Nouvel utilisateur → montrer la landing page
+          ls.style.setProperty('display','none','important');
+          document.body.setAttribute('data-view','landing');
+          // Bind landing CTAs so buttons work even if app.js crashed
+          var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium'];
+          ctaBtns.forEach(function(id){
+            var btn=document.getElementById(id);
+            if(btn)btn.addEventListener('click',function(){
+              try{localStorage.setItem('hasSeenLanding','1');}catch(e){}
+              document.body.setAttribute('data-view','login');
+              var loginEl=document.getElementById('page-login');
+              if(loginEl)loginEl.classList.remove('hidden');
+            });
           });
-        });
+        }
       }
     }
   },3000);

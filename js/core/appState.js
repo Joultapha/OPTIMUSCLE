@@ -23,6 +23,7 @@ const appState = {
   loading: true,
   hasSeenLanding: false,  // ⭐ true = utilisateur a cliqué sur "Commencer"
   currentSubPage: 'home',  // home | history | badges | profile | workout
+  reconnecting: false,      // ⭐ true = utilisateur qui revient, en attente de Firebase
 };
 
 // ============================================================
@@ -41,6 +42,9 @@ export function getAppState() {
  */
 export function getCurrentView() {
   if (appState.loading) return 'loading';
+  // ⭐ Reconnecting: utilisateur qui revient, afficher écran de reconnexion
+  // au lieu de la landing page (évite le flash)
+  if (appState.reconnecting) return 'reconnecting';
   if (!appState.isAuthenticated) {
     // Si pas vu la landing → afficher landing d'abord
     return appState.hasSeenLanding ? 'login' : 'landing';
@@ -173,6 +177,7 @@ export function render(reason = 'unknown') {
     // Définir quelle page-X doit être active
     const pageMap = {
       loading: null,
+      reconnecting: null,  // Pas de page — loading screen persiste
       landing: null,  // géré séparément
       login: null,
       onboarding: 'page-onboarding',

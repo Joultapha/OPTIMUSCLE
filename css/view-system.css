@@ -91,6 +91,29 @@ body[data-view="loading"] #app-loading-screen {
   display: flex !important;
 }
 
+/* ===== RECONNECTING STATE ===== */
+/* Quand l'utilisateur revient (hasSeenLanding=true), on affiche un mini spinner
+   au lieu de flasher la landing page pendant que Firebase résout l'auth */
+body[data-view="reconnecting"] {
+  background: #000 !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body[data-view="reconnecting"] #app-loading-screen {
+  display: flex !important;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+}
+body[data-view="reconnecting"] #view-landing,
+body[data-view="reconnecting"] #page-login,
+body[data-view="reconnecting"] #app-header {
+  display: none !important;
+}
+
 
 
 /* Aussi sur tablet/desktop, le body reste full pour la landing */

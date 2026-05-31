@@ -153,7 +153,17 @@ setTimeout(() => {
       authResolved = true;
       hideLoadingScreen('4s-timeout');
       const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-      updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
+      // ⭐ FIX: Pour les utilisateurs qui reviennent, ne PAS forcer isAuthenticated: false
+      // Cela évite le flash landing → dashboard. On garde loading: false mais on
+      // attend que Firebase résolve l'auth correctement au lieu de forcer un état.
+      if (hasSeen) {
+        // Utilisateur connu : on affiche l'état "reconnecting" (spinner)
+        // au lieu de la landing page, en attendant que Firebase résolve l'auth
+        updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: true });
+      } else {
+        // Nouvel utilisateur : montrer la landing/login
+        updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
+      }
     }
   }
 }, 4000);
@@ -276,6 +286,7 @@ setupAuthListener(async (user) => {
       onboardingCompleted: false,
       hasSeenLanding: false,
       loading: false,
+      reconnecting: false,
     });
     return;
   }
@@ -319,6 +330,7 @@ setupAuthListener(async (user) => {
     isAuthenticated: true,
     onboardingCompleted: onboardingDone,
     loading: false,
+    reconnecting: false,
   });
 
   try { initBottomNav(); } catch (e) { console.error('[APP] initBottomNav failed:', e); }
