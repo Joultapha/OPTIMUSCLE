@@ -125,10 +125,13 @@ export const EX_GIFS = {
   shoulder_press:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif",
   leg_curl:      "https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif",
   leg_ext:       "https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif",
+  lunge:         "https://fitnessprogramer.com/wp-content/uploads/2021/02/Forward-Lunge.gif",
+  high_knees:    "https://fitnessprogramer.com/wp-content/uploads/2021/02/High-Knees.gif",
+  db_press:      "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif",
+  db_tri:        "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Triceps-Extension.gif",
+  bike:          "https://fitnessprogramer.com/wp-content/uploads/2021/07/Stationary-Bike.gif",
   run:           "https://fitnessprogramer.com/wp-content/uploads/2021/07/Run.gif",
   rope:          "https://fitnessprogramer.com/wp-content/uploads/2023/10/Skip-Jump-Rope.gif",
-  // ⛔ Pas de GIF pour : lunge, high_knees, db_press, db_tri, bike
-  // → L'app affichera une icône à la place
 };
 
 // ========== PROGRAM TEMPLATES ==========

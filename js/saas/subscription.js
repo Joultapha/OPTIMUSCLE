@@ -359,6 +359,9 @@ export function enforceFreemiumLimits(program, userData) {
   const plan = getUserPlan(userData);
   const maxFreq = plan.features.maxFrequency;
 
+  // ⭐ BUGFIX : -1 signifie ILLIMITÉ — ne jamais bloquer
+  if (maxFreq === -1) return program;
+
   // Compter les séances actuelles
   const workouts = program.filter(d => !d.rest);
   if (workouts.length <= maxFreq) return program;
@@ -382,6 +385,8 @@ export function filterHistoryByPlan(history, userData) {
   if (!Array.isArray(history)) return [];
   const plan = getUserPlan(userData);
   const maxDays = plan.features.maxHistoryDays;
+  // ⭐ BUGFIX : -1 signifie ILLIMITÉ — retourner tout l'historique
+  if (maxDays === -1) return history;
   const cutoff = Date.now() - maxDays * 86400000;
   return history.filter(h => {
     const t = new Date(h.date).getTime();
