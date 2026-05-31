@@ -18,48 +18,74 @@ export const PLANS = {
     name: 'Gratuit',
     price: 0,
     features: {
-      maxFrequency: 3,
-      maxHistoryDays: 30,
+      maxFrequency: 2,         // 2 séances/semaine max (vraiment limité)
+      maxHistoryDays: 7,       // Historique 7 jours seulement
+      maxPrograms: 1,          // 1 programme basique
+      maxBadges: 3,            // 3 badges de base
       gifQuality: 'standard',
       aiCoach: false,
       pdfExport: false,
       adsRemoved: false,
       customPrograms: false,
+      advancedStats: false,
+      eliteBadge: false,
+      earlyAccess: false,
+      prioritySupport: false,
+      communityChallenges: false,
+      nutritionTracking: 'basic',
     }
   },
   premium_monthly: {
     id: 'premium_monthly',
     stripeId: 'price_XXXXX_monthly',  // À remplacer par ton vrai Price ID Stripe
     paddleId: 'pri_XXXXX_monthly',    // À remplacer par ton vrai Paddle Product ID
-    name: 'Premium Mensuel',
+    name: 'Premium',
     price: 4.99,
     interval: 'month',
+    tagline: 'Pour les sérieux',
     features: {
-      maxFrequency: 6,
+      maxFrequency: -1,        // Illimité
       maxHistoryDays: 365,
+      maxPrograms: -1,         // Illimité
+      maxBadges: -1,           // Tous
       gifQuality: 'hd',
       aiCoach: true,
       pdfExport: true,
       adsRemoved: true,
       customPrograms: true,
+      advancedStats: false,
+      eliteBadge: false,
+      earlyAccess: false,
+      prioritySupport: false,
+      communityChallenges: true,
+      nutritionTracking: 'advanced',
     }
   },
   premium_yearly: {
     id: 'premium_yearly',
     stripeId: 'price_XXXXX_yearly',
     paddleId: 'pri_XXXXX_yearly',    // À remplacer par ton vrai Paddle Product ID
-    name: 'Premium Annuel',
+    name: 'Elite',
     price: 39.99,
     interval: 'year',
     savings: '33%',
+    tagline: 'Pour les ambitieux',
     features: {
-      maxFrequency: 6,
+      maxFrequency: -1,        // Illimité
       maxHistoryDays: 365,
+      maxPrograms: -1,         // Illimité
+      maxBadges: -1,           // Tous
       gifQuality: 'hd',
-      aiCoach: true,
+      aiCoach: 'advanced',     // Coach IA avancé
       pdfExport: true,
       adsRemoved: true,
-      customPrograms: true,
+      customPrograms: 'exclusive',  // Programmes exclusifs
+      advancedStats: true,
+      eliteBadge: true,
+      earlyAccess: true,
+      prioritySupport: true,
+      communityChallenges: 'elite',
+      nutritionTracking: 'advanced',
     }
   },
   premium_lifetime: {
@@ -70,13 +96,21 @@ export const PLANS = {
     price: 99.99,
     interval: 'lifetime',
     features: {
-      maxFrequency: 6,
-      maxHistoryDays: 365,
+      maxFrequency: -1,
+      maxHistoryDays: -1,      // Illimité
+      maxPrograms: -1,
+      maxBadges: -1,
       gifQuality: 'hd',
-      aiCoach: true,
+      aiCoach: 'advanced',
       pdfExport: true,
       adsRemoved: true,
-      customPrograms: true,
+      customPrograms: 'exclusive',
+      advancedStats: true,
+      eliteBadge: true,
+      earlyAccess: true,
+      prioritySupport: true,
+      communityChallenges: 'elite',
+      nutritionTracking: 'advanced',
     }
   },
 };
