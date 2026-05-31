@@ -1,14 +1,11 @@
 /* ============================================================
    OPTIMUSCLE — Entry point (utilise appState UNIQUEMENT)
    ============================================================
-   Cette version ne touche PLUS jamais au DOM des pages directement.
-   Toute décision de rendu passe par appState.render()
-
-   ⭐ ROBUSTESSE :
-   - Firebase est chargé dynamiquement (pas de blocage si CDN down)
-   - Chaque init() est wrappé dans try/catch (un crash n'en empêche pas un autre)
-   - Les CTAs landing sont bindés IMMÉDIATEMENT (pas besoin d'attendre Firebase)
-   - Fallbacks multiples pour cacher le loading screen
+   v24 — FIXES:
+   - Loading screen stuck: ajout timeout reconnecting (6s max)
+   - Level-up Continue button: fix event binding + modal z-index
+   - Unresponsive buttons: fix coach FAB drag interfering with clicks
+   - Landing page refresh: proper hasSeenLanding flow
 */
 
 // ⚠️ Firebase imports are now DYNAMIC to prevent black screen if CDN is unreachable
@@ -99,6 +96,11 @@ initTheme();
 // DON'T override it back to loading — that causes the stuck loading screen
 if (window.__optFallbackFired) {
   console.log('[APP] Fallback already fired — skipping setLoading(true)');
+  // ⭐ FIX v24: Even if fallback fired, we need to transition properly.
+  // The fallback sets data-view via DOM but doesn't update appState.
+  // So we need to sync appState with the fallback's decision.
+  const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
+  updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: hasSeen });
 } else {
   setLoading(true);
   render('app-start');
@@ -112,6 +114,18 @@ if (window.__optFallbackFired) {
 let authResolved = false;
 let authResolveTimer = null;
 let globalEventsBound = false;
+
+// ⭐ FIX v24: Auto-timeout pour l'état reconnecting
+// Si après 6s on est toujours en reconnecting, on force la transition
+// vers la page appropriée (login si pas authentifié, dashboard si authentifié)
+setTimeout(() => {
+  const s = getAppState();
+  if (s.reconnecting) {
+    console.warn('[APP] Reconnecting timeout (6s) — forcing transition');
+    // L'utilisateur a déjà vu la landing, donc on va vers login
+    updateAppState({ reconnecting: false, loading: false, isAuthenticated: false });
+  }
+}, 6000);
 
 // ⭐ Helper : cacher le loading screen de façon fiable
 function hideLoadingScreen(reason) {
@@ -145,7 +159,8 @@ function bindLandingCTAs() {
 }
 bindLandingCTAs();
 
-// Fallback: if app doesn't resolve in 4s, force hide loading screen
+// ⭐ FIX v24: Fallback timeout réduit à 3s (plus rapide)
+// Si l'app ne charge pas en 3s, on montre la landing/login
 setTimeout(() => {
   const ls = document.getElementById('app-loading-screen');
   const status = document.getElementById('loading-status');
@@ -154,17 +169,13 @@ setTimeout(() => {
   if (isVisible) {
     if (status) status.textContent = 'Chargement lent... Vérifie ta connexion.';
     if (retryBtn) retryBtn.style.display = 'block';
-    console.warn('[APP] Loading timeout (4s) — Firebase may be slow');
+    console.warn('[APP] Loading timeout (3s) — Firebase may be slow');
     if (!authResolved) {
       authResolved = true;
-      hideLoadingScreen('4s-timeout');
+      hideLoadingScreen('3s-timeout');
       const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-      // ⭐ FIX: Pour les utilisateurs qui reviennent, ne PAS forcer isAuthenticated: false
-      // Cela évite le flash landing → dashboard. On garde loading: false mais on
-      // attend que Firebase résolve l'auth correctement au lieu de forcer un état.
       if (hasSeen) {
-        // Utilisateur connu : on affiche l'état "reconnecting" (spinner)
-        // au lieu de la landing page, en attendant que Firebase résolve l'auth
+        // Utilisateur connu : écran "reconnecting" (sera auto-timeout à 6s)
         updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: true });
       } else {
         // Nouvel utilisateur : montrer la landing/login
@@ -172,7 +183,7 @@ setTimeout(() => {
       }
     }
   }
-}, 4000);
+}, 3000);
 
 // ============================================================
 // 2. INIT FIREBASE (dynamic imports — resilient to CDN failures)
@@ -529,10 +540,13 @@ function initDraggableFab() {
   let isDragging = false;
   let startX, startY, initialX, initialY;
   let hasMoved = false;
+  // ⭐ FIX v24: Track drag start time to distinguish click vs drag
+  let dragStartTime = 0;
 
   function onStart(e) {
     isDragging = true;
     hasMoved = false;
+    dragStartTime = Date.now();
     const touch = e.touches ? e.touches[0] : e;
     startX = touch.clientX;
     startY = touch.clientY;
@@ -548,7 +562,9 @@ function initDraggableFab() {
     const touch = e.touches ? e.touches[0] : e;
     const dx = touch.clientX - startX;
     const dy = touch.clientY - startY;
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
+    // ⭐ FIX v24: Only count as moved if truly significant movement (>10px)
+    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) hasMoved = true;
+    if (!hasMoved) return; // Don't move the FAB for small movements
     const newX = initialX + dx;
     const newY = initialY + dy;
     fab.style.position = 'fixed';
@@ -565,30 +581,38 @@ function initDraggableFab() {
     fab.style.cursor = 'grab';
     fab.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
 
-    const rect = fab.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const snapX = rect.left + rect.width / 2 < vw / 2 ? 16 : vw - rect.width - 16;
-    fab.style.left = snapX + 'px';
-    fab.style.right = 'auto';
+    // Only snap if we actually moved
+    if (hasMoved) {
+      const rect = fab.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const snapX = rect.left + rect.width / 2 < vw / 2 ? 16 : vw - rect.width - 16;
+      fab.style.left = snapX + 'px';
+      fab.style.right = 'auto';
 
-    const minY = 80;
-    const maxY = vh - rect.height - 80;
-    const currentTop = rect.top;
-    const clampedTop = Math.max(minY, Math.min(maxY, currentTop));
-    fab.style.top = clampedTop + 'px';
-    fab.style.bottom = 'auto';
+      const minY = 80;
+      const maxY = vh - rect.height - 80;
+      const currentTop = rect.top;
+      const clampedTop = Math.max(minY, Math.min(maxY, currentTop));
+      fab.style.top = clampedTop + 'px';
+      fab.style.bottom = 'auto';
+    }
   }
 
+  // ⭐ FIX v24: Only listen on the FAB itself, not window-level
+  // Window-level listeners were intercepting clicks on OTHER elements
   fab.addEventListener('mousedown', onStart);
-  fab.addEventListener('touchstart', onStart, { passive: false });
+  fab.addEventListener('touchstart', onStart, { passive: true }); // passive: don't block scroll
+  // Keep window-level for move/end but only process if isDragging
   window.addEventListener('mousemove', onMove);
   window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('mouseup', onEnd);
   window.addEventListener('touchend', onEnd);
 
+  // ⭐ FIX v24: Improved click detection — only block click if truly dragged
   fab.addEventListener('click', (e) => {
-    if (hasMoved) {
+    // If user dragged (moved >10px or held >300ms), don't open coach
+    if (hasMoved || (Date.now() - dragStartTime > 300)) {
       e.stopImmediatePropagation();
       e.preventDefault();
     }

@@ -25,7 +25,8 @@
     0 0 24px var(--accent-glow),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   animation: none;
-  touch-action: none;
+  /* ⭐ FIX v24: Removed touch-action:none — it was blocking scroll and button clicks */
+  touch-action: manipulation;
 }
 
 .coach-fab:active { cursor: grabbing; }

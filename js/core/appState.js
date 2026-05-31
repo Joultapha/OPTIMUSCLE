@@ -42,8 +42,9 @@ export function getAppState() {
  */
 export function getCurrentView() {
   if (appState.loading) return 'loading';
-  // ⭐ Reconnecting: utilisateur qui revient, afficher écran de reconnexion
-  // au lieu de la landing page (évite le flash)
+  // ⭐ Reconnecting: utilisateur qui revient, en attente de Firebase
+  // MAIS on impose un timeout max de 6s — après ça, on montre la page appropriée
+  // pour éviter un écran de chargement permanent si Firebase est lent/down
   if (appState.reconnecting) return 'reconnecting';
   if (!appState.isAuthenticated) {
     // Si pas vu la landing → afficher landing d'abord

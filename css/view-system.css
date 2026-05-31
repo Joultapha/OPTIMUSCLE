@@ -92,8 +92,8 @@ body[data-view="loading"] #app-loading-screen {
 }
 
 /* ===== RECONNECTING STATE ===== */
-/* Quand l'utilisateur revient (hasSeenLanding=true), on affiche un mini spinner
-   au lieu de flasher la landing page pendant que Firebase résout l'auth */
+/* ⭐ FIX v24: Short-lived state (max 6s) while Firebase resolves auth.
+   Shows a brief spinner, then auto-transitions to login/dashboard. */
 body[data-view="reconnecting"] {
   background: #000 !important;
   min-height: 100vh;

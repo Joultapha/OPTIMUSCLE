@@ -47,12 +47,11 @@
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <!-- Robust fallback: detects if app.js failed to load, shows retry button -->
-<!-- ⭐ FIX: Check loading screen visibility DIRECTLY instead of relying on __appReady -->
+<!-- ⭐ FIX v24: Improved fallback — shorter timeout, auto-resolve reconnecting -->
 <script>
 (function(){
   var retryBtn=document.getElementById('loading-retry-btn');
   var statusEl=document.getElementById('loading-status');
-  var spinnerEl=document.getElementById('loading-spinner');
 
   // Show retry button after 2s if still loading
   setTimeout(function(){
@@ -70,18 +69,18 @@
       var comp=window.getComputedStyle(ls);
       if(comp.display!=='none'){
         window.__optFallbackFired=true;
-        // ⭐ FIX: Si l'utilisateur a DÉJÀ vu la landing, ne PAS la re-montrer
-        // ça évite le flash landing → dashboard au refresh
         var hasSeen=false;
         try{hasSeen=localStorage.getItem('hasSeenLanding')==='1';}catch(e){}
         if(hasSeen){
-          // Utilisateur connu → état "reconnecting" (garde le spinner visible)
-          // mais n'affiche PAS la landing page
-          document.body.setAttribute('data-view','reconnecting');
+          // ⭐ FIX v24: User connu → show login page directly instead of
+          // infinite "reconnecting" spinner. If Firebase resolves later,
+          // app.js will update the state properly.
+          document.body.setAttribute('data-view','login');
+          var loginEl=document.getElementById('page-login');
+          if(loginEl)loginEl.classList.remove('hidden');
           window.__appReady=true;
         } else {
           // Nouvel utilisateur → montrer la landing page
-          // ⭐ FIX: Don't use inline display:none — set data-view and let CSS handle it
           document.body.setAttribute('data-view','landing');
           // Bind landing CTAs so buttons work even if app.js crashed
           var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium','landing-pricing-elite'];

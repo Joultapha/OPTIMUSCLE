@@ -458,43 +458,46 @@ export async function completeWorkout() {
     await save();
     haptic('success');
 
-    // ⭐ Toast avec bouton Annuler (undo)
-    const undoClicked = await showToastWithAction(
+    // ⭐ FIX v24: Show toast non-blocking, navigate home immediately
+    // Previously: await showToastWithAction() blocked for 5s before showing level-up
+    // Now: toast is fire-and-forget, undo is handled via the toast action callback
+    let undoRequested = false;
+    showToastWithAction(
       `Bravo ! +${XP_REWARDS.workoutComplete} XP`,
       'Annuler',
-      5000
-    );
-
-    if (undoClicked) {
-      // Annuler la complétion
-      d.done = beforeState.done;
-      d.exercises.forEach((e, i) => e.done = beforeState.exercisesDone[i]);
-      state.stats.totalSessions = beforeState.totalSessions;
-      state.stats.totalMinutes = beforeState.totalMinutes;
-      state.stats.streak = beforeState.streak;
-      state.stats.bestStreak = beforeState.bestStreak;
-      state.stats.lastDone = beforeState.lastDone;
-      // Remove the history entry we just added
-      if (state.history.length > beforeState.historyLength) {
-        state.history.shift();
+      4000
+    ).then(clicked => {
+      if (clicked && !undoRequested) {
+        undoRequested = true;
+        // Annuler la complétion
+        d.done = beforeState.done;
+        d.exercises.forEach((e, i) => e.done = beforeState.exercisesDone[i]);
+        state.stats.totalSessions = beforeState.totalSessions;
+        state.stats.totalMinutes = beforeState.totalMinutes;
+        state.stats.streak = beforeState.streak;
+        state.stats.bestStreak = beforeState.bestStreak;
+        state.stats.lastDone = beforeState.lastDone;
+        if (state.history.length > beforeState.historyLength) {
+          state.history.shift();
+        }
+        save();
+        showToast('Séance annulée');
+        goHome();
       }
-      await save();
-      showToast('Séance annulée');
-      return;
-    }
+    });
 
-    // Vérif level up
+    // Vérif level up — don't wait for toast
     const newXp = computeTotalXp(state);
     const levelUp = checkLevelUp(oldXp, newXp);
 
-    // ⭐ FIX: Navigate home first, THEN show level-up after settling
+    // Navigate home first, THEN show level-up after settling
     goHome();
 
     if (levelUp) {
       // Show level-up modal after the home page has rendered
-      setTimeout(() => showLevelUp(levelUp.newLevel), 1000);
+      setTimeout(() => showLevelUp(levelUp.newLevel), 600);
     } else {
-      checkBadges();
+      setTimeout(() => checkBadges(), 300);
     }
   } else {
     // Workout already done — just go home
