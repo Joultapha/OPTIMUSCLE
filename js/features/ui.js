@@ -13,6 +13,7 @@ import {
   enforceFreemiumLimits,
   filterHistoryByPlan,
   isPremium,
+  hasFeature,
   getSubscriptionBadge,
 } from '../saas/subscription.js';
 import {
@@ -330,33 +331,38 @@ function createExerciseCard(ex, idx) {
   });
   nameWrap.appendChild(infoBtn);
 
-  // ⭐ Edit button (new)
-  const editBtn = createEl('button', {
-    className: 'info-btn ex-edit-btn',
-    attrs: { type: 'button', title: 'Modifier', 'aria-label': 'Modifier exercice' },
-    html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-    on: {
-      click: (e) => {
-        e.stopPropagation();
-        openExerciseEditor(idx);
+  // ⭐ Edit button (Premium only)
+  const userData = getUserData();
+  if (hasFeature(userData, 'customPrograms')) {
+    const editBtn = createEl('button', {
+      className: 'info-btn ex-edit-btn',
+      attrs: { type: 'button', title: 'Modifier', 'aria-label': 'Modifier exercice' },
+      html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+      on: {
+        click: (e) => {
+          e.stopPropagation();
+          openExerciseEditor(idx);
+        },
       },
-    },
-  });
-  nameWrap.appendChild(editBtn);
+    });
+    nameWrap.appendChild(editBtn);
+  }
 
-  // ⭐ Substitute button (new)
-  const subBtn = createEl('button', {
-    className: 'info-btn ex-sub-btn',
-    attrs: { type: 'button', title: 'Remplacer', 'aria-label': 'Remplacer exercice' },
-    html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
-    on: {
-      click: (e) => {
-        e.stopPropagation();
-        openSubstituteDialog(idx);
+  // ⭐ Substitute button (Premium only)
+  if (hasFeature(userData, 'customPrograms')) {
+    const subBtn = createEl('button', {
+      className: 'info-btn ex-sub-btn',
+      attrs: { type: 'button', title: 'Remplacer', 'aria-label': 'Remplacer exercice' },
+      html: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
+      on: {
+        click: (e) => {
+          e.stopPropagation();
+          openSubstituteDialog(idx);
+        },
       },
-    },
-  });
-  nameWrap.appendChild(subBtn);
+    });
+    nameWrap.appendChild(subBtn);
+  }
 
   body.appendChild(nameWrap);
 
@@ -806,6 +812,32 @@ export function renderHistory() {
 
   // ⭐ CALENDAR VIEW
   renderCalendar(filteredHistory);
+
+  // ⭐ Premium upsell : si utilisateur gratuit, afficher une bannière
+  if (!isPremium(userData)) {
+    const upsellCard = createEl('div', {
+      className: 'hist-premium-upsell',
+      html: `
+        <div class="hist-premium-upsell-icon">
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="rgba(212,168,67,0.15)"/></svg>
+        </div>
+        <div class="hist-premium-upsell-content">
+          <div class="hist-premium-upsell-title">Historique limité à 7 jours</div>
+          <div class="hist-premium-upsell-desc">Passe à Premium pour accéder à ton historique complet (365 jours) + export PDF</div>
+        </div>
+        <button class="btn btn-primary btn-sm hist-premium-upsell-btn" type="button">Premium</button>
+      `,
+    });
+    const calContainer = document.getElementById('history-calendar');
+    if (calContainer && calContainer.nextSibling) {
+      calContainer.parentNode.insertBefore(upsellCard, calContainer.nextSibling);
+    } else if (calContainer) {
+      calContainer.parentNode.appendChild(upsellCard);
+    }
+    upsellCard.querySelector('.hist-premium-upsell-btn')?.addEventListener('click', () => {
+      import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    });
+  }
 
   const list = document.getElementById('history-list');
   clearEl(list);

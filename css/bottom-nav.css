@@ -373,3 +373,58 @@ html[data-theme="light"] .bottom-nav-item.active .bottom-nav-label {
   font-weight: 800;
   letter-spacing: 0.05em;
 }
+
+/* ===== PREMIUM LOCK BADGE (Bottom Nav) ===== */
+.nav-lock-badge {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.9), rgba(180, 130, 30, 0.95));
+  border-radius: 50%;
+  color: #fff;
+  font-size: 8px;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(212, 168, 67, 0.4);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.bottom-nav-item.nav-locked .bottom-nav-label {
+  color: rgba(212, 168, 67, 0.7);
+}
+
+/* ===== SIDEBAR LOCK INDICATOR ===== */
+.sidebar-item.sidebar-locked {
+  opacity: 0.7;
+}
+
+.sidebar-item.sidebar-locked .sidebar-item-label {
+  color: rgba(212, 168, 67, 0.8) !important;
+}
+
+.sidebar-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(123, 44, 191, 0.10));
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: 6px;
+  padding: 1px 5px;
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.sidebar-lock-badge svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}

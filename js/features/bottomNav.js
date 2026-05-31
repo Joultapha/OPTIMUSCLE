@@ -9,6 +9,7 @@
 
 import { setSubPage } from '../core/appState.js';
 import { createEl } from '../utils/sanitize.js';
+import { hasFeature, getUserData } from '../saas/subscription.js';
 
 let initialized = false;
 let currentTab = 'home';
@@ -20,26 +21,31 @@ const TABS = [
     id: 'home',
     label: 'Accueil',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/></svg>',
+    premiumFeature: null,  // Toujours accessible
   },
   {
     id: 'training',
     label: 'Training',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2"/><path d="M20 12h2"/><rect x="4" y="9" width="3" height="6" rx="1"/><rect x="17" y="9" width="3" height="6" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg>',
+    premiumFeature: null,  // Limité par enforceFreemiumLimits, pas un lock complet
   },
   {
     id: 'nutrition',
     label: 'Nutrition',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 2a4 4 0 0 0-4 4c0 2 1 4 4 6 3-2 4-4 4-6a4 4 0 0 0-4-4z"/></svg>',
+    premiumFeature: 'nutritionTracking',  // Basique pour gratuits, avancé pour Premium
   },
   {
     id: 'challenges',
     label: 'Défis',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg>',
+    premiumFeature: 'communityChallenges',  // Réservé Premium
   },
   {
     id: 'profile',
     label: 'Profil',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>',
+    premiumFeature: null,  // Toujours accessible
   },
 ];
 
@@ -76,6 +82,8 @@ export function initBottomNav() {
   pillEl = pill;
 
   // Create nav items
+  const userData = getUserData();
+
   TABS.forEach((tab, index) => {
     const btn = createEl('button', {
       className: 'bottom-nav-item' + (tab.id === 'home' ? ' active' : ''),
@@ -83,6 +91,20 @@ export function initBottomNav() {
     });
     btn.innerHTML = tab.icon;
     btn.appendChild(createEl('span', { className: 'bottom-nav-label', text: tab.label }));
+
+    // ⭐ Ajouter un badge lock si feature premium et utilisateur gratuit
+    if (tab.premiumFeature) {
+      const featureLevel = userData ? hasFeature(userData, tab.premiumFeature) : false;
+      if (!featureLevel) {
+        btn.classList.add('nav-locked');
+        const lockBadge = createEl('span', {
+          className: 'nav-lock-badge',
+          html: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+        });
+        btn.appendChild(lockBadge);
+      }
+    }
+
     btn.addEventListener('click', () => handleTabClick(tab.id));
     inner.appendChild(btn);
   });

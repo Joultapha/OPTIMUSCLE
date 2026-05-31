@@ -554,3 +554,48 @@
   color: #3cb371;
   cursor: default;
 }
+
+/* ===== LOCKED CHALLENGES (free users) ===== */
+.chal-locked-card {
+  text-align: center;
+  padding: 48px 24px;
+  margin: 20px auto;
+  max-width: 400px;
+  background: var(--glass-bg-2);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+}
+
+.chal-locked-icon {
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.chal-locked-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.chal-locked-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.chal-locked-desc {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.chal-locked-btn {
+  margin-top: 8px;
+}

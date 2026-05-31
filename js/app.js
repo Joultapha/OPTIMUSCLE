@@ -35,6 +35,7 @@ import {
 } from './core/appState.js';
 import { initTheme, bindThemeButtons, applyTheme } from './features/theme.js';
 import { initSidebar } from './features/sidebar.js';
+import { PLANS, setDevPlan, isDevMode, getDevPlan, verifyDevPin, markDevVerified, isDevVerified, revokeDevVerification, getTodayDevPin } from './saas/subscription.js';
 import { initCoach, openCoachModal } from './features/coach.js';
 import { initNutrition, renderNutrition } from './features/nutrition.js';
 import { initChallenges, renderChallenges } from './features/challenges.js';
@@ -353,6 +354,7 @@ function bindGlobalEvents() {
   initDraggableFab();
   initNutrition();
   initChallenges();
+  initDevMode();
 
   // Listener pour navigation custom (sidebar → pages spéciales)
   window.addEventListener('opt:nav', (e) => {
@@ -554,4 +556,294 @@ function initDraggableFab() {
 function on(id, event, handler) {
   const el = document.getElementById(id);
   if (el) el.addEventListener(event, handler);
+}
+
+// ============================================================
+// DEV MODE — 5 taps on logo → PIN → dev panel
+// ============================================================
+let devTapCount = 0;
+let devTapTimer = null;
+
+function initDevMode() {
+  // ⭐ ?dev=1 dans l'URL → demande aussi le PIN maintenant
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('dev') === '1') {
+    console.log('[DEV] Mode dev détecté via URL — PIN requis');
+    setTimeout(() => showDevPinInput(), 2000);
+  }
+
+  // 5 taps on logo → PIN input (not directly the panel)
+  const logoEl = document.getElementById('app-logo') || document.querySelector('.sidebar-logo');
+  if (logoEl) {
+    logoEl.addEventListener('click', () => {
+      devTapCount++;
+      if (devTapTimer) clearTimeout(devTapTimer);
+      devTapTimer = setTimeout(() => { devTapCount = 0; }, 1500);
+      if (devTapCount >= 5) {
+        devTapCount = 0;
+        showDevPinInput();
+      }
+    });
+  }
+
+  // Also support 5 taps on the hero greeting
+  const heroGreeting = document.getElementById('hero-greeting');
+  if (heroGreeting) {
+    heroGreeting.addEventListener('click', () => {
+      devTapCount++;
+      if (devTapTimer) clearTimeout(devTapTimer);
+      devTapTimer = setTimeout(() => { devTapCount = 0; }, 1500);
+      if (devTapCount >= 5) {
+        devTapCount = 0;
+        showDevPinInput();
+      }
+    });
+  }
+}
+
+/**
+ * Affiche la boîte de saisie du PIN pour le mode dev.
+ * Si déjà authentifié, ouvre directement le panneau dev.
+ */
+function showDevPinInput() {
+  // Si déjà authentifié → directement le panneau
+  if (isDevVerified()) {
+    showDevPanel();
+    return;
+  }
+
+  // Supprimer l'existant
+  const existing = document.getElementById('dev-pin-modal');
+  if (existing) { existing.remove(); return; }
+
+  // Add shake animation keyframe (once)
+  if (!document.getElementById('dev-shake-keyframe')) {
+    const style = document.createElement('style');
+    style.id = 'dev-shake-keyframe';
+    style.textContent = `
+      @keyframes devShake {
+        0%, 100% { transform: translate(-50%, -50%); }
+        10%, 50%, 90% { transform: translate(calc(-50% + 8px), -50%); }
+        30%, 70% { transform: translate(calc(-50% - 8px), -50%); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'dev-pin-modal';
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  `;
+
+  const card = document.createElement('div');
+  card.id = 'dev-pin-card';
+  card.style.cssText = `
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: #1a1a2e; border: 2px solid #7c3aed;
+    border-radius: 16px; padding: 28px 24px; min-width: 280px; max-width: 340px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #fff;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5); text-align: center;
+  `;
+
+  card.innerHTML = `
+    <div style="font-size: 28px; margin-bottom: 8px;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h3 style="margin: 0 0 4px; color: #7c3aed; font-size: 16px;">Accès développeur</h3>
+    <p style="color: #888; font-size: 12px; margin: 0 0 20px;">PIN qui change tous les jours — entre le code du jour</p>
+    <input id="dev-pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="····" autocomplete="off" style="
+      width: 100%; padding: 14px 16px; border-radius: 10px;
+      border: 1.5px solid #333; background: #222; color: #fff;
+      font-size: 20px; text-align: center; letter-spacing: 8px;
+      outline: none; box-sizing: border-box;
+      transition: border-color 0.2s;
+    " />
+    <div id="dev-pin-error" style="color: #ef4444; font-size: 12px; margin-top: 8px; min-height: 18px;"></div>
+    <button id="dev-pin-submit" style="
+      width: 100%; padding: 12px; border-radius: 10px; border: none;
+      background: #7c3aed; color: #fff; font-size: 14px; font-weight: 600;
+      cursor: pointer; margin-top: 12px;
+      transition: background 0.2s;
+    ">Déverrouiller</button>
+    <button id="dev-pin-cancel" style="
+      width: 100%; padding: 8px; border-radius: 8px; border: none;
+      background: none; color: #888; font-size: 12px; cursor: pointer; margin-top: 8px;
+    ">Annuler</button>
+    <p style="color: #444; font-size: 9px; margin: 16px 0 0;">PIN change tous les jours · Expire après 2h</p>
+  `;
+
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  const pinInput = document.getElementById('dev-pin-input');
+  const errorEl = document.getElementById('dev-pin-error');
+  const submitBtn = document.getElementById('dev-pin-submit');
+
+  // Focus input
+  setTimeout(() => pinInput?.focus(), 200);
+
+  // Pin input styling on focus
+  pinInput?.addEventListener('focus', () => {
+    pinInput.style.borderColor = '#7c3aed';
+  });
+  pinInput?.addEventListener('blur', () => {
+    pinInput.style.borderColor = '#333';
+  });
+
+  const handleSubmit = () => {
+    const pin = pinInput?.value?.trim();
+    if (!pin) {
+      errorEl.textContent = 'Entre un code PIN';
+      return;
+    }
+    if (verifyDevPin(pin)) {
+      // ✅ PIN correct
+      markDevVerified();
+      overlay.remove();
+      showToast('Mode dev activé (expire dans 2h)');
+      showDevPanel();
+    } else {
+      // ❌ PIN incorrect
+      errorEl.textContent = 'Code incorrect';
+      pinInput.value = '';
+      pinInput.focus();
+      // Animation shake
+      card.style.animation = 'devShake 0.4s ease';
+      setTimeout(() => { card.style.animation = ''; }, 400);
+      // Rouge flash sur l'input
+      pinInput.style.borderColor = '#ef4444';
+      setTimeout(() => { pinInput.style.borderColor = '#333'; }, 1500);
+    }
+  };
+
+  submitBtn?.addEventListener('click', handleSubmit);
+  pinInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSubmit(); });
+  document.getElementById('dev-pin-cancel')?.addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
+function showDevPanel() {
+  // Remove existing panel
+  const existing = document.getElementById('dev-panel');
+  if (existing) { existing.remove(); return; }
+  // Also remove any leftover backdrop
+  document.getElementById('dev-panel-backdrop')?.remove();
+
+  const currentPlan = getDevPlan();
+  const currentPlanId = currentPlan ? currentPlan.id : 'free';
+
+  // Calculer le temps restant avant expiration
+  let expiryText = '';
+  try {
+    const data = JSON.parse(sessionStorage.getItem('opt_dev_verified'));
+    if (data?.ts) {
+      const remaining = Math.max(0, 2 * 60 * 60 * 1000 - (Date.now() - data.ts));
+      const hours = Math.floor(remaining / 3600000);
+      const mins = Math.floor((remaining % 3600000) / 60000);
+      expiryText = `Expire dans ${hours}h${mins}m`;
+    }
+  } catch (e) {}
+
+  const panel = document.createElement('div');
+  panel.id = 'dev-panel';
+  panel.style.cssText = `
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 99999; background: #1a1a2e; border: 2px solid #7c3aed;
+    border-radius: 16px; padding: 24px; min-width: 300px; max-width: 360px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #fff;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  `;
+
+  panel.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="margin: 0; color: #7c3aed; font-size: 16px;">DEV MODE</h3>
+      <button id="dev-panel-close" style="background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 4px 8px;">✕</button>
+    </div>
+    <p style="color: #888; font-size: 12px; margin: 0 0 4px;">Simule n'importe quel plan. Survit au rechargement (sessionStorage).</p>
+    <p style="color: #7c3aed88; font-size: 10px; margin: 0 0 16px;">${expiryText}</p>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <button class="dev-plan-btn" data-plan="free" style="
+        padding: 12px 16px; border-radius: 10px; border: 1.5px solid #333;
+        background: ${currentPlanId === 'free' ? '#7c3aed22' : '#222'}; color: #fff;
+        cursor: pointer; text-align: left; font-size: 14px;
+        ${currentPlanId === 'free' ? 'border-color: #7c3aed;' : ''}
+      ">
+        <strong>Gratuit</strong> — 2 séances/sem, historique 7j
+      </button>
+      <button class="dev-plan-btn" data-plan="premium_monthly" style="
+        padding: 12px 16px; border-radius: 10px; border: 1.5px solid #333;
+        background: ${currentPlanId === 'premium_monthly' ? '#7c3aed22' : '#222'}; color: #fff;
+        cursor: pointer; text-align: left; font-size: 14px;
+        ${currentPlanId === 'premium_monthly' ? 'border-color: #7c3aed;' : ''}
+      ">
+        <strong>Premium (4,99€/mois)</strong> — Coach IA, programmes custom
+      </button>
+      <button class="dev-plan-btn" data-plan="premium_yearly" style="
+        padding: 12px 16px; border-radius: 10px; border: 1.5px solid #333;
+        background: ${currentPlanId === 'premium_yearly' ? '#7c3aed22' : '#222'}; color: #fff;
+        cursor: pointer; text-align: left; font-size: 14px;
+        ${currentPlanId === 'premium_yearly' ? 'border-color: #7c3aed;' : ''}
+      ">
+        <strong>Elite (39,99€/an)</strong> — Stats avancées, badge elite
+      </button>
+      <button class="dev-plan-btn" data-plan="premium_lifetime" style="
+        padding: 12px 16px; border-radius: 10px; border: 1.5px solid #333;
+        background: ${currentPlanId === 'premium_lifetime' ? '#7c3aed22' : '#222'}; color: #fff;
+        cursor: pointer; text-align: left; font-size: 14px;
+        ${currentPlanId === 'premium_lifetime' ? 'border-color: #7c3aed;' : ''}
+      ">
+        <strong>Lifetime (99,99€)</strong> — Tout, pour toujours
+      </button>
+    </div>
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #333;">
+      <button id="dev-reset-btn" style="
+        padding: 8px 16px; border-radius: 8px; border: 1px solid #ef4444;
+        background: #ef444422; color: #ef4444; cursor: pointer; font-size: 12px; width: 100%;
+      ">Reset (revenir au plan réel Firebase)</button>
+    </div>
+    <p style="color: #555; font-size: 10px; margin: 12px 0 0; text-align: center;">
+      Plan actuel : <strong style="color: #7c3aed;">${PLANS[currentPlanId]?.name || 'Gratuit'}</strong>
+    </p>
+  `;
+
+  document.body.appendChild(panel);
+
+  // Backdrop
+  const backdrop = document.createElement('div');
+  backdrop.id = 'dev-panel-backdrop';
+  backdrop.style.cssText = 'position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.5);';
+  backdrop.addEventListener('click', () => { panel.remove(); backdrop.remove(); });
+  document.body.appendChild(backdrop);
+
+  // Close button
+  document.getElementById('dev-panel-close')?.addEventListener('click', () => {
+    panel.remove();
+    backdrop.remove();
+  });
+
+  // Plan buttons
+  panel.querySelectorAll('.dev-plan-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const planId = btn.dataset.plan;
+      setDevPlan(planId);
+      panel.remove();
+      backdrop.remove();
+      showToast(`Dev: plan changé → ${PLANS[planId]?.name || planId}`);
+      // Reload to apply changes everywhere
+      setTimeout(() => window.location.reload(), 500);
+    });
+  });
+
+  // Reset button
+  document.getElementById('dev-reset-btn')?.addEventListener('click', () => {
+    revokeDevVerification();
+    panel.remove();
+    backdrop.remove();
+    showToast('Dev: plan réinitialisé → plan Firebase réel');
+    setTimeout(() => window.location.reload(), 500);
+  });
 }

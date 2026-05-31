@@ -2,7 +2,7 @@
    OPTIMUSCLE — Challenges UI
    ============================================================ */
 
-import { getState, getCurrentUser, save, saveImmediate } from '../core/state.js';
+import { getState, getCurrentUser, getUserData, save, saveImmediate } from '../core/state.js';
 import {
   CHALLENGES_30D,
   generateWeeklyChallenge,
@@ -17,6 +17,7 @@ import {
 import { createEl, clearEl } from '../utils/sanitize.js';
 import { showToast, confirmModal } from '../utils/notifications.js';
 import { haptic } from '../utils/animations.js';
+import { hasFeature } from '../saas/subscription.js';
 
 // ============================================================
 // INIT STATE
@@ -40,6 +41,13 @@ function ensureChallengesState() {
 // RENDU PRINCIPAL
 // ============================================================
 export function renderChallenges() {
+  // ⭐ Premium gate : Défis communautaires réservés Premium
+  const userData = getUserData();
+  if (!hasFeature(userData, 'communityChallenges')) {
+    renderChallengesLocked();
+    return;
+  }
+
   ensureChallengesState();
   const container = document.getElementById('challenges-content');
   if (!container) return;
@@ -337,6 +345,39 @@ function escapeHtml(s) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+// ============================================================
+// LOCKED VIEW (free users)
+// ============================================================
+function renderChallengesLocked() {
+  const container = document.getElementById('challenges-content');
+  if (!container) return;
+  clearEl(container);
+
+  container.appendChild(createEl('div', {
+    className: 'chal-header',
+    html: `
+      <span class="label-eyebrow"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M6 9a6 6 0 0 0 12 0V3H6z"/><path d="M6 3H4a2 2 0 0 0 0 4h2"/><path d="M18 3h2a2 2 0 0 1 0 4h-2"/><path d="M10 21v-3a2 2 0 0 1 4 0v3"/><path d="M8 21h8"/></svg> Défis</span>
+      <h1>Pousse tes <span class="text-gradient">limites</span></h1>
+    `
+  }));
+
+  const lockedCard = createEl('div', {
+    className: 'chal-locked-card',
+    html: `
+      <div class="chal-locked-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" fill="rgba(212,168,67,0.1)"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h2 class="chal-locked-title">Défis communautaires</h2>
+      <p class="chal-locked-desc">Relève des défis quotidiens et hebdomadaires pour rester motivé. Disponible avec Premium.</p>
+      <button class="btn btn-primary chal-locked-btn" type="button">Voir les plans</button>
+    `,
+  });
+  lockedCard.querySelector('.chal-locked-btn')?.addEventListener('click', () => {
+    import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+  });
+  container.appendChild(lockedCard);
 }
 
 // ============================================================

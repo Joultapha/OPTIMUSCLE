@@ -226,6 +226,14 @@ header.scrolled {
   transform: none;
 }
 
+/* Small button variant */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full);
+}
+
 .btn-ghost {
   background: var(--bg-elev-1);
   color: var(--text);

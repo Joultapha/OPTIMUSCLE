@@ -7,13 +7,14 @@
    - Mode démo si pas de clé
 ============================================================ */
 
-import { getState, getCurrentUser } from '../core/state.js';
+import { getState, getCurrentUser, getUserData } from '../core/state.js';
 import { getTodayNutritionContext } from './nutrition.js';
 import { GOAL_LABELS, LEVEL_LABELS, PLACE_LABELS, GROQ_API_KEY } from '../core/config.js';
 import { createEl, clearEl, sanitizeUrl } from '../utils/sanitize.js';
-import { showToast } from '../utils/notifications.js';
+import { showToast, showToastWithAction } from '../utils/notifications.js';
 import { haptic } from '../utils/animations.js';
 import { rateLimit } from '../utils/rateLimit.js';
+import { hasFeature, isPremium } from '../saas/subscription.js';
 
 // Groq API (OpenAI-compatible)
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -441,6 +442,18 @@ function renderStarters() {
 }
 
 export function openCoachModal() {
+  // ⭐ Premium gate : Coach IA réservé aux abonnés
+  const userData = getUserData();
+  if (!hasFeature(userData, 'aiCoach')) {
+    haptic('medium');
+    showToastWithAction('Coach IA disponible avec Premium', 'Voir les plans', 4000).then(clicked => {
+      if (clicked) {
+        import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+      }
+    });
+    return;
+  }
+
   document.getElementById('coach-modal').classList.add('show');
   setTimeout(() => {
     const input = document.getElementById('coach-input');

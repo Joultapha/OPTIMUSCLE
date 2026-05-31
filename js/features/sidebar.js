@@ -6,7 +6,7 @@ import { getCurrentUser, getUserData } from '../core/state.js';
 import { setSubPage } from '../core/appState.js';
 import { sanitizeUrl, createEl, clearEl } from '../utils/sanitize.js';
 import { confirmLogout } from './auth.js';
-import { isPremium, PLANS } from '../saas/subscription.js';
+import { isPremium, hasFeature, PLANS } from '../saas/subscription.js';
 
 let initialized = false;
 
@@ -148,6 +148,49 @@ function updateSidebarUser() {
       premiumBtn.style.display = 'flex';
     }
   }
+
+  // ⭐ Update lock indicators on premium sidebar items
+  updateSidebarLocks();
+}
+
+/**
+ * Met à jour les indicateurs de verrouillage sur les items sidebar premium.
+ * Ajoute un badge "PRO" avec icône cadenas sur les features réservées Premium
+ * quand l'utilisateur est sur le plan gratuit.
+ */
+function updateSidebarLocks() {
+  const ud = getUserData();
+  const isFree = !isPremium(ud);
+
+  // Map des actions premium → feature flag
+  const PREMIUM_ITEMS = {
+    coach: 'aiCoach',
+    challenges: 'communityChallenges',
+  };
+
+  document.querySelectorAll('.sidebar-item[data-action]').forEach(item => {
+    const action = item.dataset.action;
+    const featureKey = PREMIUM_ITEMS[action];
+
+    // Supprimer l'ancien badge lock s'il existe
+    const existingBadge = item.querySelector('.sidebar-lock-badge');
+    if (existingBadge) existingBadge.remove();
+    item.classList.remove('sidebar-locked');
+
+    if (!featureKey) return; // Pas une feature premium
+
+    if (isFree || !hasFeature(ud, featureKey)) {
+      // Ajouter classe locked
+      item.classList.add('sidebar-locked');
+
+      // Ajouter badge PRO avec cadenas
+      const badge = createEl('span', {
+        className: 'sidebar-lock-badge',
+        html: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PRO',
+      });
+      item.appendChild(badge);
+    }
+  });
 }
 
 /**
@@ -155,7 +198,7 @@ function updateSidebarUser() {
  * Shows 3 well-distinct plan cards side by side: Gratuit, Premium, Elite
  * Matches the landing page pricing grid style
  */
-function openPremiumModal() {
+export function openPremiumModal() {
   let overlay = document.getElementById('premium-modal-overlay');
   if (!overlay) {
     overlay = createEl('div', {

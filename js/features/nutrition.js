@@ -2,7 +2,7 @@
    OPTIMUSCLE — Nutrition UI Module
    ============================================================ */
 
-import { getState, getCurrentUser, save, saveImmediate } from '../core/state.js';
+import { getState, getCurrentUser, getUserData, save, saveImmediate } from '../core/state.js';
 import {
   FOOD_DB,
   searchLocalFoods,
@@ -19,6 +19,7 @@ import { createEl, clearEl, sanitizeUrl } from '../utils/sanitize.js';
 import { showToast, confirmModal } from '../utils/notifications.js';
 import { haptic } from '../utils/animations.js';
 import { GROQ_API_KEY } from '../core/config.js';
+import { hasFeature, getFeatureLevel } from '../saas/subscription.js';
 
 let currentMealType = 'breakfast';
 let currentSearchTimeout = null;
@@ -62,6 +63,14 @@ function ensureNutritionState() {
 // RENDU PRINCIPAL : page Nutrition
 // ============================================================
 export function renderNutrition() {
+  // ⭐ Premium gate : Nutrition basique pour gratuits, complet pour Premium
+  const userData = getUserData();
+  const nutritionLevel = getFeatureLevel(userData, 'nutritionTracking');
+
+  // Si nutritionLevel === false → feature pas du tout disponible
+  // Si 'basic' → onboarding + vue limitée
+  // Si 'advanced' → tout le dashboard
+
   ensureNutritionState();
   const nut = getState().nutrition;
 
@@ -72,7 +81,7 @@ export function renderNutrition() {
   }
 
   // Sinon → afficher le dashboard nutrition du jour
-  renderNutritionDashboard();
+  renderNutritionDashboard(nutritionLevel);
 }
 
 // ============================================================
@@ -222,7 +231,7 @@ async function submitNutritionOnboarding(form) {
 // ============================================================
 // DASHBOARD NUTRITION DU JOUR
 // ============================================================
-function renderNutritionDashboard() {
+function renderNutritionDashboard(nutritionLevel = 'basic') {
   const container = document.getElementById('nutrition-content');
   if (!container) return;
   clearEl(container);
@@ -251,6 +260,27 @@ function renderNutritionDashboard() {
 
   // REPAS DU JOUR (4 sections)
   container.appendChild(renderMealsList(todayMeals));
+
+  // ⭐ PREMIUM UPSELL : Recherche OpenFoodFacts réservée Premium
+  if (nutritionLevel !== 'advanced') {
+    const upsellCard = createEl('div', {
+      className: 'nut-premium-upsell',
+      html: `
+        <div class="nut-premium-upsell-icon">
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="rgba(212,168,67,0.15)"/></svg>
+        </div>
+        <div class="nut-premium-upsell-content">
+          <div class="nut-premium-upsell-title">Suivi nutrition avancé</div>
+          <div class="nut-premium-upsell-desc">Recherche dans +1M aliments, suivi hydratation détaillé, analyses hebdo</div>
+        </div>
+        <button class="btn btn-primary btn-sm nut-premium-upsell-btn" type="button">Premium</button>
+      `,
+    });
+    upsellCard.querySelector('.nut-premium-upsell-btn')?.addEventListener('click', () => {
+      import('./sidebar.js').then(mod => { if (mod.openPremiumModal) mod.openPremiumModal(); });
+    });
+    container.appendChild(upsellCard);
+  }
 
   // Bouton Settings (modifier ses objectifs)
   const settingsBtn = createEl('button', {
@@ -510,8 +540,10 @@ function renderLocalSearchResults(query) {
     locals.forEach(food => results.appendChild(createFoodItem(food)));
   }
 
-  // Si query >= 2, lancer aussi recherche OpenFoodFacts
-  if (query.length >= 2) {
+  // ⭐ Si query >= 2, lancer aussi recherche OpenFoodFacts (Premium uniquement)
+  const userData = getUserData();
+  const nutritionLevel = getFeatureLevel(userData, 'nutritionTracking');
+  if (query.length >= 2 && nutritionLevel === 'advanced') {
     const offHeader = createEl('div', { className: 'nut-search-section-title', html: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> OpenFoodFacts <span class="nut-search-loading-mini">...</span>' });
     results.appendChild(offHeader);
 

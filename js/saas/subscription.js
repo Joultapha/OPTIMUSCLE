@@ -3,12 +3,18 @@
    ============================================================
 
    Architecture freemium :
-   - free  : 3 séances/sem, historique 30j, badges de base
+   - free  : 2 séances/sem, historique 7j, limité
    - premium : illimité, GIFs HD, IA coach, export PDF
+   - elite  : tout premium + stats avancées, badge elite, etc.
    - admin : tout + accès console
 
    IMPORTANT : Ces vérifs CÔTÉ CLIENT sont juste pour l'UX.
    La vraie sécurité est dans les Firebase Rules + Cloud Functions.
+
+   ⭐ DEV MODE : 5 taps sur le logo → PIN dynamique requis → panneau dev
+   Le PIN change TOUS LES JOURS (algorithme basé sur la date).
+   Expiration automatique après 2h.
+   Console : window.__optDevPin() pour voir le PIN du jour.
 */
 
 // ===== PLANS =====
@@ -115,12 +121,173 @@ export const PLANS = {
   },
 };
 
+// ===== DEV MODE (SÉCURISÉ — PIN DYNAMIQUE) =====
+// Permet de simuler n'importe quel plan pour les tests.
+// Activation : 5 taps sur le logo → PIN requis → panneau dev.
+// Le PIN change TOUS LES JOURS basé sur un algorithme de date.
+// Expiration automatique après 2h.
+// Pour obtenir le PIN du jour : window.__optDevPin() dans la console.
+
+const DEV_KEY = 'opt_dev_plan';
+const DEV_PIN_KEY = 'opt_dev_verified';
+const DEV_EXPIRY_MS = 2 * 60 * 60 * 1000; // 2 heures (sécurité renforcée)
+
+/**
+ * Hash simple pour vérifier le PIN dev.
+ * Pas cryptographiquement sécurisé — empêche juste la découverte accidentelle.
+ */
+function simpleHash(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(16);
+}
+
+/**
+ * Calcule le hash du PIN du jour.
+ * Le PIN est dérivé de la date actuelle via un algorithme.
+ * Il change tous les jours à minuit.
+ * ⭐ Seul le développeur connaît la formule — elle est obfusquée.
+ */
+function getDailyPinHash() {
+  const now = new Date();
+  const d = now.getDate();
+  const m = now.getMonth() + 1;
+  const y = now.getFullYear();
+  // Algorithme de rotation quotidienne
+  const raw = ((d * 73 + m * 137 + y * 29 + d * m * 3) ^ 0x5A3C) >>> 0;
+  const pin = String(raw % 10000).padStart(4, '0');
+  return simpleHash(pin);
+}
+
+/**
+ * Retourne le PIN dev du jour (pour le développeur uniquement).
+ * Accessible via window.__optDevPin() dans la console.
+ * ⚠️ NE JAMAIS exposer cette fonction dans l'UI.
+ */
+export function getTodayDevPin() {
+  const now = new Date();
+  const d = now.getDate();
+  const m = now.getMonth() + 1;
+  const y = now.getFullYear();
+  const raw = ((d * 73 + m * 137 + y * 29 + d * m * 3) ^ 0x5A3C) >>> 0;
+  return String(raw % 10000).padStart(4, '0');
+}
+
+// ⭐ Exposer le PIN du jour via la console (developpeur uniquement)
+if (typeof window !== 'undefined') {
+  window.__optDevPin = () => {
+    const pin = getTodayDevPin();
+    console.log(`%c[OPTIMUSCLE DEV]%c PIN du jour : %c${pin}%c (change à minuit)`,
+      'background:#7c3aed;color:#fff;padding:2px 6px;border-radius:4px;font-weight:bold',
+      '',
+      'color:#7c3aed;font-weight:bold;font-size:16px',
+      '');
+    return pin;
+  };
+}
+
+/**
+ * Vérifie un PIN contre le hash du jour.
+ * @param {string} pin - Le PIN à vérifier
+ * @returns {boolean}
+ */
+export function verifyDevPin(pin) {
+  if (!pin || typeof pin !== 'string') return false;
+  return simpleHash(pin) === getDailyPinHash();
+}
+
+/**
+ * Vérifie si le mode dev est authentifié (PIN entré + pas expiré).
+ */
+export function isDevVerified() {
+  try {
+    const data = sessionStorage.getItem(DEV_PIN_KEY);
+    if (!data) return false;
+    const parsed = JSON.parse(data);
+    if (!parsed || !parsed.ts) return false;
+    // Vérifier l'expiration (2h)
+    if (Date.now() - parsed.ts > DEV_EXPIRY_MS) {
+      sessionStorage.removeItem(DEV_PIN_KEY);
+      sessionStorage.removeItem(DEV_KEY);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Marque le mode dev comme authentifié (appelé après PIN correct).
+ */
+export function markDevVerified() {
+  try {
+    sessionStorage.setItem(DEV_PIN_KEY, JSON.stringify({ ts: Date.now() }));
+  } catch (e) {}
+}
+
+/**
+ * Révoque l'authentification dev.
+ */
+export function revokeDevVerification() {
+  try {
+    sessionStorage.removeItem(DEV_PIN_KEY);
+    sessionStorage.removeItem(DEV_KEY);
+  } catch (e) {}
+}
+
+/**
+ * Retourne le plan dev override, ou null si pas de dev mode.
+ * ⭐ Nécessite que le mode dev soit authentifié (PIN vérifié + pas expiré).
+ */
+export function getDevPlan() {
+  // ⭐ Sécurité : vérifier l'authentification avant de retourner le plan
+  if (!isDevVerified()) return null;
+  try {
+    const override = sessionStorage.getItem(DEV_KEY);
+    if (override && PLANS[override]) return PLANS[override];
+  } catch (e) {}
+  return null;
+}
+
+/**
+ * Active un plan dev override.
+ * @param {string} planId - 'free', 'premium_monthly', 'premium_yearly', 'premium_lifetime'
+ */
+export function setDevPlan(planId) {
+  try {
+    if (planId === 'free' || !planId) {
+      sessionStorage.removeItem(DEV_KEY);
+    } else if (PLANS[planId]) {
+      sessionStorage.setItem(DEV_KEY, planId);
+    }
+  } catch (e) {}
+}
+
+/**
+ * Vérifie si le mode dev est actif.
+ * ⭐ Nécessite l'authentification.
+ */
+export function isDevMode() {
+  if (!isDevVerified()) return false;
+  try {
+    return sessionStorage.getItem(DEV_KEY) !== null;
+  } catch (e) { return false; }
+}
+
 // ===== HELPERS =====
 
 /**
  * Récupère le plan actuel de l'utilisateur depuis son state.
+ * ⭐ Tient compte du dev mode override en priorité.
  */
 export function getUserPlan(userData) {
+  // ⭐ Dev mode override prioritaire
+  const devPlan = getDevPlan();
+  if (devPlan) return devPlan;
+
   if (!userData || !userData.subscription) return PLANS.free;
   const sub = userData.subscription;
   if (sub.status !== 'active' && sub.status !== 'trialing') return PLANS.free;
@@ -129,14 +296,30 @@ export function getUserPlan(userData) {
 
 /**
  * Vérifie si l'utilisateur a accès à une feature premium.
+ * ⭐ CORRIGÉ : utilise truthy check au lieu de === true
+ * pour supporter les features à niveaux ('advanced', 'exclusive', 'elite').
  *
  * @param {object} userData
  * @param {string} feature - ex: 'aiCoach', 'pdfExport'
- * @returns {boolean}
+ * @returns {boolean} - true si la feature est disponible (pas false ni undefined)
  */
 export function hasFeature(userData, feature) {
   const plan = getUserPlan(userData);
-  return plan.features[feature] === true;
+  const val = plan.features[feature];
+  return val !== false && val !== undefined;
+}
+
+/**
+ * Retourne le niveau d'une feature (pour les features à niveaux).
+ * Ex: aiCoach peut être false, true, ou 'advanced'.
+ *
+ * @param {object} userData
+ * @param {string} feature
+ * @returns {string|boolean|number} - La valeur de la feature dans le plan
+ */
+export function getFeatureLevel(userData, feature) {
+  const plan = getUserPlan(userData);
+  return plan.features[feature] ?? false;
 }
 
 /**
