@@ -14,7 +14,7 @@ import { createEl, clearEl, sanitizeUrl } from '../utils/sanitize.js';
 import { showToast, showToastWithAction } from '../utils/notifications.js';
 import { haptic } from '../utils/animations.js';
 import { rateLimit } from '../utils/rateLimit.js';
-import { hasFeature, isPremium } from '../saas/subscription.js';
+import { hasFeature, getFeatureLevel, isPremium } from '../saas/subscription.js';
 
 // Groq API (OpenAI-compatible)
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -45,6 +45,9 @@ function buildSystemPrompt() {
   const data = getState();
   const user = getCurrentUser();
   const userName = user?.displayName?.split(' ')[0] || 'athlète';
+  const userData = getUserData();
+  const coachLevel = getFeatureLevel(userData, 'aiCoach');
+  const isAdvanced = coachLevel === 'advanced';
 
   let context = `Tu es OPTI, le coach virtuel intelligent de l'application OPTIMUSCLE. Tu es à la fois :
 - [MOTIVANT] : tu encourages, célèbres les progrès, pousses à donner le meilleur
@@ -55,7 +58,22 @@ RÈGLES STRICTES :
 - Réponds TOUJOURS en français
 - Tutoie l'utilisateur (jamais "vous")
 - Réponses COURTES et percutantes (3-6 lignes max, sauf si demandé long)
-- Utilise des emojis avec parcimonie (1-2 par réponse)
+- Utilise des emojis avec parcimonie (1-2 par réponse)`;
+
+  // ⭐ Coach avancé (Elite/Lifetime) : réponses plus détaillées + plans personnalisés
+  if (isAdvanced) {
+    context += `
+
+MODE COACH AVANCÉ ACTIVÉ :
+- Tu peux fournir des plans d'entraînement détaillés (séries, reps, repos, progression hebdo)
+- Tu intègres les principes de périodisation et surcharge progressive dans tes conseils
+- Tu peux analyser le programme actuel de l'utilisateur et proposer des modifications ciblées
+- Tes réponses peuvent être plus longues (8-12 lignes) quand tu donnes un plan structuré
+- Tu mentionnes les mécanismes physiologiques derrière tes conseils (hypertrophie, VO2max, etc.)
+- Tu proposes des alternatives selon le matériel disponible`;
+  }
+
+  context += `
 
 NOM DE L'UTILISATEUR : ${userName}`;
 

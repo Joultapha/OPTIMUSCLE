@@ -776,7 +776,7 @@ function showDevPanel() {
         cursor: pointer; text-align: left; font-size: 14px;
         ${currentPlanId === 'premium_yearly' ? 'border-color: #7c3aed;' : ''}
       ">
-        <strong>Elite (39,99€/an)</strong> — Stats avancées, badge elite
+        <strong>Elite (39,99€/an)</strong> — Coach avancé, défis Elite
       </button>
       <button class="dev-plan-btn" data-plan="premium_lifetime" style="
         padding: 12px 16px; border-radius: 10px; border: 1.5px solid #333;

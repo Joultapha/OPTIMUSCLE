@@ -817,15 +817,34 @@ export function closeExInfo() {
   if (gif) gif.src = '';
 }
 
-// ========== HISTORY WITH CALENDAR ==========
+// ========== HISTORY WITH LINE CHART (TRADING STYLE) ==========
+let currentChartPeriod = 7;
+
 export function renderHistory() {
   const state = getState();
   const userData = getUserData();
   const filteredHistory = filterHistoryByPlan(state.history, userData);
 
+  // ===== Period selector event listeners =====
+  const periodBtns = document.querySelectorAll('.chart-period-btn');
+  periodBtns.forEach(btn => {
+    // Remove old listeners by cloning
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', () => {
+      currentChartPeriod = parseInt(newBtn.dataset.period);
+      document.querySelectorAll('.chart-period-btn').forEach(b => b.classList.remove('active'));
+      newBtn.classList.add('active');
+      renderLineChart(filteredHistory, currentChartPeriod);
+    });
+  });
+
+  // ===== Render chart with current period =====
+  renderLineChart(filteredHistory, currentChartPeriod);
+
+  // ===== Stats cards =====
   const last7 = getSessionsByDay(filteredHistory, 7);
   const totalWeek = last7.reduce((a, b) => a + b, 0);
-
   animateCount(document.getElementById('week-sessions'), totalWeek);
   animateCount(document.getElementById('hist-week'), totalWeek);
 
@@ -834,28 +853,6 @@ export function renderHistory() {
   ).length;
   animateCount(document.getElementById('hist-month'), monthCount);
   animateCount(document.getElementById('hist-best'), state.stats.bestStreak || 0);
-
-  const chart = document.getElementById('history-chart');
-  clearEl(chart);
-  const maxVal = Math.max(...last7, 1);
-  const dayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-
-  for (let i = 0; i < 7; i++) {
-    const val = last7[i];
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const dayLabel = dayLabels[(d.getDay() + 6) % 7];
-
-    const wrap = createEl('div', { className: 'chart-bar-wrap' });
-    const bar = createEl('div', { className: 'chart-bar' + (val === 0 ? ' empty' : '') });
-    bar.style.height = '0%';
-    requestAnimationFrame(() => {
-      setTimeout(() => { bar.style.height = `${(val / maxVal) * 100}%`; }, i * 80);
-    });
-    wrap.appendChild(bar);
-    wrap.appendChild(createEl('div', { className: 'chart-label', text: dayLabel }));
-    chart.appendChild(wrap);
-  }
 
   // ⭐ CALENDAR VIEW
   renderCalendar(filteredHistory);
@@ -870,7 +867,7 @@ export function renderHistory() {
         </div>
         <div class="hist-premium-upsell-content">
           <div class="hist-premium-upsell-title">Historique limité à 7 jours</div>
-          <div class="hist-premium-upsell-desc">Passe à Premium pour accéder à ton historique complet (365 jours) + export PDF</div>
+          <div class="hist-premium-upsell-desc">Passe à Premium pour accéder à ton historique complet (365 jours)</div>
         </div>
         <button class="btn btn-primary btn-sm hist-premium-upsell-btn" type="button">Premium</button>
       `,
@@ -921,6 +918,306 @@ export function renderHistory() {
 
     list.appendChild(card);
   });
+}
+
+// ========== LINE CHART RENDERER (TRADING STYLE) ==========
+function renderLineChart(history, periodDays) {
+  const svg = document.getElementById('chart-line-svg');
+  const tooltip = document.getElementById('chart-tooltip');
+  const periodLabel = document.getElementById('chart-period-label');
+  const trendEl = document.getElementById('chart-trend');
+  const sessionCountEl = document.getElementById('week-sessions');
+
+  if (!svg) return;
+  clearEl(svg);
+
+  // ===== Aggregate data by period =====
+  const data = aggregateChartData(history, periodDays);
+  const totalSessions = data.reduce((a, b) => a + b.count, 0);
+
+  // Update period label
+  const periodLabels = { 7: '7 DERNIERS JOURS', 30: '30 DERNIERS JOURS', 90: '90 DERNIERS JOURS', 365: 'DERNIÈRE ANNÉE' };
+  if (periodLabel) periodLabel.textContent = periodLabels[periodDays] || `${periodDays} JOURS`;
+  if (sessionCountEl) sessionCountEl.textContent = totalSessions;
+
+  // ===== Calculate trend =====
+  if (trendEl) {
+    clearEl(trendEl);
+    if (data.length >= 2) {
+      const halfLen = Math.floor(data.length / 2);
+      const firstHalf = data.slice(0, halfLen).reduce((a, b) => a + b.count, 0);
+      const secondHalf = data.slice(halfLen).reduce((a, b) => a + b.count, 0);
+      const diff = secondHalf - firstHalf;
+      const pct = firstHalf > 0 ? Math.round((diff / firstHalf) * 100) : (secondHalf > 0 ? 100 : 0);
+
+      if (diff > 0) {
+        trendEl.className = 'chart-trend up';
+        trendEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg> +${pct}% vs début`;
+      } else if (diff < 0) {
+        trendEl.className = 'chart-trend down';
+        trendEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg> ${pct}% vs début`;
+      } else {
+        trendEl.className = 'chart-trend flat';
+        trendEl.textContent = 'Stable';
+      }
+    }
+  }
+
+  // ===== SVG dimensions =====
+  const W = 600, H = 200;
+  const PAD_L = 30, PAD_R = 10, PAD_T = 10, PAD_B = 28;
+  const plotW = W - PAD_L - PAD_R;
+  const plotH = H - PAD_T - PAD_B;
+
+  // ===== No data case =====
+  if (data.length === 0) {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', W / 2);
+    text.setAttribute('y', H / 2);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', 'var(--text-dim)');
+    text.setAttribute('font-size', '13');
+    text.setAttribute('font-weight', '500');
+    text.textContent = 'Aucune donnée';
+    svg.appendChild(text);
+    return;
+  }
+
+  const maxVal = Math.max(...data.map(d => d.count), 1);
+
+  // ===== Y-axis grid lines =====
+  const ySteps = 4;
+  for (let i = 0; i <= ySteps; i++) {
+    const y = PAD_T + (plotH / ySteps) * i;
+    const val = Math.round(maxVal * (1 - i / ySteps));
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', PAD_L);
+    line.setAttribute('x2', W - PAD_R);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
+    line.setAttribute('class', 'chart-grid-line');
+    svg.appendChild(line);
+
+    // Y labels (only if max > 0)
+    if (maxVal > 0) {
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('x', PAD_L - 4);
+      label.setAttribute('y', y + 3);
+      label.setAttribute('class', 'chart-label-y');
+      label.textContent = val;
+      svg.appendChild(label);
+    }
+  }
+
+  // ===== Compute points =====
+  const points = data.map((d, i) => ({
+    x: PAD_L + (i / Math.max(data.length - 1, 1)) * plotW,
+    y: PAD_T + plotH - (d.count / maxVal) * plotH,
+    ...d,
+  }));
+
+  // If only 1 data point, center it
+  if (points.length === 1) {
+    points[0].x = W / 2;
+  }
+
+  // ===== Area fill (gradient under the line) =====
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // Gradient definition
+  const defs = document.createElementNS(ns, 'defs');
+  const grad = document.createElementNS(ns, 'linearGradient');
+  grad.setAttribute('id', 'chartAreaGrad');
+  grad.setAttribute('x1', '0');
+  grad.setAttribute('y1', '0');
+  grad.setAttribute('x2', '0');
+  grad.setAttribute('y2', '1');
+  const stop1 = document.createElementNS(ns, 'stop');
+  stop1.setAttribute('offset', '0%');
+  stop1.setAttribute('stop-color', 'var(--accent)');
+  stop1.setAttribute('stop-opacity', '0.4');
+  const stop2 = document.createElementNS(ns, 'stop');
+  stop2.setAttribute('offset', '100%');
+  stop2.setAttribute('stop-color', 'var(--accent)');
+  stop2.setAttribute('stop-opacity', '0');
+  grad.appendChild(stop1);
+  grad.appendChild(stop2);
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+
+  // Area path
+  const bottomY = PAD_T + plotH;
+  let areaD = `M ${points[0].x} ${bottomY}`;
+  areaD += ` L ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    // Smooth bezier curve
+    const prev = points[i - 1];
+    const curr = points[i];
+    const cpx = (prev.x + curr.x) / 2;
+    areaD += ` C ${cpx} ${prev.y} ${cpx} ${curr.y} ${curr.x} ${curr.y}`;
+  }
+  areaD += ` L ${points[points.length - 1].x} ${bottomY} Z`;
+
+  const area = document.createElementNS(ns, 'path');
+  area.setAttribute('d', areaD);
+  area.setAttribute('fill', 'url(#chartAreaGrad)');
+  area.setAttribute('class', 'chart-area-fill chart-area-animated');
+  svg.appendChild(area);
+
+  // ===== Line path =====
+  let lineD = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const cpx = (prev.x + curr.x) / 2;
+    lineD += ` C ${cpx} ${prev.y} ${cpx} ${curr.y} ${curr.x} ${curr.y}`;
+  }
+
+  const line = document.createElementNS(ns, 'path');
+  line.setAttribute('d', lineD);
+  line.setAttribute('class', 'chart-line chart-line-animated');
+  svg.appendChild(line);
+
+  // ===== Dots + X labels =====
+  const maxLabels = periodDays <= 7 ? 7 : periodDays <= 30 ? 10 : periodDays <= 90 ? 12 : 12;
+  const labelStep = Math.max(1, Math.ceil(data.length / maxLabels));
+
+  points.forEach((p, i) => {
+    // Dot
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', p.x);
+    dot.setAttribute('cy', p.y);
+    dot.setAttribute('class', 'chart-dot');
+    dot.setAttribute('r', '3.5');
+
+    // Hover / touch tooltip
+    const showTip = (e) => {
+      if (tooltip) {
+        tooltip.innerHTML = `<div class="tooltip-date">${p.label}</div><div class="tooltip-value">${p.count} séance${p.count > 1 ? 's' : ''}</div>`;
+        tooltip.classList.add('visible');
+        // Position tooltip near the dot
+        const svgRect = svg.getBoundingClientRect();
+        let tipX = (p.x / W) * svgRect.width - tooltip.offsetWidth / 2;
+        let tipY = (p.y / H) * svgRect.height - tooltip.offsetHeight - 12;
+        // Keep in bounds
+        tipX = Math.max(4, Math.min(tipX, svgRect.width - tooltip.offsetWidth - 4));
+        if (tipY < 0) tipY = (p.y / H) * svgRect.height + 12;
+        tooltip.style.left = tipX + 'px';
+        tooltip.style.top = tipY + 'px';
+      }
+    };
+    const hideTip = () => {
+      if (tooltip) tooltip.classList.remove('visible');
+    };
+
+    dot.addEventListener('mouseenter', showTip);
+    dot.addEventListener('mouseleave', hideTip);
+    dot.addEventListener('touchstart', (e) => { e.preventDefault(); showTip(e); }, { passive: false });
+    dot.addEventListener('touchend', hideTip);
+
+    svg.appendChild(dot);
+
+    // X-axis labels (show only some to avoid clutter)
+    if (i % labelStep === 0 || i === data.length - 1) {
+      const label = document.createElementNS(ns, 'text');
+      label.setAttribute('x', p.x);
+      label.setAttribute('y', H - 4);
+      label.setAttribute('class', 'chart-label-x');
+      label.textContent = p.shortLabel || p.label;
+      svg.appendChild(label);
+    }
+  });
+}
+
+// ========== CHART DATA AGGREGATION ==========
+function aggregateChartData(history, periodDays) {
+  if (!Array.isArray(history) || history.length === 0) return [];
+
+  const now = new Date();
+  now.setHours(23, 59, 59, 999);
+  const cutoff = new Date(now.getTime() - periodDays * 86400000);
+
+  const result = [];
+  const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+
+  if (periodDays <= 7) {
+    // ===== Daily: one point per day =====
+    const sessionsByDay = getSessionsByDay(history, periodDays);
+    for (let i = 0; i < periodDays; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - (periodDays - 1 - i));
+      const dayIdx = d.getDay();
+      result.push({
+        count: sessionsByDay[i],
+        label: `${dayNames[dayIdx]} ${d.getDate()}`,
+        shortLabel: dayNames[dayIdx],
+        date: d,
+      });
+    }
+  } else if (periodDays <= 30) {
+    // ===== Daily for 30 days, but label only some =====
+    for (let i = periodDays - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      const nextD = new Date(d.getTime() + 86400000);
+
+      const count = history.filter(h => {
+        const t = new Date(h.date).getTime();
+        return t >= d.getTime() && t < nextD.getTime();
+      }).length;
+
+      result.push({
+        count,
+        label: `${d.getDate()} ${monthNames[d.getMonth()]}`,
+        shortLabel: d.getDate() % 5 === 0 || i === 0 ? `${d.getDate()}/${d.getMonth() + 1}` : '',
+        date: d,
+      });
+    }
+  } else if (periodDays <= 90) {
+    // ===== Weekly aggregation =====
+    const weeks = Math.ceil(periodDays / 7);
+    for (let w = weeks - 1; w >= 0; w--) {
+      const weekEnd = new Date();
+      weekEnd.setDate(weekEnd.getDate() - w * 7);
+      weekEnd.setHours(23, 59, 59, 999);
+      const weekStart = new Date(weekEnd.getTime() - 7 * 86400000);
+      weekStart.setHours(0, 0, 0, 0);
+
+      const count = history.filter(h => {
+        const t = new Date(h.date).getTime();
+        return t >= weekStart.getTime() && t <= weekEnd.getTime();
+      }).length;
+
+      result.push({
+        count,
+        label: `${weekStart.getDate()} ${monthNames[weekStart.getMonth()]} - ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]}`,
+        shortLabel: `${weekStart.getDate()}/${weekStart.getMonth() + 1}`,
+        date: weekStart,
+      });
+    }
+  } else {
+    // ===== Monthly aggregation for 1 year =====
+    for (let m = 11; m >= 0; m--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - m, 1);
+      const nextMonth = new Date(now.getFullYear(), now.getMonth() - m + 1, 1);
+
+      const count = history.filter(h => {
+        const t = new Date(h.date).getTime();
+        return t >= monthDate.getTime() && t < nextMonth.getTime();
+      }).length;
+
+      result.push({
+        count,
+        label: `${monthNames[monthDate.getMonth()]} ${monthDate.getFullYear()}`,
+        shortLabel: monthNames[monthDate.getMonth()],
+        date: monthDate,
+      });
+    }
+  }
+
+  return result;
 }
 
 // ========== CALENDAR VIEW ==========

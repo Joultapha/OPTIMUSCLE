@@ -3,8 +3,8 @@
    ============================================================ */
 
 export const APP_NAME = 'OPTIMUSCLE';
-export const APP_VERSION = '24.0.0';
-export const STORAGE_KEY = 'optimuscle_v24';
+export const APP_VERSION = '26.0.0';
+export const STORAGE_KEY = 'optimuscle_v26';
 
 // 🔥 Firebase config (publique, safe à committer)
 export const firebaseConfig = {

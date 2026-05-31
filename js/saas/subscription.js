@@ -4,8 +4,8 @@
 
    Architecture freemium :
    - free  : 2 séances/sem, historique 7j, limité
-   - premium : illimité, GIFs HD, IA coach, export PDF
-   - elite  : tout premium + stats avancées, badge elite, etc.
+   - premium : illimité, GIFs HD, IA coach, nutrition avancée
+   - elite  : tout premium + coach avancé, programmes exclusifs, défis Elite
    - admin : tout + accès console
 
    IMPORTANT : Ces vérifs CÔTÉ CLIENT sont juste pour l'UX.
@@ -30,13 +30,8 @@ export const PLANS = {
       maxBadges: 3,            // 3 badges de base
       gifQuality: 'standard',
       aiCoach: false,
-      pdfExport: false,
       adsRemoved: false,
       customPrograms: false,
-      advancedStats: false,
-      eliteBadge: false,
-      earlyAccess: false,
-      prioritySupport: false,
       communityChallenges: false,
       nutritionTracking: false,
     }
@@ -56,13 +51,8 @@ export const PLANS = {
       maxBadges: -1,           // Tous
       gifQuality: 'hd',
       aiCoach: true,
-      pdfExport: true,
       adsRemoved: true,
       customPrograms: true,
-      advancedStats: false,
-      eliteBadge: false,
-      earlyAccess: false,
-      prioritySupport: false,
       communityChallenges: true,
       nutritionTracking: 'advanced',
     }
@@ -83,13 +73,8 @@ export const PLANS = {
       maxBadges: -1,           // Tous
       gifQuality: 'hd',
       aiCoach: 'advanced',     // Coach IA avancé
-      pdfExport: true,
       adsRemoved: true,
       customPrograms: 'exclusive',  // Programmes exclusifs
-      advancedStats: true,
-      eliteBadge: true,
-      earlyAccess: true,
-      prioritySupport: true,
       communityChallenges: 'elite',
       nutritionTracking: 'advanced',
     }
@@ -108,13 +93,8 @@ export const PLANS = {
       maxBadges: -1,
       gifQuality: 'hd',
       aiCoach: 'advanced',
-      pdfExport: true,
       adsRemoved: true,
       customPrograms: 'exclusive',
-      advancedStats: true,
-      eliteBadge: true,
-      earlyAccess: true,
-      prioritySupport: true,
       communityChallenges: 'elite',
       nutritionTracking: 'advanced',
     }
@@ -300,7 +280,7 @@ export function getUserPlan(userData) {
  * pour supporter les features à niveaux ('advanced', 'exclusive', 'elite').
  *
  * @param {object} userData
- * @param {string} feature - ex: 'aiCoach', 'pdfExport'
+ * @param {string} feature - ex: 'aiCoach', 'nutritionTracking'
  * @returns {boolean} - true si la feature est disponible (pas false ni undefined)
  */
 export function hasFeature(userData, feature) {
@@ -345,7 +325,10 @@ export function isPremium(userData) {
  */
 export function getSubscriptionBadge(userData) {
   if (isAdmin(userData)) return { label: 'ADMIN', color: '#ff3d00' };
-  if (isPremium(userData)) return { label: 'PREMIUM', color: '#ffb800' };
+  const plan = getUserPlan(userData);
+  if (plan.id === 'premium_yearly') return { label: 'ELITE', color: '#d4a843' };
+  if (plan.id === 'premium_lifetime') return { label: 'LIFETIME', color: '#d4a843' };
+  if (plan.id !== 'free') return { label: 'PREMIUM', color: '#ffb800' };
   return { label: 'FREE', color: '#8a8a8a' };
 }
 

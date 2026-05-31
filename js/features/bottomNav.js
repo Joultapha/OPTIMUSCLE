@@ -261,13 +261,21 @@ function handleTabClick(tabId) {
 }
 
 export function setActiveBottomTab(tabId) {
-  const index = TABS.findIndex(t => t.id === tabId);
+  // ⭐ Map legacy tab names to bottom nav equivalents
+  const tabMap = {
+    history: 'home',   // History/Stats is on the home tab
+    training: 'home',  // Training uses home page
+    badges: 'profile', // Badges are on profile page
+  };
+  const mappedTabId = tabMap[tabId] || tabId;
+
+  const index = TABS.findIndex(t => t.id === mappedTabId);
   if (index === -1) return;
 
-  currentTab = tabId;
+  currentTab = mappedTabId;
 
   document.querySelectorAll('.bottom-nav-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.tab === tabId);
+    item.classList.toggle('active', item.dataset.tab === mappedTabId);
   });
 
   movePill(index, true);

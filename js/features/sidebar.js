@@ -249,7 +249,7 @@ export function openPremiumModal() {
     { text: 'Historique 7 jours', included: true },
     { text: '3 badges de base', included: true },
     { text: 'Coach IA', included: false },
-    { text: 'Export PDF', included: false },
+    { text: 'Programmes personnalisés', included: false },
     { text: 'Sans pub', included: false },
   ].forEach(f => {
     freeFeatures.appendChild(createEl('li', {
@@ -287,7 +287,7 @@ export function openPremiumModal() {
     'Historique <strong>365 jours</strong>',
     'Coach IA <strong>24/7</strong>',
     'Démos vidéo <strong>HD</strong>',
-    'Export PDF',
+    'Nutrition <strong>avancée</strong>',
     'Sans publicité',
   ].forEach(f => {
     premFeatures.appendChild(createEl('li', {
@@ -325,9 +325,9 @@ export function openPremiumModal() {
     '<strong>Tout Premium +</strong>',
     'Coach IA <strong>avancé</strong>',
     'Programmes <strong>exclusifs</strong>',
-    'Statistiques <strong>avancées</strong>',
-    'Badge <strong>Elite</strong> exclusif',
-    'Accès <strong>anticipé</strong>',
+    'Défis communauté <strong>Elite</strong>',
+    'Nutrition <strong>avancée</strong>',
+    'Historique <strong>365 jours</strong>',
     'Support <strong>prioritaire</strong>',
   ].forEach(f => {
     eliteFeatures.appendChild(createEl('li', {
