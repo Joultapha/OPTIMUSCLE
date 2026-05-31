@@ -9,7 +9,8 @@
 
 import { setSubPage } from '../core/appState.js';
 import { createEl } from '../utils/sanitize.js';
-import { hasFeature, getUserData } from '../saas/subscription.js';
+import { getUserData } from '../core/state.js';
+import { hasFeature } from '../saas/subscription.js';
 
 let initialized = false;
 let currentTab = 'home';
