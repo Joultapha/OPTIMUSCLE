@@ -70,6 +70,7 @@ import {
   closeBadgeModal,
   closeExInfo,
   completeWorkout,
+  closeLevelup,
 } from './features/ui.js';
 import {
   toggleTimer,
@@ -118,7 +119,11 @@ function hideLoadingScreen(reason) {
   if (ls) {
     const isVisible = getComputedStyle(ls).display !== 'none';
     if (isVisible) {
-      ls.style.setProperty('display', 'none', 'important');
+      // ⭐ FIX: Don't set inline display:none — let the CSS view-system handle it
+      // via data-view attribute. Setting inline display:none with !important
+      // overrides the CSS data-view rules and breaks the reconnecting state.
+      // Instead, just remove the 'loading' data-view state which will
+      // cause CSS to hide the loading screen.
       console.log('[APP] Loading screen hidden — reason:', reason);
     }
   }
@@ -136,6 +141,7 @@ function bindLandingCTAs() {
   on('landing-cta-final', 'click', () => setHasSeenLanding(true));
   on('landing-pricing-free', 'click', () => setHasSeenLanding(true));
   on('landing-pricing-premium', 'click', () => setHasSeenLanding(true));
+  on('landing-pricing-elite', 'click', () => setHasSeenLanding(true));
 }
 bindLandingCTAs();
 
@@ -255,7 +261,14 @@ setupAuthListener(async (user) => {
           authResolved = true;
           hideLoadingScreen('auth-2s-timeout');
           const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-          updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
+          // ⭐ FIX: Pour les utilisateurs qui reviennent, ne PAS forcer isAuthenticated: false
+          // Cela évite le flash landing/login → dashboard. On garde le spinner
+          // au lieu de montrer la landing page en attendant Firebase.
+          if (hasSeen) {
+            updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: true });
+          } else {
+            updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
+          }
         }
       }, 2000);
     }
@@ -316,14 +329,9 @@ setupAuthListener(async (user) => {
 
   console.log('[FLOW] hasProfile:', hasProfile, '| hasProgram:', hasProgram, '→ onboardingDone:', onboardingDone);
 
-  if (onboardingDone) {
-    renderHome();
-    scheduleReminder();
-    setSubPage('home');
-  } else {
-    resetOnboardingUI();
-  }
-
+  // ⭐ FIX: Update appState BEFORE rendering to prevent flash to landing/login page.
+  // Previously, setSubPage() was called before updateAppState(), which caused
+  // render() to show the wrong view because isAuthenticated was still false.
   hideLoadingScreen('auth-user-ready');
 
   updateAppState({
@@ -332,6 +340,15 @@ setupAuthListener(async (user) => {
     loading: false,
     reconnecting: false,
   });
+
+  // NOW render content — appState is correct so render() will show the right view
+  if (onboardingDone) {
+    renderHome();
+    scheduleReminder();
+    setSubPage('home');
+  } else {
+    resetOnboardingUI();
+  }
 
   try { initBottomNav(); } catch (e) { console.error('[APP] initBottomNav failed:', e); }
   try { initScrollAnimations(); } catch (e) { console.error('[APP] initScrollAnimations failed:', e); }
@@ -454,6 +471,10 @@ function bindGlobalEvents() {
 
   on('btn-close-badge', 'click', closeBadgeModal);
   on('badge-modal', 'click', e => { if (e.target === e.currentTarget) closeBadgeModal(); });
+
+  // ⭐ Level-up modal
+  on('btn-close-levelup', 'click', closeLevelup);
+  on('levelup-modal', 'click', e => { if (e.target === e.currentTarget) closeLevelup(); });
 
   on('btn-reset-profile', 'click', async () => {
     const { confirmModal } = await import('./utils/notifications.js');

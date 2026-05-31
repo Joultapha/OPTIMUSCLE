@@ -81,10 +81,10 @@
           window.__appReady=true;
         } else {
           // Nouvel utilisateur → montrer la landing page
-          ls.style.setProperty('display','none','important');
+          // ⭐ FIX: Don't use inline display:none — set data-view and let CSS handle it
           document.body.setAttribute('data-view','landing');
           // Bind landing CTAs so buttons work even if app.js crashed
-          var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium'];
+          var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium','landing-pricing-elite'];
           ctaBtns.forEach(function(id){
             var btn=document.getElementById(id);
             if(btn)btn.addEventListener('click',function(){
@@ -937,7 +937,7 @@ Rejoint 180+ athlètes qui s'entraînent chaque semaine. Commence en 30 secondes
     <button class="btn btn-ghost" id="btn-reset-profile">Refaire le questionnaire</button>
 
     <button class="btn btn-danger" id="btn-logout" style="margin-top: 12px;">Se déconnecter</button>
-    <button class="btn btn-danger-outline" id="btn-delete-account" style="margin-top: 8px;" style="gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Supprimer mon compte</button>
+    <button class="btn btn-danger-outline" id="btn-delete-account" style="margin-top: 8px; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Supprimer mon compte</button>
   </div>
 </section>
 

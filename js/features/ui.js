@@ -486,14 +486,20 @@ export async function completeWorkout() {
     // Vérif level up
     const newXp = computeTotalXp(state);
     const levelUp = checkLevelUp(oldXp, newXp);
+
+    // ⭐ FIX: Navigate home first, THEN show level-up after settling
+    goHome();
+
     if (levelUp) {
-      setTimeout(() => showLevelUp(levelUp.newLevel), 1200);
+      // Show level-up modal after the home page has rendered
+      setTimeout(() => showLevelUp(levelUp.newLevel), 1000);
     } else {
       checkBadges();
     }
+  } else {
+    // Workout already done — just go home
+    goHome();
   }
-
-  setTimeout(goHome, 800);
 }
 
 // ========== EXERCISE EDITOR ==========
@@ -718,11 +724,16 @@ function showLevelUp(newLevel) {
   setText('levelup-title', `Tu deviens : ${getTitleForLevel(newLevel)}`);
   modal.classList.add('show');
   haptic('success');
-  setTimeout(() => checkBadges(), 500);
+  // ⭐ FIX: Don't call checkBadges here — it would show a badge modal
+  // on top of the level-up modal, blocking the "Continue" button.
+  // checkBadges will be called when the user closes this modal.
 }
 
 export function closeLevelup() {
-  document.getElementById('levelup-modal').classList.remove('show');
+  const modal = document.getElementById('levelup-modal');
+  if (modal) modal.classList.remove('show');
+  // ⭐ FIX: Now that the level-up modal is closed, check for new badges
+  setTimeout(() => checkBadges(), 300);
 }
 
 // ========== EXERCISE INFO ==========
@@ -753,16 +764,35 @@ export function showExInfo(key) {
   if (gifUrl) {
     // GIF disponible : tentative de chargement
     if (gifLoading) gifLoading.style.display = 'flex';
+    // ⭐ Timeout : si le GIF ne charge pas en 8s, afficher le fallback
+    let gifTimeout = setTimeout(() => {
+      if (gifImg.style.display === 'none') {
+        // GIF pas encore affiché → fallback
+        gifImg.style.display = 'none';
+        if (gifLoading) gifLoading.style.display = 'none';
+        if (gifFallback) {
+          gifFallback.style.display = 'flex';
+          const muscleIcon = gifFallback.querySelector('.ex-gif-fallback-muscle');
+          if (muscleIcon) muscleIcon.textContent = ex.muscle;
+        }
+      }
+    }, 8000);
     gifImg.onload = () => {
+      clearTimeout(gifTimeout);
       gifImg.style.display = 'block';
       if (gifLoading) gifLoading.style.display = 'none';
       if (gifFallback) gifFallback.style.display = 'none';
     };
     gifImg.onerror = () => {
+      clearTimeout(gifTimeout);
       // Si le GIF foire : afficher le fallback icône
       gifImg.style.display = 'none';
       if (gifLoading) gifLoading.style.display = 'none';
-      if (gifFallback) gifFallback.style.display = 'flex';
+      if (gifFallback) {
+        gifFallback.style.display = 'flex';
+        const muscleIcon = gifFallback.querySelector('.ex-gif-fallback-muscle');
+        if (muscleIcon) muscleIcon.textContent = ex.muscle;
+      }
     };
     gifImg.src = gifUrl;
   } else {

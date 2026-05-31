@@ -298,3 +298,35 @@ input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ⭐ FIX: Prevent double-tap zoom delay on all interactive elements */
+/* This makes buttons respond immediately on first tap on mobile */
+button,
+a,
+[role="button"],
+[tabindex],
+input,
+select,
+textarea,
+.option,
+.day-card,
+.exercise,
+.bottom-nav-item {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ⭐ FIX: Ensure buttons always have cursor pointer and minimum tap target */
+.btn,
+button {
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ⭐ FIX: Modal buttons must be easily tappable */
+.modal .btn {
+  min-height: 48px;
+  padding: 14px 24px;
+  font-size: 15px;
+}
