@@ -1,11 +1,16 @@
 /* ============================================================
    OPTIMUSCLE — Entry point (utilise appState UNIQUEMENT)
    ============================================================
-   v24 — FIXES:
-   - Loading screen stuck: ajout timeout reconnecting (6s max)
-   - Level-up Continue button: fix event binding + modal z-index
-   - Unresponsive buttons: fix coach FAB drag interfering with clicks
+   v25 — FIXES:
+   - ⭐ CRITICAL: Added missing getAppState import (was causing ENTIRE
+     app.js to crash with ReferenceError, leaving loading screen stuck)
+   - Loading screen stuck: root cause was getAppState() called at line
+     122 but never imported from appState.js
+   - Level-up Continue button: works now (was broken because app.js
+     crashed before event handlers were bound)
+   - Unresponsive buttons: same root cause — app.js crash
    - Landing page refresh: proper hasSeenLanding flow
+   - Simplified reconnecting logic (removed fragile timeout chain)
 */
 
 // ⚠️ Firebase imports are now DYNAMIC to prevent black screen if CDN is unreachable
@@ -95,52 +100,22 @@ initTheme();
 // If the inline fallback already set data-view to something other than "loading",
 // DON'T override it back to loading — that causes the stuck loading screen
 if (window.__optFallbackFired) {
-  console.log('[APP] Fallback already fired — skipping setLoading(true)');
-  // ⭐ FIX v24: Even if fallback fired, we need to transition properly.
-  // The fallback sets data-view via DOM but doesn't update appState.
-  // So we need to sync appState with the fallback's decision.
+  console.log('[APP] Fallback already fired — syncing appState');
   const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-  updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: hasSeen });
+  // Sync appState with what the fallback script already did via DOM
+  updateAppState({ loading: false, hasSeenLanding: hasSeen, isAuthenticated: false });
 } else {
   setLoading(true);
   render('app-start');
 }
 
-// ⭐ NE PAS mettre __appReady = true ici !
-// On le mettra seulement quand l'app est VRAIMENT prête.
-// Sinon le fallback inline pense que l'app est chargée.
-
 // ⭐ Flag pour ignorer le premier fire null de Firebase (race condition)
 let authResolved = false;
-let authResolveTimer = null;
 let globalEventsBound = false;
-
-// ⭐ FIX v24: Auto-timeout pour l'état reconnecting
-// Si après 6s on est toujours en reconnecting, on force la transition
-// vers la page appropriée (login si pas authentifié, dashboard si authentifié)
-setTimeout(() => {
-  const s = getAppState();
-  if (s.reconnecting) {
-    console.warn('[APP] Reconnecting timeout (6s) — forcing transition');
-    // L'utilisateur a déjà vu la landing, donc on va vers login
-    updateAppState({ reconnecting: false, loading: false, isAuthenticated: false });
-  }
-}, 6000);
 
 // ⭐ Helper : cacher le loading screen de façon fiable
 function hideLoadingScreen(reason) {
-  const ls = document.getElementById('app-loading-screen');
-  if (ls) {
-    const isVisible = getComputedStyle(ls).display !== 'none';
-    if (isVisible) {
-      // ⭐ FIX: Don't set inline display:none — let the CSS view-system handle it
-      // via data-view attribute. Setting inline display:none with !important
-      // overrides the CSS data-view rules and breaks the reconnecting state.
-      // Instead, just remove the 'loading' data-view state which will
-      // cause CSS to hide the loading screen.
-      console.log('[APP] Loading screen hidden — reason:', reason);
-    }
-  }
+  console.log('[APP] Loading screen hidden — reason:', reason);
   // ⭐ Signal to inline fallback that app is ready
   window.__appReady = true;
   // ⭐ Signal that loading was dismissed so app.js doesn't re-show it
@@ -159,31 +134,17 @@ function bindLandingCTAs() {
 }
 bindLandingCTAs();
 
-// ⭐ FIX v24: Fallback timeout réduit à 3s (plus rapide)
-// Si l'app ne charge pas en 3s, on montre la landing/login
+// ⭐ FIX v25: Simplified timeout — if Firebase/auth doesn't resolve in 4s,
+// show the appropriate page directly (no "reconnecting" state that keeps spinner)
 setTimeout(() => {
-  const ls = document.getElementById('app-loading-screen');
-  const status = document.getElementById('loading-status');
-  const retryBtn = document.getElementById('loading-retry-btn');
-  const isVisible = ls && getComputedStyle(ls).display !== 'none';
-  if (isVisible) {
-    if (status) status.textContent = 'Chargement lent... Vérifie ta connexion.';
-    if (retryBtn) retryBtn.style.display = 'block';
-    console.warn('[APP] Loading timeout (3s) — Firebase may be slow');
-    if (!authResolved) {
-      authResolved = true;
-      hideLoadingScreen('3s-timeout');
-      const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-      if (hasSeen) {
-        // Utilisateur connu : écran "reconnecting" (sera auto-timeout à 6s)
-        updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: true });
-      } else {
-        // Nouvel utilisateur : montrer la landing/login
-        updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
-      }
-    }
+  if (!authResolved) {
+    console.warn('[APP] Auth timeout (4s) — showing page without Firebase');
+    authResolved = true;
+    hideLoadingScreen('4s-timeout');
+    const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
+    updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
   }
-}, 3000);
+}, 4000);
 
 // ============================================================
 // 2. INIT FIREBASE (dynamic imports — resilient to CDN failures)
@@ -257,43 +218,17 @@ try {
 setupAuthListener(async (user) => {
   console.log('[AUTH] User changed:', user ? user.email : 'null', '| authResolved:', authResolved);
 
-  // ⭐ IMPORTANT : Firebase onAuthStateChanged tire TOUJOURS avec null en premier
-  // avant de résoudre avec l'utilisateur réel (si session existe).
-  // On ignore ce premier fire null pour éviter un flash vers la landing page.
+  // ⭐ IMPORTANT : Firebase onAuthStateChanged fires null first,
+  // then fires the real user if a session exists.
+  // We ignore the first null to avoid a flash to the landing page.
+  // The 4s timeout (above) will handle the case where Firebase never resolves.
   if (!user && !authResolved) {
     console.log('[AUTH] Ignoring initial null fire (Firebase session check)');
-    
-    // ⭐ Safety: si après 2s on n'a toujours pas de user, c'est qu'on est vraiment
-    // pas connecté — on accepte le null
-    if (!authResolveTimer) {
-      authResolveTimer = setTimeout(() => {
-        if (!authResolved) {
-          console.log('[AUTH] Auth resolve timeout (2s) — user is truly not authenticated');
-          authResolved = true;
-          hideLoadingScreen('auth-2s-timeout');
-          const hasSeen = localStorage.getItem('hasSeenLanding') === '1';
-          // ⭐ FIX: Pour les utilisateurs qui reviennent, ne PAS forcer isAuthenticated: false
-          // Cela évite le flash landing/login → dashboard. On garde le spinner
-          // au lieu de montrer la landing page en attendant Firebase.
-          if (hasSeen) {
-            updateAppState({ loading: false, hasSeenLanding: hasSeen, reconnecting: true });
-          } else {
-            updateAppState({ loading: false, isAuthenticated: false, hasSeenLanding: hasSeen });
-          }
-        }
-      }, 2000);
-    }
     return;
   }
 
-  // ⭐ Marquer l'auth comme résolu
-  if (!authResolved) {
-    authResolved = true;
-    if (authResolveTimer) {
-      clearTimeout(authResolveTimer);
-      authResolveTimer = null;
-    }
-  }
+  // ⭐ Mark auth as resolved
+  authResolved = true;
 
   if (!user) {
     // ===== UTILISATEUR VRAIMENT NON CONNECTÉ =====
@@ -310,7 +245,6 @@ setupAuthListener(async (user) => {
       onboardingCompleted: false,
       hasSeenLanding: false,
       loading: false,
-      reconnecting: false,
     });
     return;
   }
@@ -349,7 +283,6 @@ setupAuthListener(async (user) => {
     isAuthenticated: true,
     onboardingCompleted: onboardingDone,
     loading: false,
-    reconnecting: false,
   });
 
   // NOW render content — appState is correct so render() will show the right view

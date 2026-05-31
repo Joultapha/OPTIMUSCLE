@@ -180,7 +180,7 @@ export function validateState(state) {
 export function sanitizeState(state) {
   if (!state || typeof state !== 'object') return null;
 
-  const ALLOWED_KEYS = ['profile', 'program', 'weekStart', 'stats', 'history', 'badges', 'settings', 'currentDay'];
+  const ALLOWED_KEYS = ['profile', 'program', 'weekStart', 'stats', 'history', 'badges', 'settings', 'currentDay', 'nutrition', 'challenges'];
   const clean = {};
 
   for (const k of ALLOWED_KEYS) {

@@ -25,6 +25,9 @@ import { showToastWithAction } from '../utils/notifications.js';
 let currentMealType = 'breakfast';
 let currentSearchTimeout = null;
 let openFoodFactsCache = {};
+// ⭐ FIX v25: Track the current nutrition level so sub-actions
+// (add/delete/water) re-render with the correct level
+let currentNutritionLevel = 'basic';
 
 // ============================================================
 // INIT DU MODULE NUTRITION DANS LE STATE
@@ -241,6 +244,8 @@ async function submitNutritionOnboarding(form) {
 // DASHBOARD NUTRITION DU JOUR
 // ============================================================
 function renderNutritionDashboard(nutritionLevel = 'basic') {
+  // ⭐ FIX v25: Store the nutrition level for subsequent re-renders
+  currentNutritionLevel = nutritionLevel;
   const container = document.getElementById('nutrition-content');
   if (!container) return;
   clearEl(container);
@@ -418,7 +423,7 @@ async function changeWater(delta) {
   nut.dailyWater[today] = newVal;
   haptic('light');
   await save();
-  renderNutritionDashboard();
+  renderNutritionDashboard(currentNutritionLevel);
 }
 
 function renderMealsList(todayMeals) {
@@ -498,7 +503,7 @@ async function deleteMealItem(mealId, idx) {
   }
   haptic('medium');
   await save();
-  renderNutritionDashboard();
+  renderNutritionDashboard(currentNutritionLevel);
 }
 
 // ============================================================
@@ -684,7 +689,7 @@ async function addFoodToMeal(foodEntry) {
   haptic('success');
   await save();
   showToast(`${foodEntry.name} ajouté !`);
-  renderNutritionDashboard();
+  renderNutritionDashboard(currentNutritionLevel);
 }
 
 // ============================================================

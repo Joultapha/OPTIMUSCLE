@@ -47,7 +47,7 @@
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <!-- Robust fallback: detects if app.js failed to load, shows retry button -->
-<!-- ⭐ FIX v24: Improved fallback — shorter timeout, auto-resolve reconnecting -->
+<!-- ⭐ FIX v25: Simplified fallback — no "reconnecting" state, direct landing/login -->
 <script>
 (function(){
   var retryBtn=document.getElementById('loading-retry-btn');
@@ -72,15 +72,13 @@
         var hasSeen=false;
         try{hasSeen=localStorage.getItem('hasSeenLanding')==='1';}catch(e){}
         if(hasSeen){
-          // ⭐ FIX v24: User connu → show login page directly instead of
-          // infinite "reconnecting" spinner. If Firebase resolves later,
-          // app.js will update the state properly.
+          // Returning user → show login page
           document.body.setAttribute('data-view','login');
           var loginEl=document.getElementById('page-login');
           if(loginEl)loginEl.classList.remove('hidden');
           window.__appReady=true;
         } else {
-          // Nouvel utilisateur → montrer la landing page
+          // New user → show landing page
           document.body.setAttribute('data-view','landing');
           // Bind landing CTAs so buttons work even if app.js crashed
           var ctaBtns=['landing-cta-start','landing-cta-login','landing-cta-final','landing-pricing-free','landing-pricing-premium','landing-pricing-elite'];
